@@ -5,7 +5,7 @@
     <!-- 🔹 اللوجو -->
     <img src="@/assets/images/Project LOGO.png" alt="Logo" class="w-[140px] h-auto" />
 
-    <!-- 🔹 روابط التنقل -->
+    <!--  روابط التنقل -->
     <ul
       class="hidden md:flex items-center justify-center md:space-x-10 lg:space-x-16 font-[500] md:text-[85%] lg:text-[100%]"
     >
