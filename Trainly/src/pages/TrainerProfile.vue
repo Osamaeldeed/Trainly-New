@@ -387,8 +387,8 @@ import {
 } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
 
-// Config
-const API_URL = 'http://localhost:3000'; // ⬅️ عنوان السيرفر
+// Config — غيّر لو السيرفر مش على localhost:3000
+const API_URL = 'http://localhost:3000';
 
 // router / auth
 const route = useRoute();
@@ -407,7 +407,7 @@ const plans = ref([]);
 const reviews = ref([]);
 const loading = ref(true);
 const error = ref(null);
-const bookingPlanId = ref(null); // ⬅️ للتحكم في loading state للزرار
+const bookingPlanId = ref(null); // loading state للزرار
 
 const avgRating = ref(null);
 const reviewsCount = ref(0);
@@ -618,7 +618,7 @@ const getLocation = () => {
 };
 const formatPrice = (price) => {
   if (price === undefined || price === null || price === "") return "N/A";
-  return `${Number(price).toFixed(2)}`;
+  return `$${Number(price).toFixed(2)}`;
 };
 const formatDate = (ts) => {
   if (!ts) return "N/A";
@@ -634,7 +634,7 @@ const handleImageError = (e) => {
 };
 const viewCertificate = (certUrl) => window.open(certUrl, "_blank");
 
-// ------------------ Book Plan (مع Stripe Hosted Checkout) ------------------
+// ------------------ Book Plan (مع Stripe Hosted Checkout على السيرفر) ------------------
 const bookPlan = async (plan) => {
   const user = auth.currentUser;
 
@@ -644,11 +644,16 @@ const bookPlan = async (plan) => {
     return;
   }
 
+  if (!plan || !plan.id) {
+    alert('Invalid plan selected');
+    return;
+  }
+
+  // set loading state on the button
   bookingPlanId.value = plan.id;
 
   try {
-    console.log('📤 Sending request to:', `${API_URL}/create-checkout-session`); // للتأكد من الـ URL
-    console.log('📦 Request data:', {
+    const payload = {
       planId: plan.id,
       trainerId: uid,
       traineeId: user.uid,
@@ -657,10 +662,12 @@ const bookPlan = async (plan) => {
         description: plan.description,
         duration: plan.duration,
         sessions: plan.sessions,
-        price: plan.price,
-        image: plan.image
+        price: Number(plan.price || 0),
+        image: plan.image || null
       }
-    });
+    };
+
+    console.log('📤 create-checkout-session ->', `${API_URL}/create-checkout-session`, payload);
 
     const response = await fetch(`${API_URL}/create-checkout-session`, {
       method: 'POST',
@@ -668,31 +675,16 @@ const bookPlan = async (plan) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({
-        planId: plan.id,
-        trainerId: uid,
-        traineeId: user.uid,
-        planDetails: {
-          name: plan.title,
-          description: plan.description,
-          duration: plan.duration,
-          sessions: plan.sessions,
-          price: plan.price,
-          image: plan.image
-        }
-      })
+      body: JSON.stringify(payload)
     });
 
-    console.log('📥 Response status:', response.status); // شوف الـ status code
+    console.log('📥 Response status:', response.status);
 
-    // ⬇️ التحقق من الـ response قبل parse
     const contentType = response.headers.get('content-type');
-    console.log('📄 Content-Type:', contentType);
-
     if (!contentType || !contentType.includes('application/json')) {
-      const text = await response.text();
+      const text = await response.text().catch(() => '');
       console.error('❌ Server returned non-JSON response:', text);
-      throw new Error('Server error: Expected JSON response but got HTML');
+      throw new Error('Server error: Expected JSON response but got non-JSON');
     }
 
     const data = await response.json();
@@ -702,24 +694,30 @@ const bookPlan = async (plan) => {
       throw new Error(data.error || `Server error: ${response.status}`);
     }
 
-    // ⬇️ التحقق من وجود الـ URL
-    if (!data.url) {
-      console.error('❌ No URL in response:', data);
-      throw new Error('No checkout URL received from server');
+    if (!data.url && !data.sessionId) {
+      console.error('❌ No URL or sessionId in response:', data);
+      throw new Error('No checkout URL returned from server');
     }
 
-    console.log('🔗 Redirecting to Stripe:', data.url);
+    // redirect to the provided URL (recommended — server creates session.url)
+    if (data.url) {
+      window.location.href = data.url;
+      return;
+    }
 
-    // إعادة توجيه للـ Stripe Checkout
-    window.location.href = data.url;
+    // fallback if server only returned sessionId (not used here)
+    if (data.sessionId) {
+      throw new Error('Session created but client-side redirect via sessionId not implemented.');
+    }
 
   } catch (error) {
     console.error('❌ Booking error:', error);
-    alert(`Failed to start booking process: ${error.message}`);
+    alert(`Failed to start booking process: ${error.message || error}`);
     bookingPlanId.value = null;
   }
 };
 
+// ------------------ Contact / booking fallback ------------------
 const contactTrainer = () => {
   if (trainer.value.email) {
     window.location.href = `mailto:${trainer.value.email}`;
@@ -845,6 +843,7 @@ const submitReview = async () => {
   }
 };
 </script>
+
 
 <style scoped>
 .line-clamp-2 {
