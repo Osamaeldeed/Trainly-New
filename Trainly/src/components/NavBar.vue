@@ -3,7 +3,7 @@
     class="flex justify-between items-center px-[50px] md:px-[70px] h-20 bg-white shadow-sm relative"
   >
     <!--  اللوجو -->
-    <img src="@/assets/images/Project LOGO.png" alt="Logo" class="w-[140px] h-auto" />
+    <img src="@/assets/images/Project LOGO.png" alt="Logo1" class="w-[140px] h-auto" />
 
     <!--  روابط التنقل -->
     <ul
