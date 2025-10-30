@@ -15,7 +15,7 @@ const firebaseConfig = {
   projectId: "trainly-b998e",
   storageBucket: "trainly-b998e.firebasestorage.app",
   messagingSenderId: "541980307705",
-  appId: "1:541980307705:web:374ab80f998717ea3ff228"
+  appId: "1:541980307705:web:990f44abe1221d393ff228"
 };
 
 // Initialize Firebase
