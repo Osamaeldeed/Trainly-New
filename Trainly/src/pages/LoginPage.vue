@@ -1,120 +1,121 @@
 <template>
-  <div v-if="showToast" class="toast flex justify-center items-center">
-  {{ toastMessage }}
-</div>
-  <div
-    class="bg-[url('/src/assets/images/couple-training-together-gym.jpg')] bg-cover bg-no-repeat bg-[position-x:100%] w-full h-screen flex items-center justify-start pl-20 max-[768px]:pl-0 max-[768px]:justify-center"
-  >
+  <div>
+    <div v-if="showToast" class="toast flex justify-center items-center">
+      {{ toastMessage }}
+    </div>
     <div
-      class="w-[480px] max-w-[calc(100%-40px)] mx-0 rounded-[10px] bg-white/95 p-3 flex items-start justify-center relative animate-slideUp"
+      class="bg-[url('/src/assets/images/couple-training-together-gym.jpg')] bg-cover bg-no-repeat bg-[position-x:100%] w-full h-screen flex items-center justify-start pl-20 max-[768px]:pl-0 max-[768px]:justify-center"
     >
       <div
-        class="w-[446px] h-[546px] bg-white p-9 rounded-lg flex flex-col justify-center shadow-[0_0_10px_rgba(0,0,0,0.1)]"
+        class="w-[480px] max-w-[calc(100%-40px)] mx-0 rounded-[10px] bg-white/95 p-3 flex items-start justify-center relative animate-slideUp"
       >
-        <h2 class="mb-5 text-[22px] font-semibold">
-          Welcome back To
-          <span class="bg-gradient-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent">
-            Trainly
-          </span>
-        </h2>
+        <div
+          class="w-[446px] h-[546px] bg-white p-9 rounded-lg flex flex-col justify-center shadow-[0_0_10px_rgba(0,0,0,0.1)]"
+        >
+          <h2 class="mb-5 text-[22px] font-semibold">
+            Welcome back To
+            <span class="bg-gradient-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent">
+              Trainly
+            </span>
+          </h2>
 
-        <form @submit.prevent="handleLogin" class="w-full">
-          <!-- Email -->
-          <label for="email" class="text-sm block mt-2 mb-1">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            placeholder="Enter email"
-            required
-            class="w-full p-3 mb-2 border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
-          />
-
-          <!-- Password -->
-          <div class="relative">
-            <label for="password" class="text-sm block mt-2 mb-1">Password</label>
+          <form @submit.prevent="handleLogin" class="w-full">
+            <!-- Email -->
+            <label for="email" class="text-sm block mt-2 mb-1">Email</label>
             <input
-              :type="passwordFieldType"
-              id="password"
-              v-model="password"
-              placeholder="Enter your password"
+              type="email"
+              id="email"
+              v-model="email"
+              placeholder="Enter email"
               required
               class="w-full p-3 mb-2 border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
             />
+
+            <!-- Password -->
+            <div class="relative">
+              <label for="password" class="text-sm block mt-2 mb-1">Password</label>
+              <input
+                :type="passwordFieldType"
+                id="password"
+                v-model="password"
+                placeholder="Enter your password"
+                required
+                class="w-full p-3 mb-2 border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
+              />
+              <button
+                type="button"
+                class="absolute right-4 top-1/2 translate-y-[10%] w-5 h-auto cursor-pointer bg-transparent border-0"
+                @click="togglePasswordVisibility"
+              >
+                <img
+                  :src="
+                    passwordVisible ? '/src/assets/images/eye off.png' : '/src/assets/images/Eye.png'
+                  "
+                  alt="Show/Hide"
+                  class="w-full h-auto"
+                />
+              </button>
+            </div>
+
+            <!-- Forgot Password -->
+            <a
+              href="/forgetpassword1"
+              class="text-xs text-[#2d8fff] hover:underline block text-right mb-4 cursor-pointer"
+            >
+              Forgot Password?
+            </a>
+
+            <!-- Login Button -->
+            <button
+              type="submit"
+              class="w-full p-3 text-white text-lg rounded-md cursor-pointer mb-4 bg-gradient-to-r from-[#00C853] to-[#00b0ff] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              :disabled="isLoading"
+            >
+              <template v-if="!isLoading">
+                Log In
+              </template>
+              <template v-else>
+                <svg
+                  class="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                <span>Logging in...</span>
+              </template>
+            </button>
+
+            <!-- Google Button -->
             <button
               type="button"
-              class="absolute right-4 top-1/2 translate-y-[10%] w-5 h-auto cursor-pointer bg-transparent border-0"
-              @click="togglePasswordVisibility"
+              @click="handleGoogleLogin"
+              class="flex items-center justify-center gap-2 border border-gray-300 p-2 cursor-pointer rounded-md bg-white w-full"
             >
-              <img
-                :src="
-                  passwordVisible ? '/src/assets/images/eye off.png' : '/src/assets/images/Eye.png'
-                "
-                alt="Show/Hide"
-                class="w-full h-auto"
-              />
+              <img src="/src/assets/images/g-logo.png" alt="google" class="w-5 h-5" />
+              Continue with Google
             </button>
-          </div>
 
-          <!-- Forgot Password -->
-          <a
-            href="/forgetpassword1"
-            class="text-xs text-[#2d8fff] hover:underline block text-right mb-4 cursor-pointer"
-          >
-            Forgot Password?
-          </a>
-
-          <!-- Login Button -->
-<button
-  type="submit"
-  class="w-full p-3 text-white text-lg rounded-md cursor-pointer mb-4 bg-gradient-to-r from-[#00C853] to-[#00b0ff] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-  :disabled="isLoading"
->
-  <template v-if="!isLoading">
-    Log In
-  </template>
-  <template v-else>
-    <svg
-      class="animate-spin h-5 w-5 text-white"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        class="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        stroke-width="4"
-      ></circle>
-      <path
-        class="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-      ></path>
-    </svg>
-    <span>Logging in...</span>
-  </template>
-</button>
-
-
-          <!-- Google Button -->
-          <button
-            type="button"
-            @click="handleGoogleLogin"
-            class="flex items-center justify-center gap-2 border border-gray-300 p-2 cursor-pointer rounded-md bg-white w-full"
-          >
-            <img src="/src/assets/images/g-logo.png" alt="google" class="w-5 h-5" />
-            Continue with Google
-          </button>
-
-          <!-- Sign Up Link -->
-          <p class="text-left text-sm mt-7">
-            Don't have an account?
-            <a href="/signup" class="text-[#2d8fff] hover:underline">Sign up</a>
-          </p>
-        </form>
+            <!-- Sign Up Link -->
+            <p class="text-left text-sm mt-7">
+              Don't have an account?
+              <a href="/signup" class="text-[#2d8fff] hover:underline">Sign up</a>
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -286,7 +287,7 @@ export default {
 
           router.push("/trainer/home");
         } else {
-         
+
           router.push("/traineehome");
         }
 
