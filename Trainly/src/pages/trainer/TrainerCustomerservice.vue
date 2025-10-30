@@ -1,4 +1,5 @@
 <template>
+ <div>
   <!-- Welcome Header -->
   <div
     class="bg-white p-6 rounded-2xl shadow-sm mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -135,22 +136,20 @@
   </section>
 
   <!-- Success Popup -->
-  <div
-    v-if="showPopup"
-    class="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 px-4"
-  >
-    <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-full max-w-md animate-fadeIn">
-      <img src="@/assets/images/done.png" alt="done" class="w-[80px] sm:w-[114px] mx-auto mb-3" />
-      <p class="text-gray-700 mb-4 text-base sm:text-lg leading-relaxed">
-        Your report has been sent successfully. <br />
-        The admin will review it soon.
-      </p>
-      <button
-        @click="showPopup = false"
-        class="bg-[#00B0FF] text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
-      >
-        OK
-      </button>
+    <div v-if="showPopup" class="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 px-4">
+      <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-full max-w-md animate-fadeIn">
+        <img src="@/assets/images/done.png" alt="done" class="w-[80px] sm:w-[114px] mx-auto mb-3" />
+        <p class="text-gray-700 mb-4 text-base sm:text-lg leading-relaxed">
+          Your report has been sent successfully. <br />
+          The admin will review it soon.
+        </p>
+        <button
+          @click="showPopup = false"
+          class="bg-[#00B0FF] text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+        >
+          OK
+        </button>
+      </div>
     </div>
   </div>
 </template>
