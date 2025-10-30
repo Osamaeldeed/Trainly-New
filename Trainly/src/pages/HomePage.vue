@@ -1,5 +1,6 @@
 <template>
-<section class="w-[90%] md:w-[85%] mx-auto mt-10 mb-12 relative">
+<div>
+ <section class="w-[90%] md:w-[85%] mx-auto mt-10 mb-12 relative">
   <div
     class="relative flex flex-col justify-center items-center text-center text-white h-[200px] md:h-[377px] border-4 border-black rounded-3xl overflow-hidden shadow-lg"
     :style="{
@@ -132,6 +133,7 @@ shadow-lg z-20 transition-transform hover:scale-105 cursor-pointer" aria-label="
         </div>
       </div>
     </div>
+</div>
 </template>
 
 <script setup>
