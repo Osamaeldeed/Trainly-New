@@ -35,15 +35,74 @@
             @click="toggleSidebar"
           ></div>
 
-          <!-- باقي الناف زي ما هو -->
+          <!-- باقي الناف -->
           <div class="flex items-center">
-            <div class="flex items-center ms-3 gap-[40px]">
-              <div class="hidden md:block">
-                <img
-                  src="@/assets/images/mingcute_notification-line.png"
-                  alt=""
-                  class="w-7 h-7"
-                />
+            <div class="flex items-center ms-3 gap-[24px]">
+              <!-- notification bell + badge -->
+              <div class="relative">
+                <button
+                  @click="toggleNotifications"
+                  type="button"
+                  class="relative inline-flex items-center justify-center p-2 text-gray-600 rounded-lg hover:bg-gray-200 focus:outline-none transition duration-200"
+                  aria-label="Notifications"
+                >
+                  <img src="@/assets/images/mingcute_notification-line.png" alt="bell" class="w-7 h-7" />
+                  <span
+                    v-if="unreadCount > 0"
+                    class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full"
+                  >
+                    {{ unreadCount }}
+                  </span>
+                </button>
+
+               <!-- dropdown notifications -->
+<div
+  v-if="showNotifications"
+  class="absolute right-0 mt-2 w-80 bg-white border shadow-xl rounded-xl overflow-hidden z-50"
+>
+  <!-- header -->
+  <div class="p-3 border-b font-semibold flex items-center justify-between bg-blue-50">
+    <div class="text-gray-700">Notifications</div>
+    <button
+      v-if="unreadCount > 0"
+      @click.stop="markAllRead"
+      class="text-sm text-blue-600 hover:underline"
+    >
+      Mark all read
+    </button>
+  </div>
+
+  <!-- notifications list -->
+  <div class="max-h-64 overflow-y-auto">
+    <div v-if="notifications.length === 0" class="p-4 text-center text-sm text-gray-400">
+      No notifications
+    </div>
+
+    <div
+      v-for="note in notifications"
+      :key="note.id"
+      @click="handleNotificationClick(note)"
+      class="cursor-pointer p-3 flex flex-col gap-1 border-b hover:bg-blue-50 transition-colors duration-200 rounded-xl mx-2 my-1"
+      :class="{ 'bg-blue-100': !note.read }"
+    >
+      <div class="flex items-center justify-between">
+        <div class="font-medium text-gray-800 text-sm">{{ note.title || 'Notification' }}</div>
+        <div class="text-xs text-gray-400">{{ formatTime(note.createdAt) }}</div>
+      </div>
+      <div class="text-sm text-gray-700 mt-1">{{ note.message || '' }}</div>
+      <div class="self-end mt-1">
+        <button
+          @click.stop="toggleRead(note)"
+          class="text-xs px-2 py-1 border rounded-full text-gray-600 hover:bg-gray-200 transition-colors"
+        >
+          {{ note.read ? 'Read' : 'Mark' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+                 
+                </div>
               </div>
 
               <div>
@@ -221,10 +280,19 @@
   </div>
 </template>
 
-
 <script>
-import { onMounted, ref } from "vue";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  doc,
+  updateDoc,
+  limit
+} from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
 import ConfirmLogoutModal from "../components/ConfirmLogoutModal.vue";
@@ -237,6 +305,12 @@ export default {
     const showLogoutModal = ref(false);
     const isSidebarOpen = ref(false);
 
+    // notifications
+    const notifications = ref([]);
+    const showNotifications = ref(false);
+    const trainerUid = ref(null);
+    let notificationsUnsub = null;
+
     const db = getFirestore();
     const auth = getAuth();
     const router = useRouter();
@@ -245,11 +319,18 @@ export default {
       isSidebarOpen.value = !isSidebarOpen.value;
     };
 
+    const toggleNotifications = () => {
+      showNotifications.value = !showNotifications.value;
+    };
+
+    const unreadCount = computed(() => notifications.value.filter(n => !n.read).length);
+
+    // fetch trainer image (unchanged)
     const fetchTrainerImage = async (uid) => {
       try {
         const docRef = doc(db, "users", uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
+        const docSnap = await (await import("firebase/firestore")).getDoc(docRef).catch(e => { throw e; });
+        if (docSnap && docSnap.exists && docSnap.exists()) {
           trainerImage.value =
             docSnap.data().profilePicture ||
             "https://media1.tenor.com/m/IfbOs_yh89AAAAAC/loading-buffering.gif";
@@ -258,6 +339,170 @@ export default {
         console.error("Error fetching trainer data:", error);
       }
     };
+
+    // format time helper
+    const formatTime = (ts) => {
+      if (!ts) return "";
+      try {
+        if (ts.toDate && typeof ts.toDate === "function") return ts.toDate().toLocaleString();
+        const d = new Date(ts);
+        if (!isNaN(d.getTime())) return d.toLocaleString();
+        return "";
+      } catch {
+        return "";
+      }
+    };
+
+    // mark single note read
+    const markReadLocal = (noteId) => {
+      const idx = notifications.value.findIndex(n => n.id === noteId);
+      if (idx !== -1) notifications.value[idx].read = true;
+    };
+
+    const toggleRead = async (note) => {
+      if (!note || !note.id) return;
+      try {
+        const nRef = doc(db, "notifications", note.id);
+        await updateDoc(nRef, { read: true });
+        markReadLocal(note.id);
+      } catch (err) {
+        console.error("toggleRead error:", err);
+        // إذا permission-denied نحدّث محليًا فقط ونعرض تحذير
+        if (err.code === "permission-denied") {
+          console.warn("No permission to update notification.read — check Firestore rules.");
+          markReadLocal(note.id);
+        }
+      }
+    };
+
+    const markAllRead = async () => {
+      const unread = notifications.value.filter(n => !n.read);
+      for (const n of unread) {
+        try {
+          await updateDoc(doc(db, "notifications", n.id), { read: true });
+        } catch (err) {
+          console.error("markAllRead error for", n.id, err);
+          if (err.code === "permission-denied") {
+            // fallback: mark locally
+            notifications.value = notifications.value.map(x => ({ ...x, read: true }));
+            return;
+          }
+        }
+      }
+      notifications.value = notifications.value.map(n => ({ ...n, read: true }));
+    };
+
+    const handleNotificationClick = async (note) => {
+      if (!note) return;
+      if (!note.read) await toggleRead(note);
+      // navigate e.g. trainer bookings
+      try {
+        router.push({ name: "trainerBookings" });
+      } catch (err) {
+  // لو مش عايز تعمل حاجة بالخطأ ممكن تسيبه فاضي أو تعمل console
+  console.warn("Ignored error:", err);
+}
+    };
+
+    // start listener with robust error handling and fallback
+    const startNotificationsListener = async () => {
+      if (!trainerUid.value) {
+        console.warn("startNotificationsListener: no trainerUid yet");
+        return;
+      }
+
+      // cleanup old listener
+      if (notificationsUnsub) {
+        notificationsUnsub();
+        notificationsUnsub = null;
+      }
+
+      const notRef = collection(db, "notifications");
+
+      // try with orderBy(createdAt) first (nice UX). If Firestore requires an index, fallback to no orderBy.
+      const tryQuery = (useOrder) => {
+        try {
+          if (useOrder) {
+            return query(notRef, where("userId", "==", trainerUid.value), orderBy("createdAt", "desc"), limit(100));
+          } else {
+            return query(notRef, where("userId", "==", trainerUid.value), limit(100));
+          }
+        } catch (err) {
+          console.warn("tryQuery build error:", err);
+          return query(notRef, where("userId", "==", trainerUid.value), limit(100));
+        }
+      };
+
+      // attempt with orderBy, but handle runtime index error
+      let q = tryQuery(true);
+
+      try {
+        notificationsUnsub = onSnapshot(q, (snap) => {
+          const list = [];
+          snap.forEach(d => {
+            const data = d.data();
+            list.push({
+              id: d.id,
+              title: data.title || data.t || "",
+              // try many possible names: message / massage / msg / massageText
+              message: data.message || data.massage || data.msg || data.massageText || data.massage_text || data.massageMessage || "",
+              createdAt: data.createdAt || data.time || null,
+              read: typeof data.read === "boolean" ? data.read : false,
+              raw: data
+            });
+          });
+          notifications.value = list;
+        }, (err) => {
+          console.error("notifications onSnapshot error:", err);
+          // إذا الخطأ متعلق بindex (permission/failed-precondition) نحاول نسخة بدون orderBy
+          const msg = String(err && err.message ? err.message : err);
+          if (msg.includes("index") || msg.includes("requires an index")) {
+            console.warn("Firestore requires a composite index for this query — falling back to query without orderBy. Create the suggested index in Firebase Console for best performance.");
+            // fallback: unsubscribe current and retry without orderBy
+            if (notificationsUnsub) { notificationsUnsub(); notificationsUnsub = null; }
+            q = tryQuery(false);
+            notificationsUnsub = onSnapshot(q, (snap2) => {
+              const list2 = [];
+              snap2.forEach(d => {
+                const data = d.data();
+                list2.push({
+                  id: d.id,
+                  title: data.title || data.t || "",
+                  message: data.message || data.massage || data.msg || "",
+                  createdAt: data.createdAt || data.time || null,
+                  read: typeof data.read === "boolean" ? data.read : false,
+                  raw: data
+                });
+              });
+              notifications.value = list2;
+            }, e2 => {
+              console.error("Fallback notifications onSnapshot error:", e2);
+            });
+          }
+        });
+      } catch (err) {
+        console.error("startNotificationsListener fatal:", err);
+      }
+    };
+
+    onMounted(() => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          trainerUid.value = user.uid;
+          fetchTrainerImage(user.uid);
+          startNotificationsListener();
+        } else {
+          console.warn("No user logged in");
+        }
+      });
+    });
+
+    onUnmounted(() => {
+      if (notificationsUnsub) {
+        notificationsUnsub();
+        notificationsUnsub = null;
+      }
+    });
 
     const handleLogout = () => {
       showLogoutModal.value = true;
@@ -276,14 +521,6 @@ export default {
       console.log("Logout cancelled");
     };
 
-    onMounted(() => {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          fetchTrainerImage(user.uid);
-        }
-      });
-    });
-
     return {
       trainerImage,
       handleLogout,
@@ -292,6 +529,14 @@ export default {
       cancelLogout,
       isSidebarOpen,
       toggleSidebar,
+      notifications,
+      unreadCount,
+      showNotifications,
+      toggleNotifications,
+      toggleRead,
+      markAllRead,
+      handleNotificationClick,
+      formatTime
     };
   },
 };
