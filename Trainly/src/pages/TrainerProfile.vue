@@ -388,7 +388,7 @@ import {
 import { db } from "@/Firebase/firebaseConfig";
 
 // Config — غيّر لو السيرفر مش على localhost:3000
-const API_URL = 'http://localhost:3000';
+const API_URL = ' https://elenora-unexampled-carmon.ngrok-free.dev';
 
 // router / auth
 const route = useRoute();

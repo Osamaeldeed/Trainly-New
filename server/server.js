@@ -127,8 +127,8 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
         await db.collection('notifications').add({
           userId: trainerId || null,
           type: 'new_booking',
-          title: 'تم حجز خطة جديدة',
-          message: `${(traineeData.firstName || 'User')} اشترك في ${planData.name || planName || ''}`,
+          title: 'congratulations you have new book',
+          message: `${(traineeData.firstName || 'User')} booked your plan ${planData.name || planName || ''}`,
           bookingId: bookingRef.id,
           read: false,
           createdAt: admin.firestore.FieldValue.serverTimestamp()

@@ -142,11 +142,69 @@
       </div>
     </div>
 
+    <!-- ================= Upgrade Modal (shown when over free limit) ================= -->
+    <div
+      v-if="showUpgradeModal"
+      class="fixed inset-0 z-60 flex items-center justify-center"
+    >
+      <!-- blur background -->
+      <div class="absolute inset-0 backdrop-blur-sm bg-black/30"></div>
+
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl p-6 z-10">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="text-xl font-bold">Upgrade to add more plans</h3>
+            <p class="text-sm text-gray-600 mt-1">
+              You have reached the free plan limit (2 plans). Choose a subscription to create more plans.
+            </p>
+          </div>
+          <button @click="closeUpgradeModal" class="text-gray-500 hover:text-gray-700">✕</button>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div
+            v-for="opt in subscriptionOptions"
+            :key="opt.id"
+            class="border rounded-2xl p-4 flex flex-col justify-between hover:shadow-md transition"
+            :class="{'ring-2 ring-blue-200': selectedSubscription && selectedSubscription.id === opt.id}"
+            @click="selectedSubscription = opt"
+          >
+            <div>
+              <div class="flex items-center justify-between">
+                <div class="text-lg font-semibold">{{ opt.title }}</div>
+                <div class="text-sm text-gray-500">{{ opt.priceLabel }}</div>
+              </div>
+              <p class="mt-3 text-sm text-gray-600">{{ opt.description }}</p>
+
+              <ul class="mt-4 text-sm space-y-1 text-gray-700">
+                <li>• Up to <span class="font-semibold">{{ opt.planLimit }}</span> plans</li>
+                <li>• Billed monthly</li>
+                <li v-if="opt.extra" class="text-gray-600">• {{ opt.extra }}</li>
+              </ul>
+            </div>
+
+            <div class="mt-5">
+              <button
+                @click.stop="startSubscriptionCheckout(opt)"
+                class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+                Subscribe - {{ opt.priceLabel }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-xs text-gray-500">
+          After payment you'll be returned to your Plans page and your account will be updated.
+        </div>
+      </div>
+    </div>
+
     <!-- Create Plan Modal -->
     <div
       v-if="showCreateModal"
       class="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4"
-      @click.self="showCreateModal = false"
+      @click.self="() => (showCreateModal = false)"
     >
       <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl animate-fadeIn max-h-[90vh] overflow-y-auto">
         <!-- Modal Header -->
@@ -301,7 +359,7 @@
             Cancel
           </button>
           <button
-            @click="createPlan"
+            @click="attemptCreatePlan"
             :disabled="uploadingImage"
             class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -311,7 +369,7 @@
       </div>
     </div>
 
-    <!-- Manage Plan Modal -->
+    <!-- Manage Plan Modal (unchanged) -->
     <div
       v-if="showManageModal"
       class="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4"
@@ -551,7 +609,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import {
   getFirestore,
   collection,
@@ -562,6 +620,8 @@ import {
   deleteDoc,
   updateDoc,
   doc,
+  onSnapshot,
+  serverTimestamp,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -570,6 +630,10 @@ import { toast } from "vue3-toastify";
 export default {
   name: "TrainerPlans",
   setup() {
+    // ----- CONFIG: ضع هنا عنوان السيرفر بتاعك -----
+    const API_URL = "https://elenora-unexampled-carmon.ngrok-free.dev"; // غيّره لو لازم
+    // --------------------------------------------
+
     const db = getFirestore();
     const auth = getAuth();
     const storage = getStorage();
@@ -599,12 +663,39 @@ export default {
       image: null,
     });
 
+    // Upgrade modal state
+    const showUpgradeModal = ref(false);
+    const subscriptionOptions = ref([
+      {
+        id: "sub_basic_10",
+        title: "Starter",
+        price: 50,
+        priceLabel: "$50 / month",
+        planLimit: 10,
+        description: "Ideal for trainers starting out - up to 10 plans.",
+        priceId: "PRICE_ID_10_PLANS", // <<< استبدل الـ placeholder بقيمة Stripe Price ID الحقيقية
+      },
+      {
+        id: "sub_pro_30",
+        title: "Pro",
+        price: 100,
+        priceLabel: "$100 / month",
+        planLimit: 30,
+        description: "For growing trainers - up to 30 plans.",
+        priceId: "PRICE_ID_30_PLANS", // <<< استبدل الـ placeholder بقيمة Stripe Price ID الحقيقية
+      },
+    ]);
+    const selectedSubscription = ref(null);
+
+    // حفظ unsubscribe للـ bookings listener علشان نقدر نعمل cleanup
+    let bookingsUnsubscribe = null;
+
     const fetchPlans = async () => {
       if (!trainerUid.value) return;
       const plansRef = collection(db, "plans");
       const q = query(plansRef, where("trainer_uid", "==", trainerUid.value));
       const snapshot = await getDocs(q);
-      plans.value = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      plans.value = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
     };
 
     const handleImageSelect = (event) => {
@@ -645,7 +736,61 @@ export default {
       }
     };
 
-    const createPlan = async () => {
+    // helper: check active subscription
+    const getActiveSubscription = async () => {
+      if (!trainerUid.value) return null;
+      try {
+        const subsRef = collection(db, "subscribers");
+        const q = query(subsRef, where("trainerUid", "==", trainerUid.value), where("subscriptionStatus", "==", "active"));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          // return the subscription with highest planLimit
+          let best = null;
+          snap.forEach(d => {
+            const data = d.data();
+            if (!best || (data.planLimit && data.planLimit > (best.planLimit || 0))) {
+              best = { id: d.id, ...data };
+            }
+          });
+          return best;
+        }
+      } catch (err) {
+        console.error("getActiveSubscription error:", err);
+      }
+      return null;
+    };
+
+    // Attempt to create plan but check limits first
+    const attemptCreatePlan = async () => {
+      // count current plans
+      const currentCount = plans.value.length;
+      const willBe = currentCount + 1;
+
+      // check active subscription
+      let activeSub = null;
+      try {
+        activeSub = await getActiveSubscription();
+      } catch (e) {
+        console.warn("couldn't fetch active subscription", e);
+      }
+
+      // Determine allowed limit
+      const allowedLimit = activeSub && activeSub.planLimit ? activeSub.planLimit : 2;
+
+      if (willBe > allowedLimit) {
+        // show upgrade modal
+        showUpgradeModal.value = true;
+        // pick default option (first)
+        selectedSubscription.value = subscriptionOptions.value[0];
+        return;
+      }
+
+      // else allowed -> create plan normally
+      await createPlanCore();
+    };
+
+    // core create plan (image upload + addDoc)
+    const createPlanCore = async () => {
       if (!newPlan.value.title.trim()) {
         toast.error("Please enter a plan title", { position: "top-center", autoClose: 2000 });
         return;
@@ -664,11 +809,6 @@ export default {
       }
 
       try {
-        if (!trainerUid.value) {
-          toast.error("User not authenticated", { position: "top-center", autoClose: 2000 });
-          return;
-        }
-
         let imageUrl = null;
         if (selectedImageFile.value) {
           imageUrl = await uploadPlanImage();
@@ -704,6 +844,105 @@ export default {
         console.error("Error creating plan:", err);
         toast.error("Failed to create plan. Please try again.", { position: "top-center", autoClose: 2000 });
       }
+    };
+
+    // start subscription checkout flow (calls server to create checkout session and redirects)
+    const startSubscriptionCheckout = async (opt) => {
+      if (!trainerUid.value) {
+        toast.error("User not authenticated", { position: "top-center", autoClose: 2000 });
+        return;
+      }
+      try {
+        // store pending subscription locally so we can finalize after redirect
+        const pending = {
+          trainerUid: trainerUid.value,
+          planType: opt.title,
+          planLimit: opt.planLimit,
+          price: opt.price,
+          priceId: opt.priceId,
+          priceLabel: opt.priceLabel,
+          createdAt: Date.now()
+        };
+        localStorage.setItem("pendingSubscription", JSON.stringify(pending));
+
+        // create checkout session on server
+        const payload = {
+          mode: "subscription",
+          priceId: opt.priceId,
+          trainerUid: trainerUid.value,
+          metadata: {
+            purpose: "trainer_subscription",
+            trainerUid: trainerUid.value,
+            planId: opt.id
+          },
+          // success URL should return to this same page — we'll read localStorage to finalize
+          success_url: `${window.location.origin + window.location.pathname}?sub_complete=1`,
+          cancel_url: `${window.location.origin + window.location.pathname}?sub_canceled=1`
+        };
+
+        const res = await fetch(`${API_URL}/create-checkout-session`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const txt = await res.text().catch(() => "");
+          console.error("create-checkout-session failed:", res.status, txt);
+          throw new Error("Failed to create checkout session");
+        }
+
+        const data = await res.json();
+        if (data.url) {
+          // redirect user to Stripe checkout
+          window.location.href = data.url;
+        } else if (data.sessionId) {
+          // fallback: if server returned sessionId but not url
+          // (your server might return a checkout url in data.url usually)
+          // try to redirect using Stripe.js if available (not implemented here).
+          console.error("sessionId returned but no url — handle on server or implement Stripe.js redirect.");
+          toast.error("Checkout not available. Contact support.", { position: "top-center", autoClose: 3000 });
+        } else {
+          console.error("Unexpected response from checkout session:", data);
+          toast.error("Checkout not available. Contact support.", { position: "top-center", autoClose: 3000 });
+        }
+      } catch (err) {
+        console.error("startSubscriptionCheckout error:", err);
+        toast.error("Failed to start checkout. Try again.", { position: "top-center", autoClose: 3000 });
+      }
+    };
+
+    // After user returns from checkout, finalize the pending subscription (optimistic)
+    const finalizePendingSubscription = async () => {
+      try {
+        const raw = localStorage.getItem("pendingSubscription");
+        if (!raw) return;
+        const pending = JSON.parse(raw);
+
+        // create subscribers doc
+        await addDoc(collection(db, "subscribers"), {
+          trainerUid: pending.trainerUid,
+          planType: pending.planType,
+          planLimit: pending.planLimit,
+          price: pending.price,
+          stripeSessionId: null,
+          subscriptionStatus: "active",
+          createdAt: serverTimestamp()
+        });
+
+        // cleanup and UI
+        localStorage.removeItem("pendingSubscription");
+        showUpgradeModal.value = false;
+        showSuccess("Subscription activated — you can now add more plans!");
+        // refresh plans/subscriptions
+        fetchPlans();
+      } catch (err) {
+        console.error("finalizePendingSubscription error:", err);
+      }
+    };
+
+    const closeUpgradeModal = () => {
+      showUpgradeModal.value = false;
     };
 
     const openManageModal = (plan) => {
@@ -785,11 +1024,101 @@ export default {
       });
     });
 
+    /**
+     * --- new: startBookingsListener ---
+     * (unchanged) نعمل listener على collection bookings بس للـ trainer الحالي
+     */
+    const startBookingsListener = () => {
+      // safety
+      if (!trainerUid.value) return;
+
+      // clean existing listener
+      if (bookingsUnsubscribe) {
+        bookingsUnsubscribe();
+        bookingsUnsubscribe = null;
+      }
+
+      try {
+        const bookingsRef = collection(db, "bookings");
+        const q = query(bookingsRef, where("trainerId", "==", trainerUid.value));
+        bookingsUnsubscribe = onSnapshot(q, async (snapshot) => {
+          const countsMap = new Map();
+
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const planId =
+              data.planId ||
+              data.plan_id ||
+              (data.plan && (data.plan.id || data.plan.planId)) ||
+              data.plan?.planId ||
+              null;
+            const traineeId =
+              data.traineeId ||
+              data.traineeUid ||
+              data.userId ||
+              data.clientId ||
+              null;
+
+            if (!planId) return;
+
+            if (!countsMap.has(planId)) countsMap.set(planId, new Set());
+            if (traineeId) countsMap.get(planId).add(String(traineeId));
+            else countsMap.get(planId).add(docSnap.id);
+          });
+
+          const updates = [];
+          plans.value.forEach((plan) => {
+            const newCount = countsMap.has(plan.id) ? countsMap.get(plan.id).size : 0;
+            const oldCount = plan.clientsCount || 0;
+            if (newCount !== oldCount) {
+              plan.clientsCount = newCount;
+              updates.push({ planId: plan.id, clientsCount: newCount });
+            }
+          });
+
+          for (const u of updates) {
+            try {
+              const planRef = doc(db, "plans", u.planId);
+              await updateDoc(planRef, { clientsCount: u.clientsCount });
+              console.log(`Updated clientsCount for plan ${u.planId} => ${u.clientsCount}`);
+            } catch (err) {
+              console.error("Failed to update clientsCount for plan", u.planId, err);
+            }
+          }
+        }, (err) => {
+          console.error("bookings onSnapshot error:", err);
+        });
+      } catch (err) {
+        console.error("startBookingsListener error:", err);
+      }
+    };
+
+    // cleanup on unmount
+    onUnmounted(() => {
+      if (bookingsUnsubscribe) {
+        bookingsUnsubscribe();
+        bookingsUnsubscribe = null;
+      }
+    });
+
+    // on mount: auth + fetch plans + listener + finalize pending subscription if present
     onMounted(() => {
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
           trainerUid.value = user.uid;
-          fetchPlans();
+          await fetchPlans();
+          startBookingsListener();
+
+          // if returned from Stripe checkout and we have pending subscription in localStorage -> finalize
+          // We rely on localStorage pendingSubscription saved before redirect
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.has("sub_complete")) {
+            // finalize pending subscription (optimistic)
+            await finalizePendingSubscription();
+            // remove query params to clean URL (nice-to-have)
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+          }
         } else {
           console.warn("No user logged in");
         }
@@ -812,11 +1141,18 @@ export default {
       selectedImageFile,
       imagePreviewUrl,
       handleImageSelect,
-      createPlan,
+      attemptCreatePlan,
+      createPlanCore,
       openManageModal,
       updatePlan,
       confirmDelete,
       deletePlan,
+      // upgrade modal
+      showUpgradeModal,
+      subscriptionOptions,
+      selectedSubscription,
+      startSubscriptionCheckout,
+      closeUpgradeModal,
     };
   },
 };
