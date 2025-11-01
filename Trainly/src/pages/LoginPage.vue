@@ -14,7 +14,9 @@
         >
           <h2 class="mb-5 text-[22px] font-semibold">
             Welcome back To
-            <span class="bg-gradient-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent">
+            <span
+              class="bg-gradient-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent"
+            >
               Trainly
             </span>
           </h2>
@@ -49,7 +51,9 @@
               >
                 <img
                   :src="
-                    passwordVisible ? '/src/assets/images/eye off.png' : '/src/assets/images/Eye.png'
+                    passwordVisible
+                      ? '/src/assets/images/eye off.png'
+                      : '/src/assets/images/Eye.png'
                   "
                   alt="Show/Hide"
                   class="w-full h-auto"
@@ -71,9 +75,7 @@
               class="w-full p-3 text-white text-lg rounded-md cursor-pointer mb-4 bg-gradient-to-r from-[#00C853] to-[#00b0ff] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               :disabled="isLoading"
             >
-              <template v-if="!isLoading">
-                Log In
-              </template>
+              <template v-if="!isLoading"> Log In </template>
               <template v-else>
                 <svg
                   class="animate-spin h-5 w-5 text-white"
@@ -162,11 +164,7 @@ export default {
       try {
         await signOut(auth).catch(() => {});
 
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email.value,
-          password.value
-        );
+        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
         console.log("✅ Logged in with Email:", user);
 
@@ -192,14 +190,13 @@ export default {
         }
 
         // ✅ تحقق من الدور (role)
-        if (userData.role === "trainer") {
-
+        if (userData.role === "admin") {
+          router.push("/admin/overview");
+        } else if (userData.role === "trainer") {
           router.push("/trainer/home");
         } else {
-
           router.push("/traineehome");
         }
-
       } catch (error) {
         console.error("❌ Login error:", error.code, error.message);
 
@@ -242,7 +239,10 @@ export default {
             console.error("❌ Linking error:", linkError);
             showPopup("❌ Failed to link accounts. Try signing in with Google.");
           }
-        } else if (error.code === "auth/invalid-credential" || error.code === "auth/invalid-login-credentials") {
+        } else if (
+          error.code === "auth/invalid-credential" ||
+          error.code === "auth/invalid-login-credentials"
+        ) {
           showPopup("❌ Wrong email or password.");
         } else {
           showPopup(`❌ ${error.message || "Login failed."}`);
@@ -282,15 +282,14 @@ export default {
           return;
         }
 
-        // ✅ تحقق من الدور
-        if (userData.role === "trainer") {
-
+        // ✅ تحقق من الدور عند تسجيل الدخول بجوجل
+        if (userData.role === "admin") {
+          router.push("/admin/overview");
+        } else if (userData.role === "trainer") {
           router.push("/trainer/home");
         } else {
-
           router.push("/traineehome");
         }
-
       } catch (error) {
         console.error("❌ Google login error:", error.code, error.message);
         if (error.code === "auth/popup-closed-by-user") {
@@ -309,9 +308,7 @@ export default {
       passwordVisible.value = !passwordVisible.value;
     };
 
-    const passwordFieldType = computed(() =>
-      passwordVisible.value ? "text" : "password"
-    );
+    const passwordFieldType = computed(() => (passwordVisible.value ? "text" : "password"));
 
     return {
       email,
