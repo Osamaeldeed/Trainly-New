@@ -48,6 +48,8 @@ import ContactUstrainee from "./pages/NavpagesforTrainee/ContactUstrainee.vue";
 import SportStrainee from "./pages/NavpagesforTrainee/SportsPagetrainee.vue";
 import TrainerProfile from "./pages/TrainerProfile.vue";
 import TrainerViewHisProfile from "./pages/TrainerViewHisProfile.vue";
+import TrainerInbox from "./pages/trainer/TrainerInbox.vue";
+import TraineeInbox from "./pages/trainee/TraineeInbox.vue";
 
 // ----------------------------
 // ✅ إعداد المسارات (Routes)
@@ -84,6 +86,7 @@ const routes = [
       { path: "clients", name: "trainerclient", component: TrainerClient },
       { path: "customerservice", name: "trainercustomerservice", component: TrainerCustomerservice },
       { path: "settings", name: "trainersettings", component: TrainerSettings },
+      { path: "inbox", name: "trainerinbox", component: TrainerInbox},
     ],
   },
   {
@@ -94,6 +97,7 @@ const routes = [
       { path: "dashboard", name: "traineedashboard", component: TraineeDashboard },
       { path: "settings", name: "traineesettings", component: TraineeSettings },
       { path: "customerservice", name: "traineecustomerservice", component: TraineeCustomerservice },
+      { path: "inbox", name: "traineeinbox", component: TraineeInbox},
     ],
   },
   { path: "/:pathMatch(.*)*", name: "error", component: ErrorPage },

@@ -155,7 +155,7 @@
           <div>
             <h3 class="text-xl font-bold">Upgrade to add more plans</h3>
             <p class="text-sm text-gray-600 mt-1">
-              You have reached the free plan limit (2 plans). Choose a subscription to create more plans.
+              You have reached the free plan limit (1 plan). Choose a subscription to create more plans.
             </p>
           </div>
           <button @click="closeUpgradeModal" class="text-gray-500 hover:text-gray-700">✕</button>
@@ -616,6 +616,7 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
   addDoc,
   deleteDoc,
   updateDoc,
@@ -669,20 +670,20 @@ export default {
       {
         id: "sub_basic_10",
         title: "Starter",
-        price: 50,
-        priceLabel: "$50 / month",
-        planLimit: 10,
-        description: "Ideal for trainers starting out - up to 10 plans.",
-        priceId: "PRICE_ID_10_PLANS", // <<< استبدل الـ placeholder بقيمة Stripe Price ID الحقيقية
+        price: 100,
+        priceLabel: "$100 / month",
+        planLimit: 3,
+        description: "Ideal for trainers starting out - up to 3 plans.",
+        priceId: "PRICE_ID_3_PLANS", // <<< استبدل الـ placeholder بقيمة Stripe Price ID الحقيقية
       },
       {
         id: "sub_pro_30",
         title: "Pro",
-        price: 100,
-        priceLabel: "$100 / month",
-        planLimit: 30,
-        description: "For growing trainers - up to 30 plans.",
-        priceId: "PRICE_ID_30_PLANS", // <<< استبدل الـ placeholder بقيمة Stripe Price ID الحقيقية
+        price: 150,
+        priceLabel: "$150 / month",
+        planLimit: 6,
+        description: "For growing trainers - up to 6 plans.",
+        priceId: "PRICE_ID_6_PLANS", // <<< استبدل الـ placeholder بقيمة Stripe Price ID الحقيقية
       },
     ]);
     const selectedSubscription = ref(null);
@@ -775,7 +776,7 @@ export default {
       }
 
       // Determine allowed limit
-      const allowedLimit = activeSub && activeSub.planLimit ? activeSub.planLimit : 2;
+      const allowedLimit = activeSub && activeSub.planLimit ? activeSub.planLimit : 1;
 
       if (willBe > allowedLimit) {
         // show upgrade modal
@@ -846,16 +847,30 @@ export default {
       }
     };
 
-    // start subscription checkout flow (calls server to create checkout session and redirects)
+  // start subscription checkout flow (calls server to create checkout session and redirects)
     const startSubscriptionCheckout = async (opt) => {
       if (!trainerUid.value) {
         toast.error("User not authenticated", { position: "top-center", autoClose: 2000 });
         return;
       }
       try {
+        // Get trainer data from Firestore
+        const userRef = doc(db, "users", trainerUid.value);
+        const userSnap = await getDoc(userRef);
+        let trainerEmail = "";
+        let trainerName = "";
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          trainerEmail = userData.email || "";
+          trainerName = `${userData.firstName || ""} ${userData.lastName || ""}`.trim();
+        }
+
         // store pending subscription locally so we can finalize after redirect
         const pending = {
           trainerUid: trainerUid.value,
+          trainerEmail: trainerEmail,
+          trainerName: trainerName,
           planType: opt.title,
           planLimit: opt.planLimit,
           price: opt.price,
@@ -870,17 +885,24 @@ export default {
           mode: "subscription",
           priceId: opt.priceId,
           trainerUid: trainerUid.value,
+          trainerEmail: trainerEmail,
+          trainerName: trainerName,
+          planType: opt.title,
+          planLimit: opt.planLimit,
+          price: opt.price,
           metadata: {
             purpose: "trainer_subscription",
             trainerUid: trainerUid.value,
-            planId: opt.id
+            planId: opt.id,
+            planType: opt.title,
+            planLimit: opt.planLimit.toString()
           },
           // success URL should return to this same page — we'll read localStorage to finalize
           success_url: `${window.location.origin + window.location.pathname}?sub_complete=1`,
           cancel_url: `${window.location.origin + window.location.pathname}?sub_canceled=1`
         };
 
-        const res = await fetch(`${API_URL}/create-checkout-session`, {
+        const res = await fetch(`${API_URL}/create-subscription-checkout`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "Accept": "application/json" },
           body: JSON.stringify(payload)
@@ -888,7 +910,7 @@ export default {
 
         if (!res.ok) {
           const txt = await res.text().catch(() => "");
-          console.error("create-checkout-session failed:", res.status, txt);
+          console.error("create-subscription-checkout failed:", res.status, txt);
           throw new Error("Failed to create checkout session");
         }
 
@@ -896,12 +918,6 @@ export default {
         if (data.url) {
           // redirect user to Stripe checkout
           window.location.href = data.url;
-        } else if (data.sessionId) {
-          // fallback: if server returned sessionId but not url
-          // (your server might return a checkout url in data.url usually)
-          // try to redirect using Stripe.js if available (not implemented here).
-          console.error("sessionId returned but no url — handle on server or implement Stripe.js redirect.");
-          toast.error("Checkout not available. Contact support.", { position: "top-center", autoClose: 3000 });
         } else {
           console.error("Unexpected response from checkout session:", data);
           toast.error("Checkout not available. Contact support.", { position: "top-center", autoClose: 3000 });

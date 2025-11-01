@@ -101,9 +101,9 @@
     </div>
   </div>
 
-                 
+</div>
+
                 </div>
-              </div>
 
               <div>
                 <button
@@ -192,6 +192,9 @@
                 class="w-5 h-5"
               />
               <span class="ms-3">Inbox</span>
+
+              <!-- unread dot for inbox (small blue) -->
+              <span v-if="unreadConversations > 0" class="sidebar-unread-dot ms-3" :title="unreadConversations + ' unread'"></span>
             </router-link>
           </li>
 
@@ -244,7 +247,7 @@
             >
               <img
                 src="@/assets/images/mdi_customer-service.png"
-                alt=""
+                alt=" "
                 class="w-6 h-6"
               />
               <span class="ms-3">Customer Service</span>
@@ -311,6 +314,10 @@ export default {
     const trainerUid = ref(null);
     let notificationsUnsub = null;
 
+    // conversations unread indicator
+    const unreadConversations = ref(0);
+    let conversationsUnsub = null;
+
     const db = getFirestore();
     const auth = getAuth();
     const router = useRouter();
@@ -367,7 +374,6 @@ export default {
         markReadLocal(note.id);
       } catch (err) {
         console.error("toggleRead error:", err);
-        // إذا permission-denied نحدّث محليًا فقط ونعرض تحذير
         if (err.code === "permission-denied") {
           console.warn("No permission to update notification.read — check Firestore rules.");
           markReadLocal(note.id);
@@ -383,7 +389,6 @@ export default {
         } catch (err) {
           console.error("markAllRead error for", n.id, err);
           if (err.code === "permission-denied") {
-            // fallback: mark locally
             notifications.value = notifications.value.map(x => ({ ...x, read: true }));
             return;
           }
@@ -395,31 +400,26 @@ export default {
     const handleNotificationClick = async (note) => {
       if (!note) return;
       if (!note.read) await toggleRead(note);
-      // navigate e.g. trainer bookings
       try {
         router.push({ name: "trainerBookings" });
       } catch (err) {
-  // لو مش عايز تعمل حاجة بالخطأ ممكن تسيبه فاضي أو تعمل console
-  console.warn("Ignored error:", err);
-}
+        console.warn("Ignored error:", err);
+      }
     };
 
-    // start listener with robust error handling and fallback
+    // start listener for notifications (existing logic)
     const startNotificationsListener = async () => {
       if (!trainerUid.value) {
         console.warn("startNotificationsListener: no trainerUid yet");
         return;
       }
 
-      // cleanup old listener
       if (notificationsUnsub) {
         notificationsUnsub();
         notificationsUnsub = null;
       }
 
       const notRef = collection(db, "notifications");
-
-      // try with orderBy(createdAt) first (nice UX). If Firestore requires an index, fallback to no orderBy.
       const tryQuery = (useOrder) => {
         try {
           if (useOrder) {
@@ -433,7 +433,6 @@ export default {
         }
       };
 
-      // attempt with orderBy, but handle runtime index error
       let q = tryQuery(true);
 
       try {
@@ -444,7 +443,6 @@ export default {
             list.push({
               id: d.id,
               title: data.title || data.t || "",
-              // try many possible names: message / massage / msg / massageText
               message: data.message || data.massage || data.msg || data.massageText || data.massage_text || data.massageMessage || "",
               createdAt: data.createdAt || data.time || null,
               read: typeof data.read === "boolean" ? data.read : false,
@@ -454,11 +452,9 @@ export default {
           notifications.value = list;
         }, (err) => {
           console.error("notifications onSnapshot error:", err);
-          // إذا الخطأ متعلق بindex (permission/failed-precondition) نحاول نسخة بدون orderBy
           const msg = String(err && err.message ? err.message : err);
           if (msg.includes("index") || msg.includes("requires an index")) {
-            console.warn("Firestore requires a composite index for this query — falling back to query without orderBy. Create the suggested index in Firebase Console for best performance.");
-            // fallback: unsubscribe current and retry without orderBy
+            console.warn("Firestore requires a composite index for this query — falling back to query without orderBy.");
             if (notificationsUnsub) { notificationsUnsub(); notificationsUnsub = null; }
             q = tryQuery(false);
             notificationsUnsub = onSnapshot(q, (snap2) => {
@@ -485,22 +481,104 @@ export default {
       }
     };
 
-    onMounted(() => {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          trainerUid.value = user.uid;
-          fetchTrainerImage(user.uid);
-          startNotificationsListener();
-        } else {
-          console.warn("No user logged in");
-        }
-      });
-    });
+    // --------- NEW: conversations unread listener ----------
+    const startConversationsListener = async () => {
+      if (!trainerUid.value) {
+        console.warn("startConversationsListener: no trainerUid yet");
+        return;
+      }
 
+      // cleanup
+      if (conversationsUnsub) {
+        conversationsUnsub();
+        conversationsUnsub = null;
+        unreadConversations.value = 0;
+      }
+
+      const convRef = collection(db, "conversations");
+
+      // build query with unreadCount.<uid> > 0 — this is efficient but may require an index
+      const tryConvQuery = (useUnreadFilter) => {
+        try {
+          if (useUnreadFilter) {
+            return query(convRef, where("participants", "array-contains", trainerUid.value), where(`unreadCount.${trainerUid.value}`, ">", 0));
+          } else {
+            return query(convRef, where("participants", "array-contains", trainerUid.value));
+          }
+        } catch (err) {
+          console.warn("tryConvQuery build error:", err);
+          return query(convRef, where("participants", "array-contains", trainerUid.value));
+        }
+      };
+
+      let q = tryConvQuery(true);
+
+      try {
+        conversationsUnsub = onSnapshot(q, (snap) => {
+          // if query had unread filter, snap.size is count of convs with unread > 0
+          if (q && String(q).includes("unreadCount")) {
+            // just set size (but more reliable to compute)
+            unreadConversations.value = snap.size;
+          } else {
+            // fallback path handled below, but keep safe handling
+            let count = 0;
+            snap.forEach(d => {
+              const data = d.data();
+              if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0) count++;
+            });
+            unreadConversations.value = count;
+          }
+        }, (err) => {
+          console.error("conversations onSnapshot error:", err);
+          const msg = String(err && err.message ? err.message : err);
+          if (msg.includes("index") || msg.includes("requires an index")) {
+            console.warn("Firestore requires an index for this conversations query — falling back to scanning conversations for unread count.");
+            if (conversationsUnsub) { conversationsUnsub(); conversationsUnsub = null; }
+            q = tryConvQuery(false);
+            conversationsUnsub = onSnapshot(q, (snap2) => {
+              let count2 = 0;
+              snap2.forEach(d => {
+                const data = d.data();
+                if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0) count2++;
+              });
+              unreadConversations.value = count2;
+            }, e2 => {
+              console.error("Fallback conversations onSnapshot error:", e2);
+            });
+          } else {
+            // other error: fallback to scanning without index assumptions
+            try {
+              if (conversationsUnsub) { conversationsUnsub(); conversationsUnsub = null; }
+              q = tryConvQuery(false);
+              conversationsUnsub = onSnapshot(q, (snap3) => {
+                let cnt = 0;
+                snap3.forEach(d => {
+                  const data = d.data();
+                  if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0) cnt++;
+                });
+                unreadConversations.value = cnt;
+              }, e3 => {
+                console.error("Second fallback conversations onSnapshot error:", e3);
+              });
+            } catch (e) {
+              console.error("conversations listener fatal fallback error:", e);
+            }
+          }
+        });
+      } catch (err) {
+        console.error("startConversationsListener fatal:", err);
+      }
+    };
+
+    // cleanup on unmount
     onUnmounted(() => {
       if (notificationsUnsub) {
         notificationsUnsub();
         notificationsUnsub = null;
+      }
+      if (conversationsUnsub) {
+        conversationsUnsub();
+        conversationsUnsub = null;
       }
     });
 
@@ -521,6 +599,19 @@ export default {
       console.log("Logout cancelled");
     };
 
+    onMounted(() => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          trainerUid.value = user.uid;
+          fetchTrainerImage(user.uid);
+          startNotificationsListener();
+          startConversationsListener();
+        } else {
+          console.warn("No user logged in");
+        }
+      });
+    });
+
     return {
       trainerImage,
       handleLogout,
@@ -536,7 +627,9 @@ export default {
       toggleRead,
       markAllRead,
       handleNotificationClick,
-      formatTime
+      formatTime,
+      // new prop for template
+      unreadConversations
     };
   },
 };
@@ -555,4 +648,17 @@ export default {
   filter: invert(29%) sepia(83%) saturate(749%) hue-rotate(181deg)
     brightness(95%) contrast(90%);
 }
+
+/* small blue dot for unread indicator on Inbox */
+.sidebar-unread-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #2563eb; /* blue-600 */
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* spacing helper */
+.ms-3 { margin-left: 0.75rem; }
 </style>
