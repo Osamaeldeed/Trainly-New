@@ -145,6 +145,14 @@
               <span class="ms-3">Log out</span>
             </button>
           </li>
+           <!-- ✅ Confirmation Modal -->
+          <Teleport to="body">
+            <ConfirmLogoutModal
+              v-model="showLogoutModal"
+              @confirm="confirmLogout"
+              @cancel="cancelLogout"
+            />
+          </Teleport>
         </ul>
       </div>
     </aside>
@@ -152,25 +160,73 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { auth, db } from "@/Firebase/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+import ConfirmLogoutModal from "../components/ConfirmLogoutModal.vue";
 
 const router = useRouter();
 const isSidebarOpen = ref(false);
+const showLogoutModal = ref(false);
 const adminImage = ref(null);
+const adminName = ref("Admin");
 
+// 🔹 Toggle sidebar
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
-
 const closeSidebar = () => {
   isSidebarOpen.value = false;
 };
 
-const handleLogout = () => {
-  localStorage.removeItem("adminToken");
-  router.push("/login");
-};
+// 🔹 Fetch Admin Data
+onMounted(async () => {
+  const user = auth.currentUser;
+
+  if (!user) {
+    router.push("/login");
+    return;
+  }
+
+  const userDocRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userDocRef);
+
+  if (!userSnap.exists()) {
+    // لو ملهوش Document
+    router.push("/login");
+    return;
+  }
+
+  const data = userSnap.data();
+
+  // ✅ تأكد إنه Admin
+  if (data.role !== "admin") {
+    router.push("/login");
+    return;
+  }
+
+  adminImage.value = data.profilePicture || null;
+  adminName.value = `${data.firstName} ${data.lastName}`;
+});
+
+ const handleLogout = () => {
+      showLogoutModal.value = true;
+    };
+
+    const confirmLogout = async () => {
+      try {
+        await signOut(auth);
+        router.push("/");
+      } catch (error) {
+        console.error("Error logging out:", error);
+      }
+    };
+
+    const cancelLogout = () => {
+      console.log("Logout cancelled");
+    };
 </script>
 
 <style scoped>

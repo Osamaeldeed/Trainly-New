@@ -94,9 +94,13 @@ const routes = [
       { path: "plans", name: "trainerplans", component: TrainerPlans },
       { path: "reviews", name: "trainerreviews", component: TrainerReviews },
       { path: "clients", name: "trainerclient", component: TrainerClient },
-      { path: "customerservice", name: "trainercustomerservice", component: TrainerCustomerservice },
+      {
+        path: "customerservice",
+        name: "trainercustomerservice",
+        component: TrainerCustomerservice,
+      },
       { path: "settings", name: "trainersettings", component: TrainerSettings },
-      { path: "inbox", name: "trainerinbox", component: TrainerInbox},
+      { path: "inbox", name: "trainerinbox", component: TrainerInbox },
     ],
   },
   {
@@ -106,8 +110,12 @@ const routes = [
     children: [
       { path: "dashboard", name: "traineedashboard", component: TraineeDashboard },
       { path: "settings", name: "traineesettings", component: TraineeSettings },
-      { path: "customerservice", name: "traineecustomerservice", component: TraineeCustomerservice },
-      { path: "inbox", name: "traineeinbox", component: TraineeInbox},
+      {
+        path: "customerservice",
+        name: "traineecustomerservice",
+        component: TraineeCustomerservice,
+      },
+      { path: "inbox", name: "traineeinbox", component: TraineeInbox },
     ],
   },
   {
@@ -137,18 +145,44 @@ const router = createRouter({
 import { auth, db } from "./Firebase/firebaseConfig.js";
 import { getDoc, doc } from "firebase/firestore";
 
-const publicPages = ["/", "/login", "/signup", "/aboutus", "/contactus", "/sports", "/success", "/failed"];
+const publicPages = [
+  "/",
+  "/login",
+  "/signup",
+  "/aboutus",
+  "/contactus",
+  "/sports",
+  "/success",
+  "/failed",
+];
 const traineePages = [
-  "/traineehome", "/searchresults", "/viewtrainerprofile",
-  "/aboutustrainee", "/contactustrainee", "/sportstrainee",
-  "/trainee/dashboard", "/trainee/settings", "/trainee/customerservice",
+  "/traineehome",
+  "/searchresults",
+  "/viewtrainerprofile",
+  "/aboutustrainee",
+  "/contactustrainee",
+  "/sportstrainee",
+  "/trainee/dashboard",
+  "/trainee/settings",
+  "/trainee/customerservice",
 ];
 const trainerPages = [
-  "/trainer/home", "/trainer/plans", "/trainer/reviews",
-  "/trainer/clients", "/trainer/customerservice", "/trainer/settings",
+  "/trainer/home",
+  "/trainer/plans",
+  "/trainer/reviews",
+  "/trainer/clients",
+  "/trainer/customerservice",
+  "/trainer/settings",
   "/myprofile",
 ];
-
+const adminPages = [
+  "/admin/overview",
+  "/admin/managetrainers",
+  "/admin/managetrainees",
+  "/admin/reviews",
+  "/admin/bookings",
+  "/admin/payments",
+];
 
 // ✅ Helper function: انتظار تحميل حالة المستخدم من Firebase
 const getCurrentUser = () => {
@@ -159,7 +193,7 @@ const getCurrentUser = () => {
         unsubscribe();
         resolve(user);
       },
-      reject
+      reject,
     );
   });
 };
@@ -170,18 +204,20 @@ router.beforeEach(async (to, from, next) => {
 
   // ✅ انتظر Firebase يخلص تحميل حالة المستخدم
   const user = await getCurrentUser();
-  // ✅ لو الصفحة صفحة أدمن، افتحها عادي بدون تسجيل دخول (للتجربة فقط)
-  if (to.path.startsWith("/admin")) return next();
 
   // لو مش عامل تسجيل دخول → يروح login
   if (!user) return next("/login");
 
-
-  // لو عامل تسجيل دخول → نعرف هو trainee ولا trainer
   try {
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
     const role = snap.exists() ? snap.data().role : null;
+
+    // حماية صفحات الأدمن
+    if (adminPages.includes(to.path)) {
+      if (role === "admin") return next();
+      return next("/error");
+    }
 
     // لو trainer حاول يدخل صفحة trainee
     if (role === "trainer" && traineePages.includes(to.path)) {
@@ -193,7 +229,7 @@ router.beforeEach(async (to, from, next) => {
       return next("/error");
     }
 
-    // لو admin حاول يدخل صفحة trainee أو trainer
+    // لو admin حاول يدخل صفحات user
     if (role === "admin" && [...trainerPages, ...traineePages].includes(to.path)) {
       return next("/error");
     }
@@ -239,14 +275,14 @@ router.isReady().then(() => {
   // نستنى شوية عشان ال CSS و ال components تخلص render
   requestAnimationFrame(() => {
     setTimeout(() => {
-      const appElement = document.getElementById('app');
-      const loader = document.querySelector('.app-loading');
+      const appElement = document.getElementById("app");
+      const loader = document.querySelector(".app-loading");
 
-      if (appElement) appElement.classList.add('loaded');
+      if (appElement) appElement.classList.add("loaded");
       if (loader) {
-        loader.classList.add('loaded');
+        loader.classList.add("loaded");
         setTimeout(() => loader.remove(), 300);
       }
-    }, 50); // زود الوقت شوية عشان نتأكد إن كل حاجة ظهرت
+    }, 50);
   });
 });

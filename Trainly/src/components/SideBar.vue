@@ -46,7 +46,11 @@
                   class="relative inline-flex items-center justify-center p-2 text-gray-600 rounded-lg hover:bg-gray-200 focus:outline-none transition duration-200"
                   aria-label="Notifications"
                 >
-                  <img src="@/assets/images/mingcute_notification-line.png" alt="bell" class="w-7 h-7" />
+                  <img
+                    src="@/assets/images/mingcute_notification-line.png"
+                    alt="bell"
+                    class="w-7 h-7"
+                  />
                   <span
                     v-if="unreadCount > 0"
                     class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full"
@@ -55,55 +59,60 @@
                   </span>
                 </button>
 
-               <!-- dropdown notifications -->
-<div
-  v-if="showNotifications"
-  class="absolute right-0 mt-2 w-80 bg-white border shadow-xl rounded-xl overflow-hidden z-50"
->
-  <!-- header -->
-  <div class="p-3 border-b font-semibold flex items-center justify-between bg-blue-50">
-    <div class="text-gray-700">Notifications</div>
-    <button
-      v-if="unreadCount > 0"
-      @click.stop="markAllRead"
-      class="text-sm text-blue-600 hover:underline"
-    >
-      Mark all read
-    </button>
-  </div>
+                <!-- dropdown notifications -->
+                <div
+                  v-if="showNotifications"
+                  class="absolute right-0 mt-2 w-80 bg-white border shadow-xl rounded-xl overflow-hidden z-50"
+                >
+                  <!-- header -->
+                  <div
+                    class="p-3 border-b font-semibold flex items-center justify-between bg-blue-50"
+                  >
+                    <div class="text-gray-700">Notifications</div>
+                    <button
+                      v-if="unreadCount > 0"
+                      @click.stop="markAllRead"
+                      class="text-sm text-blue-600 hover:underline"
+                    >
+                      Mark all read
+                    </button>
+                  </div>
 
-  <!-- notifications list -->
-  <div class="max-h-64 overflow-y-auto">
-    <div v-if="notifications.length === 0" class="p-4 text-center text-sm text-gray-400">
-      No notifications
-    </div>
+                  <!-- notifications list -->
+                  <div class="max-h-64 overflow-y-auto">
+                    <div
+                      v-if="notifications.length === 0"
+                      class="p-4 text-center text-sm text-gray-400"
+                    >
+                      No notifications
+                    </div>
 
-    <div
-      v-for="note in notifications"
-      :key="note.id"
-      @click="handleNotificationClick(note)"
-      class="cursor-pointer p-3 flex flex-col gap-1 border-b hover:bg-blue-50 transition-colors duration-200 rounded-xl mx-2 my-1"
-      :class="{ 'bg-blue-100': !note.read }"
-    >
-      <div class="flex items-center justify-between">
-        <div class="font-medium text-gray-800 text-sm">{{ note.title || 'Notification' }}</div>
-        <div class="text-xs text-gray-400">{{ formatTime(note.createdAt) }}</div>
-      </div>
-      <div class="text-sm text-gray-700 mt-1">{{ note.message || '' }}</div>
-      <div class="self-end mt-1">
-        <button
-          @click.stop="toggleRead(note)"
-          class="text-xs px-2 py-1 border rounded-full text-gray-600 hover:bg-gray-200 transition-colors"
-        >
-          {{ note.read ? 'Read' : 'Mark' }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-</div>
-
+                    <div
+                      v-for="note in notifications"
+                      :key="note.id"
+                      @click="handleNotificationClick(note)"
+                      class="cursor-pointer p-3 flex flex-col gap-1 border-b hover:bg-blue-50 transition-colors duration-200 rounded-xl mx-2 my-1"
+                      :class="{ 'bg-blue-100': !note.read }"
+                    >
+                      <div class="flex items-center justify-between">
+                        <div class="font-medium text-gray-800 text-sm">
+                          {{ note.title || "Notification" }}
+                        </div>
+                        <div class="text-xs text-gray-400">{{ formatTime(note.createdAt) }}</div>
+                      </div>
+                      <div class="text-sm text-gray-700 mt-1">{{ note.message || "" }}</div>
+                      <div class="self-end mt-1">
+                        <button
+                          @click.stop="toggleRead(note)"
+                          class="text-xs px-2 py-1 border rounded-full text-gray-600 hover:bg-gray-200 transition-colors"
+                        >
+                          {{ note.read ? "Read" : "Mark" }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
               <div>
                 <button
@@ -114,7 +123,10 @@
                 >
                   <img
                     class="w-8 h-8 rounded-full"
-                    :src="trainerImage || 'https://media1.tenor.com/m/IfbOs_yh89AAAAAC/loading-buffering.gif'"
+                    :src="
+                      trainerImage ||
+                      'https://media1.tenor.com/m/IfbOs_yh89AAAAAC/loading-buffering.gif'
+                    "
                     alt="user photo"
                   />
                 </button>
@@ -130,18 +142,14 @@
       :class="[
         'fixed top-0 left-0 z-40 w-65 h-screen transition-transform duration-300 bg-all rounded-tr-4xl overflow-y-auto',
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'lg:translate-x-0'
+        'lg:translate-x-0',
       ]"
       aria-label="Sidebar"
     >
       <div class="h-full px-3 py-4">
         <ul class="space-y-4 font-light text-[14px] mx-5">
           <li class="mb-11 mt-3 mx-2">
-            <img
-              src="@/assets/images/Project LOGO.png"
-              class="h-8 w-25 me-3"
-              alt="Logo"
-            />
+            <img src="@/assets/images/Project LOGO.png" class="h-8 w-25 me-3" alt="Logo" />
           </li>
 
           <!-- ✅ View My Profile - الرابط الصح -->
@@ -150,8 +158,19 @@
               to="/myprofile"
               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
               </svg>
               <span class="ms-3">View My Profile</span>
             </router-link>
@@ -172,11 +191,7 @@
               to="/trainer/plans"
               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
-              <img
-                src="@/assets/images/grommet-icons_plan.png"
-                alt=""
-                class="w-5 h-5"
-              />
+              <img src="@/assets/images/grommet-icons_plan.png" alt="" class="w-5 h-5" />
               <span class="ms-3">My Plans</span>
             </router-link>
           </li>
@@ -186,15 +201,15 @@
               to="/trainer/inbox"
               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
-              <img
-                src="@/assets/images/wpf_message-outline.png"
-                alt=""
-                class="w-5 h-5"
-              />
+              <img src="@/assets/images/wpf_message-outline.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Inbox</span>
 
               <!-- unread dot for inbox (small blue) -->
-              <span v-if="unreadConversations > 0" class="sidebar-unread-dot ms-3" :title="unreadConversations + ' unread'"></span>
+              <span
+                v-if="unreadConversations > 0"
+                class="sidebar-unread-dot ms-3"
+                :title="unreadConversations + ' unread'"
+              ></span>
             </router-link>
           </li>
 
@@ -203,11 +218,7 @@
               to="/trainer/clients"
               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
-              <img
-                src="@/assets/images/fluent_people-24-filled.png"
-                alt=""
-                class="w-5 h-5"
-              />
+              <img src="@/assets/images/fluent_people-24-filled.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Clients</span>
             </router-link>
           </li>
@@ -217,11 +228,7 @@
               to="/trainer/reviews"
               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
-              <img
-                src="@/assets/images/carbon_star-review.png"
-                alt=""
-                class="w-5 h-5"
-              />
+              <img src="@/assets/images/carbon_star-review.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Reviews</span>
             </router-link>
           </li>
@@ -231,11 +238,7 @@
               to="/trainer/settings"
               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
-              <img
-                src="@/assets/images/mdi_settings-outline.png"
-                alt=""
-                class="w-5 h-5"
-              />
+              <img src="@/assets/images/mdi_settings-outline.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Settings</span>
             </router-link>
           </li>
@@ -245,11 +248,7 @@
               to="/trainer/customerservice"
               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
-              <img
-                src="@/assets/images/mdi_customer-service.png"
-                alt=" "
-                class="w-6 h-6"
-              />
+              <img src="@/assets/images/mdi_customer-service.png" alt=" " class="w-6 h-6" />
               <span class="ms-3">Customer Service</span>
             </router-link>
           </li>
@@ -260,11 +259,7 @@
               @click="handleLogout"
               class="flex items-center p-2 text-red-600 rounded-lg hover:bg-blue-200 w-full transition duration-300 cursor-pointer"
             >
-              <img
-                src="@/assets/images/logout.png"
-                alt="logout icon"
-                class="w-5 h-5"
-              />
+              <img src="@/assets/images/logout.png" alt="logout icon" class="w-5 h-5" />
               <span class="ms-3 font-medium">Log out</span>
             </button>
           </li>
@@ -294,7 +289,7 @@ import {
   onSnapshot,
   doc,
   updateDoc,
-  limit
+  limit,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
@@ -330,13 +325,15 @@ export default {
       showNotifications.value = !showNotifications.value;
     };
 
-    const unreadCount = computed(() => notifications.value.filter(n => !n.read).length);
+    const unreadCount = computed(() => notifications.value.filter((n) => !n.read).length);
 
     // fetch trainer image (unchanged)
     const fetchTrainerImage = async (uid) => {
       try {
         const docRef = doc(db, "users", uid);
-        const docSnap = await (await import("firebase/firestore")).getDoc(docRef).catch(e => { throw e; });
+        const docSnap = await (await import("firebase/firestore")).getDoc(docRef).catch((e) => {
+          throw e;
+        });
         if (docSnap && docSnap.exists && docSnap.exists()) {
           trainerImage.value =
             docSnap.data().profilePicture ||
@@ -362,7 +359,7 @@ export default {
 
     // mark single note read
     const markReadLocal = (noteId) => {
-      const idx = notifications.value.findIndex(n => n.id === noteId);
+      const idx = notifications.value.findIndex((n) => n.id === noteId);
       if (idx !== -1) notifications.value[idx].read = true;
     };
 
@@ -382,19 +379,19 @@ export default {
     };
 
     const markAllRead = async () => {
-      const unread = notifications.value.filter(n => !n.read);
+      const unread = notifications.value.filter((n) => !n.read);
       for (const n of unread) {
         try {
           await updateDoc(doc(db, "notifications", n.id), { read: true });
         } catch (err) {
           console.error("markAllRead error for", n.id, err);
           if (err.code === "permission-denied") {
-            notifications.value = notifications.value.map(x => ({ ...x, read: true }));
+            notifications.value = notifications.value.map((x) => ({ ...x, read: true }));
             return;
           }
         }
       }
-      notifications.value = notifications.value.map(n => ({ ...n, read: true }));
+      notifications.value = notifications.value.map((n) => ({ ...n, read: true }));
     };
 
     const handleNotificationClick = async (note) => {
@@ -423,7 +420,12 @@ export default {
       const tryQuery = (useOrder) => {
         try {
           if (useOrder) {
-            return query(notRef, where("userId", "==", trainerUid.value), orderBy("createdAt", "desc"), limit(100));
+            return query(
+              notRef,
+              where("userId", "==", trainerUid.value),
+              orderBy("createdAt", "desc"),
+              limit(100),
+            );
           } else {
             return query(notRef, where("userId", "==", trainerUid.value), limit(100));
           }
@@ -436,46 +438,66 @@ export default {
       let q = tryQuery(true);
 
       try {
-        notificationsUnsub = onSnapshot(q, (snap) => {
-          const list = [];
-          snap.forEach(d => {
-            const data = d.data();
-            list.push({
-              id: d.id,
-              title: data.title || data.t || "",
-              message: data.message || data.massage || data.msg || data.massageText || data.massage_text || data.massageMessage || "",
-              createdAt: data.createdAt || data.time || null,
-              read: typeof data.read === "boolean" ? data.read : false,
-              raw: data
-            });
-          });
-          notifications.value = list;
-        }, (err) => {
-          console.error("notifications onSnapshot error:", err);
-          const msg = String(err && err.message ? err.message : err);
-          if (msg.includes("index") || msg.includes("requires an index")) {
-            console.warn("Firestore requires a composite index for this query — falling back to query without orderBy.");
-            if (notificationsUnsub) { notificationsUnsub(); notificationsUnsub = null; }
-            q = tryQuery(false);
-            notificationsUnsub = onSnapshot(q, (snap2) => {
-              const list2 = [];
-              snap2.forEach(d => {
-                const data = d.data();
-                list2.push({
-                  id: d.id,
-                  title: data.title || data.t || "",
-                  message: data.message || data.massage || data.msg || "",
-                  createdAt: data.createdAt || data.time || null,
-                  read: typeof data.read === "boolean" ? data.read : false,
-                  raw: data
-                });
+        notificationsUnsub = onSnapshot(
+          q,
+          (snap) => {
+            const list = [];
+            snap.forEach((d) => {
+              const data = d.data();
+              list.push({
+                id: d.id,
+                title: data.title || data.t || "",
+                message:
+                  data.message ||
+                  data.massage ||
+                  data.msg ||
+                  data.massageText ||
+                  data.massage_text ||
+                  data.massageMessage ||
+                  "",
+                createdAt: data.createdAt || data.time || null,
+                read: typeof data.read === "boolean" ? data.read : false,
+                raw: data,
               });
-              notifications.value = list2;
-            }, e2 => {
-              console.error("Fallback notifications onSnapshot error:", e2);
             });
-          }
-        });
+            notifications.value = list;
+          },
+          (err) => {
+            console.error("notifications onSnapshot error:", err);
+            const msg = String(err && err.message ? err.message : err);
+            if (msg.includes("index") || msg.includes("requires an index")) {
+              console.warn(
+                "Firestore requires a composite index for this query — falling back to query without orderBy.",
+              );
+              if (notificationsUnsub) {
+                notificationsUnsub();
+                notificationsUnsub = null;
+              }
+              q = tryQuery(false);
+              notificationsUnsub = onSnapshot(
+                q,
+                (snap2) => {
+                  const list2 = [];
+                  snap2.forEach((d) => {
+                    const data = d.data();
+                    list2.push({
+                      id: d.id,
+                      title: data.title || data.t || "",
+                      message: data.message || data.massage || data.msg || "",
+                      createdAt: data.createdAt || data.time || null,
+                      read: typeof data.read === "boolean" ? data.read : false,
+                      raw: data,
+                    });
+                  });
+                  notifications.value = list2;
+                },
+                (e2) => {
+                  console.error("Fallback notifications onSnapshot error:", e2);
+                },
+              );
+            }
+          },
+        );
       } catch (err) {
         console.error("startNotificationsListener fatal:", err);
       }
@@ -501,7 +523,11 @@ export default {
       const tryConvQuery = (useUnreadFilter) => {
         try {
           if (useUnreadFilter) {
-            return query(convRef, where("participants", "array-contains", trainerUid.value), where(`unreadCount.${trainerUid.value}`, ">", 0));
+            return query(
+              convRef,
+              where("participants", "array-contains", trainerUid.value),
+              where(`unreadCount.${trainerUid.value}`, ">", 0),
+            );
           } else {
             return query(convRef, where("participants", "array-contains", trainerUid.value));
           }
@@ -514,57 +540,78 @@ export default {
       let q = tryConvQuery(true);
 
       try {
-        conversationsUnsub = onSnapshot(q, (snap) => {
-          // if query had unread filter, snap.size is count of convs with unread > 0
-          if (q && String(q).includes("unreadCount")) {
-            // just set size (but more reliable to compute)
-            unreadConversations.value = snap.size;
-          } else {
-            // fallback path handled below, but keep safe handling
-            let count = 0;
-            snap.forEach(d => {
-              const data = d.data();
-              if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0) count++;
-            });
-            unreadConversations.value = count;
-          }
-        }, (err) => {
-          console.error("conversations onSnapshot error:", err);
-          const msg = String(err && err.message ? err.message : err);
-          if (msg.includes("index") || msg.includes("requires an index")) {
-            console.warn("Firestore requires an index for this conversations query — falling back to scanning conversations for unread count.");
-            if (conversationsUnsub) { conversationsUnsub(); conversationsUnsub = null; }
-            q = tryConvQuery(false);
-            conversationsUnsub = onSnapshot(q, (snap2) => {
-              let count2 = 0;
-              snap2.forEach(d => {
+        conversationsUnsub = onSnapshot(
+          q,
+          (snap) => {
+            // if query had unread filter, snap.size is count of convs with unread > 0
+            if (q && String(q).includes("unreadCount")) {
+              // just set size (but more reliable to compute)
+              unreadConversations.value = snap.size;
+            } else {
+              // fallback path handled below, but keep safe handling
+              let count = 0;
+              snap.forEach((d) => {
                 const data = d.data();
-                if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0) count2++;
+                if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0) count++;
               });
-              unreadConversations.value = count2;
-            }, e2 => {
-              console.error("Fallback conversations onSnapshot error:", e2);
-            });
-          } else {
-            // other error: fallback to scanning without index assumptions
-            try {
-              if (conversationsUnsub) { conversationsUnsub(); conversationsUnsub = null; }
-              q = tryConvQuery(false);
-              conversationsUnsub = onSnapshot(q, (snap3) => {
-                let cnt = 0;
-                snap3.forEach(d => {
-                  const data = d.data();
-                  if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0) cnt++;
-                });
-                unreadConversations.value = cnt;
-              }, e3 => {
-                console.error("Second fallback conversations onSnapshot error:", e3);
-              });
-            } catch (e) {
-              console.error("conversations listener fatal fallback error:", e);
+              unreadConversations.value = count;
             }
-          }
-        });
+          },
+          (err) => {
+            console.error("conversations onSnapshot error:", err);
+            const msg = String(err && err.message ? err.message : err);
+            if (msg.includes("index") || msg.includes("requires an index")) {
+              console.warn(
+                "Firestore requires an index for this conversations query — falling back to scanning conversations for unread count.",
+              );
+              if (conversationsUnsub) {
+                conversationsUnsub();
+                conversationsUnsub = null;
+              }
+              q = tryConvQuery(false);
+              conversationsUnsub = onSnapshot(
+                q,
+                (snap2) => {
+                  let count2 = 0;
+                  snap2.forEach((d) => {
+                    const data = d.data();
+                    if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0)
+                      count2++;
+                  });
+                  unreadConversations.value = count2;
+                },
+                (e2) => {
+                  console.error("Fallback conversations onSnapshot error:", e2);
+                },
+              );
+            } else {
+              // other error: fallback to scanning without index assumptions
+              try {
+                if (conversationsUnsub) {
+                  conversationsUnsub();
+                  conversationsUnsub = null;
+                }
+                q = tryConvQuery(false);
+                conversationsUnsub = onSnapshot(
+                  q,
+                  (snap3) => {
+                    let cnt = 0;
+                    snap3.forEach((d) => {
+                      const data = d.data();
+                      if (data && data.unreadCount && data.unreadCount[trainerUid.value] > 0) cnt++;
+                    });
+                    unreadConversations.value = cnt;
+                  },
+                  (e3) => {
+                    console.error("Second fallback conversations onSnapshot error:", e3);
+                  },
+                );
+              } catch (e) {
+                console.error("conversations listener fatal fallback error:", e);
+              }
+            }
+          },
+        );
       } catch (err) {
         console.error("startConversationsListener fatal:", err);
       }
@@ -629,7 +676,7 @@ export default {
       handleNotificationClick,
       formatTime,
       // new prop for template
-      unreadConversations
+      unreadConversations,
     };
   },
 };
@@ -645,8 +692,7 @@ export default {
   font-weight: 600;
 }
 .router-link-active img {
-  filter: invert(29%) sepia(83%) saturate(749%) hue-rotate(181deg)
-    brightness(95%) contrast(90%);
+  filter: invert(29%) sepia(83%) saturate(749%) hue-rotate(181deg) brightness(95%) contrast(90%);
 }
 
 /* small blue dot for unread indicator on Inbox */
@@ -660,5 +706,7 @@ export default {
 }
 
 /* spacing helper */
-.ms-3 { margin-left: 0.75rem; }
+.ms-3 {
+  margin-left: 0.75rem;
+}
 </style>
