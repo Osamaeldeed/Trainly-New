@@ -4,7 +4,7 @@
     <SideBarAdmin />
 
     <!-- Main content -->
-    <div class="flex-1 lg:ml-48 p-10 min-h-screen bg-gray-50">
+    <div class="flex-1 lg:ml-48 p-10 min-h-screen bg-white">
       <router-view />
     </div>
   </div>

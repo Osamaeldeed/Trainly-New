@@ -48,8 +48,11 @@
       v-if="['adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
     />
 
+    
+
     <!-- عرض الصفحات -->
     <router-view />
+
 
     <!-- Footer -->
     <FooterComp
@@ -80,6 +83,7 @@ export default {
     TraineeNavbar,
     TrainerNavbar,
     SideBarAdmin,
+   
   },
 };
 </script>
