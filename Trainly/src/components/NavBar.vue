@@ -1,35 +1,55 @@
 <template>
   <nav
-    class="flex justify-between items-center px-[50px] md:px-[70px] h-20 bg-white shadow-sm relative"
+    class="flex justify-between items-center px-[50px] md:px-[70px] h-20 bg-white shadow-sm relative dark:bg-[#3B3B3B]"
   >
     <!-- 🔹 اللوجو -->
-    <img src="@/assets/images/Project LOGO.png" alt="Logo" class="w-[140px] h-auto" />
+    <img :src="logoSrc" alt="Logo" class="w-[140px] h-auto" />
 
     <!-- 🔹 روابط التنقل -->
     <ul
       class="hidden md:flex items-center justify-center md:space-x-10 lg:space-x-16 font-[500] md:text-[85%] lg:text-[100%]"
     >
-      <router-link to="/" class="nav-link">{{ $t("home") }}</router-link>
-      <router-link to="/aboutus" class="nav-link">{{ $t("about") }}</router-link>
-      <router-link to="/sports" class="nav-link">{{ $t("sports") }}</router-link>
-      <router-link to="/contactus" class="nav-link">{{ $t("contact") }}</router-link>
+      <router-link
+        to="/"
+        class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
+        >{{ $t("home") }}</router-link
+      >
+      <router-link
+        to="/aboutus"
+        class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
+        >{{ $t("about") }}</router-link
+      >
+      <router-link
+        to="/sports"
+        class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
+        >{{ $t("sports") }}</router-link
+      >
+      <router-link
+        to="/contactus"
+        class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
+        >{{ $t("contact") }}</router-link
+      >
     </ul>
 
     <!-- 🔹 الأزرار وتبديل اللغة -->
     <div class="hidden md:flex items-center gap-3">
       <!-- ✅ زرار Login بستايل منفصل -->
-        <button
-          @click="$router.push('/login')"
-          class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl border-1 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-[var(--third)] transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
-        >
-          {{ $t("login") }}
-        </button>
+      <button
+        @click="$router.push('/login')"
+        class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl border border-(--primary) text-(--primary) hover:bg-(--primary) hover:text-(--third) transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
+      >
+        {{ $t("login") }}
+      </button>
+
       <!-- ✅ زرار Get Started -->
       <button
         @click="$router.push('/signup')"
         class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl bg-primary text-white hover:opacity-90 transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
       >
         {{ $t("get_started") }}
+      </button>
+      <button @click="toggleDarkMode" class="mx-auto block py-2 cursor-pointer">
+        {{ isDark ? "☀️" : "🌙" }}
       </button>
 
       <img
@@ -39,7 +59,6 @@
         @click="switchLang"
       />
     </div>
-
 
     <!-- 🔹 أيقونة الموبايل -->
     <div
@@ -64,24 +83,51 @@
     <transition name="fade">
       <div
         v-if="isOpen"
-        class="absolute top-[80px] left-0 w-full bg-white shadow-md flex flex-col items-center space-y-6 py-6 z-50 md:hidden"
+        class="absolute top-[80px] left-0 w-full bg-white dark:bg-black shadow-md flex flex-col items-center space-y-6 py-6 z-50 md:hidden"
       >
-        <router-link to="/" class="nav-link" @click="isOpen = false">{{ $t("home") }}</router-link>
-        <router-link to="/sports" class="nav-link" @click="isOpen = false">{{
-          $t("sports")
+        <!-- Controls row: dark toggle (left) and language switch (right) -->
+        <div class="w-full px-6 flex items-center justify-between">
+          <button @click="toggleDarkMode" class="py-2 px-3 rounded-md text-xl cursor-pointer">
+            {{ isDark ? "☀️" : "🌙" }}
+          </button>
+          <img
+            src="@/assets/images/language switch(1)(1).png"
+            alt="Language"
+            class="w-[36px] cursor-pointer transition-transform duration-500 hover:rotate-180"
+            @click="switchLang"
+          />
+        </div>
+
+        <router-link to="/" class="nav-link text-[#333] dark:text-white" @click="isOpen = false">{{
+          $t("home")
         }}</router-link>
-        <router-link to="/aboutus" class="nav-link" @click="isOpen = false">{{
-          $t("about")
-        }}</router-link>
-        <router-link to="/contactus" class="nav-link" @click="isOpen = false">{{
-          $t("contact")
-        }}</router-link>
+        <router-link
+          to="/sports"
+          class="nav-link text-[#333] dark:text-white"
+          @click="isOpen = false"
+          >{{ $t("sports") }}</router-link
+        >
+        <router-link
+          to="/aboutus"
+          class="nav-link text-[#333] dark:text-white"
+          @click="isOpen = false"
+          >{{ $t("about") }}</router-link
+        >
+        <router-link
+          to="/contactus"
+          class="nav-link text-[#333] dark:text-white"
+          @click="isOpen = false"
+          >{{ $t("contact") }}</router-link
+        >
 
         <div class="flex flex-col gap-4 w-[80%] items-center">
           <button
-            @click="$router.push('/login'); isOpen = false"
-             class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl border-1 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-[var(--third)] transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
-        >
+            @click="
+              $router.push('/login');
+              isOpen = false;
+            "
+            class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl border border-(--primary) text-(--primary) hover:bg-(--primary) hover:text-(--third) transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
+          >
             {{ $t("login") }}
           </button>
         </div>
@@ -91,12 +137,21 @@
 </template>
 
 <script>
+import logoLight from "@/assets/images/Project LOGO.png";
+import logoDark from "@/assets/images/LOGO for (Dark mode).png";
+
 export default {
   name: "NavBar",
   data() {
     return {
       isOpen: false,
+      isDark: false,
     };
+  },
+  computed: {
+    logoSrc() {
+      return this.isDark ? logoDark : logoLight;
+    },
   },
   methods: {
     switchLang() {
@@ -108,9 +163,24 @@ export default {
       document.body.style.fontFamily =
         newLocale === "ar" ? "'Tajawal', sans-serif" : "'Poppins', sans-serif";
     },
+    saveDark(val) {
+      localStorage.setItem("darkMode", val);
+      if (val) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    },
+    toggleDarkMode() {
+      this.isDark = !this.isDark;
+      this.saveDark(this.isDark);
+    },
   },
   mounted() {
     document.dir = this.$i18n.locale === "ar" ? "rtl" : "ltr";
+    const saved = localStorage.getItem("darkMode") === "true";
+    this.isDark = saved;
+    this.saveDark(saved);
   },
 };
 </script>
@@ -119,7 +189,6 @@ export default {
 /* 🌈 ألوان اللينكات */
 .nav-link {
   position: relative;
-  color: #333;
   font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;

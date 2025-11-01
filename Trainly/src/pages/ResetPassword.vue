@@ -4,11 +4,9 @@ export default {
 };
 </script>
 
-
 <template>
   <section class="flex min-h-screen justify-center items-center bg-white relative overflow-hidden">
     <div class="flex w-full h-full">
-
       <!-- الصورة الجانبية (للكبير فقط) -->
       <div class="hidden lg:flex w-[40%] h-screen items-center justify-center">
         <img
@@ -29,21 +27,14 @@ export default {
 
       <!-- العمود اللي فيه اللوجو والفورم -->
       <div class="flex flex-col w-full justify-center lg:w-[60%] relative z-10">
-
         <!-- اللوجو -->
         <div class="hidden lg:flex ml-13 mb-5">
-          <img
-            src="@/assets/images/Project LOGO.png"
-            alt="Project Logo"
-            class="w-40 h-13 mx-10"
-          />
+          <img src="@/assets/images/Project LOGO.png" alt="Project Logo" class="w-40 h-13 mx-10" />
         </div>
 
         <!-- الفورم -->
         <div
-          class="relative w-4/5 mx-auto flex flex-col items-center justify-center
-          bg-transparent md:bg-white lg:bg-transparent
-          md:rounded-3xl p-8 md:p-10 text-center"
+          class="relative w-4/5 mx-auto flex flex-col items-center justify-center bg-transparent md:bg-white lg:bg-transparent md:rounded-3xl p-8 md:p-10 text-center"
         >
           <div class="w-full">
             <div class="flex justify-center">
@@ -56,10 +47,10 @@ export default {
 
             <form action="">
               <h1 class="text-2xl font-bold text-black-600 mb-3 mt-3">
-                {{ $t('resetPasswordTitle') }}
+                {{ $t("resetPasswordTitle") }}
               </h1>
               <p class="text-gray-900 mb-5 font-normal">
-                {{ $t('resetPasswordSubtitle') }}
+                {{ $t("resetPasswordSubtitle") }}
               </p>
 
               <input
@@ -78,15 +69,14 @@ export default {
 
               <button
                 type="submit"
-                class="px-10 py-1 rounded-4xl bg-gradient-to-r from-green-500 to-sky-400 text-white
-                hover:opacity-90 transition font-semibold w-[50%] h-12 mb-5 text-[90%] cursor-pointer"
+                class="px-10 py-1 rounded-4xl bg-linear-to-r from-green-500 to-sky-400 text-white hover:opacity-90 transition font-semibold w-[50%] h-12 mb-5 text-[90%] cursor-pointer"
               >
-                {{ $t('resetPasswordButton') }}
+                {{ $t("resetPasswordButton") }}
               </button>
             </form>
 
             <router-link to="/" class="text-gray-600">
-              {{ $t('backToLogin') }}
+              {{ $t("backToLogin") }}
             </router-link>
           </div>
         </div>
@@ -94,9 +84,6 @@ export default {
     </div>
   </section>
 </template>
-
-
-
 
 <style>
 :root {

@@ -31,11 +31,7 @@
           <div class="flex items-center">
             <div class="flex items-center ms-3 gap-[40px]">
               <div class="hidden md:block">
-                <img
-                  src="@/assets/images/mingcute_notification-line.png"
-                  alt=""
-                  class="w-7 h-7"
-                />
+                <img src="@/assets/images/mingcute_notification-line.png" alt="" class="w-7 h-7" />
               </div>
 
               <div>
@@ -73,7 +69,7 @@
       :class="[
         'fixed top-0 left-0 z-40 w-65 h-screen bg-all transition-transform duration-300 ease-in-out rounded-tr-4xl',
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'lg:translate-x-0 lg:block'
+        'lg:translate-x-0 lg:block',
       ]"
       aria-label="Sidebar"
     >
@@ -88,7 +84,7 @@
           <li class="mb-6">
             <router-link
               to="/traineehome"
-              class="flex items-center p-2 text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 transition duration-300 shadow-md"
+              class="flex items-center p-2 text-white bg-linear-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 transition duration-300 shadow-md"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -201,8 +197,6 @@ export default {
     const db = getFirestore();
     const auth = getAuth();
     const router = useRouter();
-
-
 
     const toggleSidebar = () => {
       isSidebarOpen.value = !isSidebarOpen.value;

@@ -1,12 +1,19 @@
 @import "tailwindcss";
 @reference "tailwindcss";
 
-html[lang="en"], body[lang="en"], :root[lang="en"] {
-  font-family: 'Poppins', sans-serif !important;
+@variant dark (&:where(.dark, .dark *)) {
 }
 
-html[lang="ar"], body[lang="ar"], :root[lang="ar"] {
-  font-family: 'Tajawal', sans-serif !important;
+html[lang="en"],
+body[lang="en"],
+:root[lang="en"] {
+  font-family: "Poppins", sans-serif !important;
+}
+
+html[lang="ar"],
+body[lang="ar"],
+:root[lang="ar"] {
+  font-family: "Tajawal", sans-serif !important;
 }
 
 html[dir="rtl"] .text-start {
@@ -16,29 +23,26 @@ html[dir="ltr"] .text-start {
   text-align: left !important;
 }
 
-
 :root {
   font-family: "Poppins", sans-serif;
-  --primary: #00C853;
-  --secondry: #00B0FFB2;
+  --primary: #00c853;
+  --secondry: #00b0ffb2;
   --third: #ffffff;
-  --fourth:#7AE2A5F2;
+  --fourth: #7ae2a5f2;
 }
 
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
 
 input:focus {
   outline: none !important;
   box-shadow: none;
-
 }
 
-
-
 .btn-primary {
-  color:black;
+  color: black;
   transition: all 0.3s ease;
 }
 
@@ -46,18 +50,16 @@ input:focus {
   color: var(--secondry);
 }
 
-
 .features-card {
-  @apply md:w-[27%]  lg:h-[300px] bg-[#D9EEFF] rounded-[20px] shadow-sm w-[300px] h-[230px] ;
+  @apply md:w-[27%]  lg:h-[300px] bg-[#D9EEFF] rounded-[20px] shadow-sm w-[300px] h-[230px];
 }
 
-.img-box{
+.img-box {
   @apply absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center w-[40px] h-[40px] md:w-[60px] md:h-[60px] rounded-full bg-white border border-[#0D8BF2];
 }
-.img-box img{
-  @apply w-7 h-7 md:w-10 md:h-10 p-1 rounded-full bg-gradient-to-b from-[#00C853F2] to-[#0D8BF2] border border-[#0D8BF2] object-contain;
+.img-box img {
+  @apply w-7 h-7 md:w-10 md:h-10 p-1 rounded-full bg-linear-to-b from-[#00C853F2] to-[#0D8BF2] border border-[#0D8BF2] object-contain;
 }
 .bg-primary {
   background: linear-gradient(to right, var(--primary), var(--secondry));
 }
-

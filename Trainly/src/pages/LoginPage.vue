@@ -1,79 +1,76 @@
 <template>
   <div>
-    <div v-if="showToast" class="toast flex justify-center items-center">
+    <div v-if="showToast" class="toast flex justify-center items-center bg-white dark:bg-[#3B3B3B]">
       {{ toastMessage }}
     </div>
     <div
-      class="bg-[url('/src/assets/images/couple-training-together-gym.jpg')] bg-cover bg-no-repeat bg-[position-x:100%] w-full h-screen flex items-center justify-start pl-20 max-[768px]:pl-0 max-[768px]:justify-center"
+      class="bg-cover bg-no-repeat bg-[position-x:100%] w-full h-screen flex items-center justify-start pl-20 max-[768px]:pl-0 max-[768px]:justify-center"
+      :style="{ backgroundImage: `url(${bgLogin})` }"
     >
       <div
-        class="w-[480px] max-w-[calc(100%-40px)] mx-0 rounded-[10px] bg-white/95 p-3 flex items-start justify-center relative animate-slideUp"
+        class="w-[480px] max-w-[calc(100%-40px)] mx-0 rounded-[10px] bg-white dark:bg-[#3B3B3B]/80 p-3 flex items-start justify-center relative animate-slideUp"
       >
         <div
-          class="w-[446px] h-[546px] bg-white p-9 rounded-lg flex flex-col justify-center shadow-[0_0_10px_rgba(0,0,0,0.1)]"
+          class="w-[446px] h-[546px] bg-white dark:bg-[#3B3B3B] p-9 rounded-lg flex flex-col justify-center shadow-[0_0_10px_rgba(0,0,0,0.1)]"
         >
-          <h2 class="mb-5 text-[22px] font-semibold">
+          <h2 class="mb-5 text-[22px] text-black dark:text-white font-semibold">
             Welcome back To
-            <span class="bg-gradient-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent">
+            <span class="bg-linear-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent">
               Trainly
             </span>
           </h2>
 
           <form @submit.prevent="handleLogin" class="w-full">
             <!-- Email -->
-            <label for="email" class="text-sm block mt-2 mb-1">Email</label>
+            <label for="email" class="text-sm text-black dark:text-white block mt-2 mb-1"
+              >Email</label
+            >
             <input
               type="email"
               id="email"
               v-model="email"
               placeholder="Enter email"
               required
-              class="w-full p-3 mb-2 border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
+              class="w-full p-3 mb-2 border placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
             />
 
             <!-- Password -->
             <div class="relative">
-              <label for="password" class="text-sm block mt-2 mb-1">Password</label>
+              <label for="password" class="text-sm block text-black dark:text-white mt-2 mb-1"
+                >Password</label
+              >
               <input
                 :type="passwordFieldType"
                 id="password"
                 v-model="password"
                 placeholder="Enter your password"
                 required
-                class="w-full p-3 mb-2 border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
+                class="w-full p-3 mb-2 placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
               />
               <button
                 type="button"
                 class="absolute right-4 top-1/2 translate-y-[10%] w-5 h-auto cursor-pointer bg-transparent border-0"
                 @click="togglePasswordVisibility"
               >
-                <img
-                  :src="
-                    passwordVisible ? '/src/assets/images/eye off.png' : '/src/assets/images/Eye.png'
-                  "
-                  alt="Show/Hide"
-                  class="w-full h-auto"
-                />
+                <img :src="passwordVisible ? eyeOff : eye" alt="Show/Hide" class="w-full h-auto" />
               </button>
             </div>
 
             <!-- Forgot Password -->
-            <a
-              href="/forgetpassword1"
-              class="text-xs text-[#2d8fff] hover:underline block text-right mb-4 cursor-pointer"
+            <router-link
+              to="/forgetpassword1"
+              class="text-xs text-[#2d8fff] dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] transition-colors duration-300 hover:underline block text-right mb-4 cursor-pointer"
             >
               Forgot Password?
-            </a>
+            </router-link>
 
             <!-- Login Button -->
             <button
               type="submit"
-              class="w-full p-3 text-white text-lg rounded-md cursor-pointer mb-4 bg-gradient-to-r from-[#00C853] to-[#00b0ff] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              class="w-full p-3 text-white text-lg rounded-md cursor-pointer mb-4 bg-linear-to-r from-[#00C853] to-[#00b0ff] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               :disabled="isLoading"
             >
-              <template v-if="!isLoading">
-                Log In
-              </template>
+              <template v-if="!isLoading"> Log In </template>
               <template v-else>
                 <svg
                   class="animate-spin h-5 w-5 text-white"
@@ -103,16 +100,21 @@
             <button
               type="button"
               @click="handleGoogleLogin"
-              class="flex items-center justify-center gap-2 border border-gray-300 p-2 cursor-pointer rounded-md bg-white w-full"
+              class="flex items-center dark:text-white dark:bg-[#555555] justify-center gap-2 border border-gray-300 p-2 cursor-pointer rounded-md bg-white w-full"
             >
-              <img src="/src/assets/images/g-logo.png" alt="google" class="w-5 h-5" />
+              <img :src="googleLogo" alt="google" class="w-5 h-5" />
               Continue with Google
             </button>
 
             <!-- Sign Up Link -->
-            <p class="text-left text-sm mt-7">
+            <p class="text-left text-black dark:text-white text-sm mt-7">
               Don't have an account?
-              <a href="/signup" class="text-[#2d8fff] hover:underline">Sign up</a>
+              <a
+                href="/signup"
+                class="text-[#2d8fff] hover:underline dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] transition-colors duration-300"
+              >
+                Sign up
+              </a>
             </p>
           </form>
         </div>
@@ -134,6 +136,10 @@ import {
   signOut,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import bgLogin from "../assets/images/couple-training-together-gym.jpg";
+import eye from "../assets/images/Eye.png";
+import eyeOff from "../assets/images/eye off.png";
+import googleLogo from "../assets/images/g-logo.png";
 
 export default {
   name: "LoginPage",
@@ -162,11 +168,7 @@ export default {
       try {
         await signOut(auth).catch(() => {});
 
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email.value,
-          password.value
-        );
+        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
         console.log("✅ Logged in with Email:", user);
 
@@ -193,13 +195,10 @@ export default {
 
         // ✅ تحقق من الدور (role)
         if (userData.role === "trainer") {
-
           router.push("/trainer/home");
         } else {
-
           router.push("/traineehome");
         }
-
       } catch (error) {
         console.error("❌ Login error:", error.code, error.message);
 
@@ -242,7 +241,10 @@ export default {
             console.error("❌ Linking error:", linkError);
             showPopup("❌ Failed to link accounts. Try signing in with Google.");
           }
-        } else if (error.code === "auth/invalid-credential" || error.code === "auth/invalid-login-credentials") {
+        } else if (
+          error.code === "auth/invalid-credential" ||
+          error.code === "auth/invalid-login-credentials"
+        ) {
           showPopup("❌ Wrong email or password.");
         } else {
           showPopup(`❌ ${error.message || "Login failed."}`);
@@ -284,13 +286,12 @@ export default {
 
         // ✅ تحقق من الدور
         if (userData.role === "trainer") {
-
+          showPopup("✅ Logged in with Google!");
           router.push("/trainer/home");
         } else {
-
+          showPopup("✅ Logged in with Google!");
           router.push("/traineehome");
         }
-
       } catch (error) {
         console.error("❌ Google login error:", error.code, error.message);
         if (error.code === "auth/popup-closed-by-user") {
@@ -309,9 +310,7 @@ export default {
       passwordVisible.value = !passwordVisible.value;
     };
 
-    const passwordFieldType = computed(() =>
-      passwordVisible.value ? "text" : "password"
-    );
+    const passwordFieldType = computed(() => (passwordVisible.value ? "text" : "password"));
 
     return {
       email,
@@ -324,6 +323,10 @@ export default {
       passwordFieldType,
       showToast,
       toastMessage,
+      bgLogin,
+      eye,
+      eyeOff,
+      googleLogo,
     };
   },
 };

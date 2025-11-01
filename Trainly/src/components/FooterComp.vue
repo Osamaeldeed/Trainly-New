@@ -1,9 +1,7 @@
 <template>
-  <footer class="relative bg-black text-white mt-10">
+  <footer class="relative bg-black dark:bg-[#3B3B3B] text-white mt-10">
     <div class="mx-auto w-full max-w-screen-xl py-8">
-      <div
-        class="flex justify-around flex-col md:flex-row gap-5 md:gap-0 pl-5 md:pl-0"
-      >
+      <div class="flex justify-around flex-col md:flex-row gap-5 md:gap-0 pl-5 md:pl-0">
         <div>
           <h2 class="mb-2 md:mb-6 text-sm font-semibold uppercase text-white">
             {{ $t("aboutUs") }}
@@ -32,9 +30,7 @@
             <li class="text-[12px] md:text-[15px]">
               <h6>
                 {{ $t("phone") }} :
-                <span class="hover:underline cursor-pointer"
-                  >+1 (800) 123-4567</span
-                >
+                <span class="hover:underline cursor-pointer">+1 (800) 123-4567</span>
               </h6>
             </li>
           </ul>
@@ -157,7 +153,7 @@
             >
               <button
                 @click="switchLang"
-                class=" px-4 py-2 text-sm md:text-base hover:bg-gray-100 transition"
+                class="px-4 py-2 text-sm md:text-base hover:bg-gray-100 transition"
               >
                 {{ $i18n.locale === "en" ? "العربية" : "English" }}
               </button>
@@ -168,8 +164,7 @@
     </div>
     <div class="text-center pb-5">
       <span class="text-sm text-center"
-        >© 2025 <a href="#" class="hover:underline">Trainly</a>. All Rights
-        Reserved.
+        >© 2025 <a href="#" class="hover:underline">Trainly</a>. All Rights Reserved.
       </span>
     </div>
   </footer>

@@ -82,7 +82,11 @@ const routes = [
       { path: "plans", name: "trainerplans", component: TrainerPlans },
       { path: "reviews", name: "trainerreviews", component: TrainerReviews },
       { path: "clients", name: "trainerclient", component: TrainerClient },
-      { path: "customerservice", name: "trainercustomerservice", component: TrainerCustomerservice },
+      {
+        path: "customerservice",
+        name: "trainercustomerservice",
+        component: TrainerCustomerservice,
+      },
       { path: "settings", name: "trainersettings", component: TrainerSettings },
     ],
   },
@@ -93,7 +97,11 @@ const routes = [
     children: [
       { path: "dashboard", name: "traineedashboard", component: TraineeDashboard },
       { path: "settings", name: "traineesettings", component: TraineeSettings },
-      { path: "customerservice", name: "traineecustomerservice", component: TraineeCustomerservice },
+      {
+        path: "customerservice",
+        name: "traineecustomerservice",
+        component: TraineeCustomerservice,
+      },
     ],
   },
   { path: "/:pathMatch(.*)*", name: "error", component: ErrorPage },
@@ -110,15 +118,39 @@ const router = createRouter({
 import { auth, db } from "./Firebase/firebaseConfig.js";
 import { getDoc, doc } from "firebase/firestore";
 
-const publicPages = ["/", "/login", "/signup", "/aboutus", "/contactus", "/sports", "/success", "/failed" ];
+const publicPages = [
+  "/",
+  "/login",
+  "/signup",
+  "/aboutus",
+  "/contactus",
+  "/sports",
+  "/success",
+  "/failed",
+  "/forgetpassword1",
+  "/forgetpassword2",
+  "/resetpassword",
+  "/resetpassword2",
+  "/error",
+];
 const traineePages = [
-  "/traineehome", "/searchresults", "/viewtrainerprofile",
-  "/aboutustrainee", "/contactustrainee", "/sportstrainee",
-  "/trainee/dashboard", "/trainee/settings", "/trainee/customerservice",
+  "/traineehome",
+  "/searchresults",
+  "/viewtrainerprofile",
+  "/aboutustrainee",
+  "/contactustrainee",
+  "/sportstrainee",
+  "/trainee/dashboard",
+  "/trainee/settings",
+  "/trainee/customerservice",
 ];
 const trainerPages = [
-  "/trainer/home", "/trainer/plans", "/trainer/reviews",
-  "/trainer/clients", "/trainer/customerservice", "/trainer/settings",
+  "/trainer/home",
+  "/trainer/plans",
+  "/trainer/reviews",
+  "/trainer/clients",
+  "/trainer/customerservice",
+  "/trainer/settings",
   "/myprofile",
 ];
 
@@ -131,7 +163,7 @@ const getCurrentUser = () => {
         unsubscribe();
         resolve(user);
       },
-      reject
+      reject,
     );
   });
 };
@@ -198,17 +230,17 @@ createApp(App)
   })
   .mount("#app");
 
-  // ✅ إخفاء loading بعد ما كل حاجة تتحمل (including CSS)
+// ✅ إخفاء loading بعد ما كل حاجة تتحمل (including CSS)
 router.isReady().then(() => {
   // نستنى شوية عشان ال CSS و ال components تخلص render
   requestAnimationFrame(() => {
     setTimeout(() => {
-      const appElement = document.getElementById('app');
-      const loader = document.querySelector('.app-loading');
+      const appElement = document.getElementById("app");
+      const loader = document.querySelector(".app-loading");
 
-      if (appElement) appElement.classList.add('loaded');
+      if (appElement) appElement.classList.add("loaded");
       if (loader) {
-        loader.classList.add('loaded');
+        loader.classList.add("loaded");
         setTimeout(() => loader.remove(), 300);
       }
     }, 50); // زود الوقت شوية عشان نتأكد إن كل حاجة ظهرت

@@ -1,29 +1,34 @@
 <template>
-  <div class="min-h-screen relative flex items-center justify-center lg:justify-start px-4 sm:px-6 lg:px-20">
+  <div
+    class="min-h-screen relative flex items-center justify-center lg:justify-start px-4 sm:px-6 lg:px-20"
+  >
     <!-- Background image layer (blur on small screens, normal on desktop) -->
-    <div
-      class="absolute inset-0 bg-cover bg-center transition-all duration-300"
-      style="background-image: url('/src/assets/images/signup.png')"
-      aria-hidden="true"
-    ></div>
+    <div class="absolute inset-0 bg-cover bg-center transition-all duration-300">
+      <div
+        class="w-full h-full bg-cover bg-center"
+        :style="{ backgroundImage: `url(${bgSignup})` }"
+      ></div>
+    </div>
 
     <!-- optional dim overlay on small screens to increase contrast -->
     <div class="absolute inset-0 bg-black/25 lg:bg-transparent pointer-events-none"></div>
 
     <!-- Card (form) -->
     <!-- centered on small/tablet via mx-auto; on desktop it's left-aligned because parent uses lg:justify-start and lg:px-20 -->
-    <div class="relative z-10 w-full max-w-md bg-white bg-opacity-95 rounded-lg p-3 mx-auto lg:mx-0">
-      <div class="bg-white rounded-lg p-4">
+    <div
+      class="relative z-10 w-full max-w-md bg-white dark:bg-[#3B3B3B] bg-opacity-95 rounded-lg p-3 mx-auto lg:mx-0"
+    >
+      <div class="bg-white dark:bg-[#3B3B3B] rounded-lg p-4">
         <!-- Brand -->
         <div class="mb-4">
           <span
-            class="text-2xl font-bold bg-gradient-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent"
+            class="text-2xl font-bold bg-linear-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent"
           >
             Trainly
           </span>
         </div>
 
-        <h2 class="text-xl font-semibold mb-5">Create Your Account</h2>
+        <h2 class="text-xl text-black dark:text-white font-semibold mb-5">Create Your Account</h2>
 
         <!-- Error Message -->
         <div
@@ -38,14 +43,20 @@
           <div v-for="step in 3" :key="step" class="flex items-center">
             <div
               class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300"
-              :class="currentStep >= step ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white scale-110' : 'bg-gray-300 text-gray-500'"
+              :class="
+                currentStep >= step
+                  ? 'bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white scale-110'
+                  : 'bg-gray-300 text-gray-500'
+              "
             >
               {{ step }}
             </div>
             <div
               v-if="step < 3"
               class="w-10 h-0.5 mx-1 transition-all duration-300"
-              :class="currentStep > step ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF]' : 'bg-gray-300'"
+              :class="
+                currentStep > step ? 'bg-linear-to-r from-[#00C853] to-[#00B0FF]' : 'bg-gray-300'
+              "
             ></div>
           </div>
         </div>
@@ -69,11 +80,19 @@
                   <label
                     for="trainee"
                     class="flex flex-col items-center cursor-pointer text-center transition-all duration-300 rounded-md"
-                    :class="formData.role === 'trainee' ? 'border-green-500 bg-green-50 transform -translate-y-1 scale-105 shadow-md' : ''"
+                    :class="
+                      formData.role === 'trainee'
+                        ? 'border-green-500 bg-green-50 transform -translate-y-1 scale-105 shadow-md'
+                        : ''
+                    "
                   >
                     <span
                       class="w-full p-3 text-lg rounded-md transition-all duration-300"
-                      :class="formData.role === 'trainee' ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white' : 'bg-[#E9F5EE] text-black'"
+                      :class="
+                        formData.role === 'trainee'
+                          ? 'bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white'
+                          : 'bg-[#E9F5EE] text-black dark:text-white dark:bg-[#555555]'
+                      "
                     >
                       I'm a Trainee
                     </span>
@@ -92,11 +111,19 @@
                   <label
                     for="trainer"
                     class="flex flex-col items-center cursor-pointer text-center transition-all duration-300 rounded-md"
-                    :class="formData.role === 'trainer' ? 'border-green-500 bg-green-50 transform -translate-y-1 scale-105 shadow-md' : ''"
+                    :class="
+                      formData.role === 'trainer'
+                        ? 'border-green-500 bg-green-50 transform -translate-y-1 scale-105 shadow-md'
+                        : ''
+                    "
                   >
                     <span
                       class="w-full p-3 text-lg rounded-md transition-all duration-300"
-                      :class="formData.role === 'trainer' ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white' : 'bg-[#E9F5EE] text-black'"
+                      :class="
+                        formData.role === 'trainer'
+                          ? 'bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white'
+                          : 'bg-[#E9F5EE] text-black dark:text-white dark:bg-[#555555]'
+                      "
                     >
                       I'm a Trainer
                     </span>
@@ -108,13 +135,15 @@
             <!-- Name Fields (responsive: stacked on small, side-by-side on sm+) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               <div>
-                <label for="first-name" class="block text-sm mb-1">First Name</label>
+                <label for="first-name" class="block text-sm text-black dark:text-white mb-1"
+                  >First Name</label
+                >
                 <input
                   type="text"
                   id="first-name"
                   v-model="formData.firstName"
                   placeholder="Enter name"
-                  class="w-full p-2 border rounded-md shadow-sm text-sm box-border"
+                  class="w-full p-2 border rounded-md shadow-sm text-sm box-border text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   :class="errors.firstName ? 'border-red-500' : 'border-gray-300'"
                 />
                 <p v-if="errors.firstName" class="text-red-500 text-xs mt-1">
@@ -123,13 +152,15 @@
               </div>
 
               <div>
-                <label for="last-name" class="block text-sm mb-1">Last Name</label>
+                <label for="last-name" class="block text-sm text-black dark:text-white mb-1"
+                  >Last Name</label
+                >
                 <input
                   type="text"
                   id="last-name"
                   v-model="formData.lastName"
                   placeholder="Enter name"
-                  class="w-full p-2 border rounded-md shadow-sm text-sm box-border"
+                  class="w-full p-2 border rounded-md shadow-sm text-black dark:text-white text-sm box-border placeholder-gray-500 dark:placeholder-gray-400"
                   :class="errors.lastName ? 'border-red-500' : 'border-gray-300'"
                 />
                 <p v-if="errors.lastName" class="text-red-500 text-xs mt-1">
@@ -141,12 +172,14 @@
             <!-- Birthday and Gender (responsive) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               <div>
-                <label for="birthdate" class="block text-sm mb-1">Birthday</label>
+                <label for="birthdate" class="block text-sm text-black dark:text-white mb-1"
+                  >Birthday</label
+                >
                 <input
                   type="date"
                   id="birthdate"
                   v-model="formData.birthdate"
-                  class="w-full p-2 border rounded-md shadow-sm text-sm box-border"
+                  class="w-full p-2 border text-black dark:text-white bg-white dark:bg-[#1e1e1e] rounded-md shadow-sm text-sm box-border focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent scheme-light dark:scheme-dark"
                   :class="errors.birthdate ? 'border-red-500' : 'border-gray-300'"
                   :max="maxBirthdate"
                 />
@@ -156,11 +189,13 @@
               </div>
 
               <div>
-                <label for="gender" class="block text-sm mb-1">Gender</label>
+                <label for="gender" class="block text-sm text-black dark:text-white mb-1"
+                  >Gender</label
+                >
                 <select
                   id="gender"
                   v-model="formData.gender"
-                  class="cursor-pointer w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm"
+                  class="cursor-pointer w-full text-black dark:text-white p-2 border bg-white dark:bg-[#1e1e1e] border-gray-300 rounded-md shadow-sm text-sm"
                   :class="errors.gender ? 'border-red-500' : 'border-gray-300'"
                 >
                   <option value="" disabled>Select</option>
@@ -176,13 +211,13 @@
 
             <!-- Email -->
             <div class="mb-4">
-              <label for="email" class="block text-sm mb-1">Email</label>
+              <label for="email" class="block text-sm text-black dark:text-white mb-1">Email</label>
               <input
                 type="email"
                 id="email"
                 v-model="formData.email"
                 placeholder="Enter email"
-                class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                class="w-full p-2 border border-gray-300 rounded-md text-black dark:text-white shadow-sm placeholder-gray-500 dark:placeholder-gray-400 text-sm box-border"
                 :class="errors.email ? 'border-red-500' : 'border-gray-300'"
               />
               <p v-if="errors.email" class="text-red-500 text-xs mt-1">
@@ -193,13 +228,15 @@
             <!-- Passwords (responsive) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
               <div>
-                <label for="password" class="block text-sm mb-1">Password</label>
+                <label for="password" class="block text-sm text-black dark:text-white mb-1"
+                  >Password</label
+                >
                 <input
                   type="password"
                   id="password"
                   v-model="formData.password"
                   placeholder="Enter password"
-                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                  class="w-full placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
                   :class="errors.password ? 'border-red-500' : 'border-gray-300'"
                 />
                 <p v-if="errors.password" class="text-red-500 text-xs mt-1">
@@ -208,13 +245,15 @@
               </div>
 
               <div>
-                <label for="confirm-password" class="block text-sm mb-1">Confirm Password</label>
+                <label for="confirm-password" class="block text-sm text-black dark:text-white mb-1"
+                  >Confirm Password</label
+                >
                 <input
                   type="password"
                   id="confirm-password"
                   v-model="formData.confirmPassword"
                   placeholder="Enter password"
-                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                  class="w-full p-2 placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white border border-gray-300 rounded-md shadow-sm text-sm box-border"
                   :class="errors.confirmPassword ? 'border-red-500' : 'border-gray-300'"
                 />
                 <p v-if="errors.confirmPassword" class="text-red-500 text-xs mt-1">
@@ -223,13 +262,17 @@
               </div>
             </div>
 
-            <p class="text-xs text-gray-600 mb-4">
+            <p class="text-xs text-gray-600 dark:text-gray-300 mb-4">
               *At least 8 characters mixed between letters, numbers and symbols
             </p>
 
-            <div class="text-sm mb-5">
+            <div class="text-sm text-black dark:text-white mb-5">
               Already have an account?
-              <router-link to="/login" class="text-blue-500 underline">Log in</router-link>
+              <router-link
+                to="/login"
+                class="text-blue-500 dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] transition-colors duration-300 underline"
+                >Log in</router-link
+              >
             </div>
 
             <div class="flex flex-col sm:flex-row gap-2 mt-4">
@@ -237,7 +280,7 @@
                 type="button"
                 @click="nextStep"
                 :disabled="isLoading"
-                class="cursor-pointer flex-1 p-2 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="cursor-pointer flex-1 p-2 bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -248,13 +291,15 @@
           <div v-show="currentStep === 2" class="animate-fade-in">
             <!-- Phone Number -->
             <div class="mb-4">
-              <label for="phone" class="block text-sm mb-1">Phone Number</label>
+              <label for="phone" class="block text-sm text-black dark:text-white mb-1"
+                >Phone Number</label
+              >
               <input
                 type="tel"
                 id="phone"
                 v-model="formData.phone"
                 placeholder="Enter phone number"
-                class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                class="w-full placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
                 :class="errors.phone ? 'border-red-500' : 'border-gray-300'"
               />
               <p v-if="errors.phone" class="text-red-500 text-xs mt-1">
@@ -265,13 +310,13 @@
             <!-- City and Country -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               <div>
-                <label for="city" class="block text-sm mb-1">City</label>
+                <label for="city" class="block text-sm text-black dark:text-whitemb-1">City</label>
                 <input
                   type="text"
                   id="city"
                   v-model="formData.city"
                   placeholder="Enter a city"
-                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                  class="w-full p-2 border border-gray-300 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md shadow-sm text-sm box-border"
                   :class="errors.city ? 'border-red-500' : 'border-gray-300'"
                 />
                 <p v-if="errors.city" class="text-red-500 text-xs mt-1">
@@ -280,13 +325,15 @@
               </div>
 
               <div>
-                <label for="country" class="block text-sm mb-1">Country</label>
+                <label for="country" class="block text-sm text-black dark:text-white mb-1"
+                  >Country</label
+                >
                 <input
                   type="text"
                   id="country"
                   v-model="formData.country"
                   placeholder="Enter a country"
-                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                  class="w-full p-2 border border-gray-300 placeholder-gray-500 text-black dark:text-white dark:placeholder-gray-400 rounded-md shadow-sm text-sm box-border"
                   :class="errors.country ? 'border-red-500' : 'border-gray-300'"
                 />
                 <p v-if="errors.country" class="text-red-500 text-xs mt-1">
@@ -296,13 +343,18 @@
             </div>
 
             <!-- Trainer Only Section -->
-            <div v-if="formData.role === 'trainer'" class="border-t border-gray-300 pt-4 mt-4 animate-slide-down">
+            <div
+              v-if="formData.role === 'trainer'"
+              class="border-t border-gray-300 pt-4 mt-4 animate-slide-down"
+            >
               <div class="mb-4">
-                <label for="sport" class="block text-sm mb-1">Sport</label>
+                <label for="sport" class="block text-sm text-black dark:text-white mb-1"
+                  >Sport</label
+                >
                 <select
                   id="sport"
                   v-model="formData.sport"
-                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm cursor-pointer box-border"
+                  class="w-full p-2 border text-black dark:text-white border-gray-300 rounded-md shadow-sm text-sm cursor-pointer box-border bg-white dark:bg-[#1e1e1e]"
                   :class="errors.sport ? 'border-red-500' : 'border-gray-300'"
                 >
                   <option value="" disabled>Select your sport</option>
@@ -316,7 +368,9 @@
               </div>
 
               <div class="mb-4">
-                <label for="experience" class="block text-sm mb-1">Years of Experience</label>
+                <label for="experience" class="block text-sm text-black dark:text-white mb-1"
+                  >Years of Experience</label
+                >
                 <input
                   type="number"
                   id="experience"
@@ -324,7 +378,7 @@
                   min="0"
                   max="50"
                   placeholder="Enter years"
-                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                  class="w-full p-2 border border-gray-300 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md shadow-sm text-sm box-border"
                   :class="errors.experience ? 'border-red-500' : 'border-gray-300'"
                 />
                 <p v-if="errors.experience" class="text-red-500 text-xs mt-1">
@@ -333,10 +387,12 @@
               </div>
 
               <div class="mb-4">
-                <label class="block text-sm mb-1">Upload Certifications</label>
+                <label class="block text-sm text-black dark:text-white mb-1"
+                  >Upload Certifications</label
+                >
                 <label
                   for="certifications"
-                  class="inline-block px-3 py-2 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white text-sm rounded-md cursor-pointer transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5"
+                  class="inline-block px-3 py-2 bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white text-sm rounded-md cursor-pointer transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5"
                 >
                   Choose Files
                 </label>
@@ -352,9 +408,19 @@
                   {{ certificationsError }}
                 </div>
                 <div class="mt-2">
-                  <div v-for="(file, index) in certifications" :key="index" class="flex items-center justify-between p-2 bg-gray-100 rounded-md text-sm mb-1">
+                  <div
+                    v-for="(file, index) in certifications"
+                    :key="index"
+                    class="flex items-center justify-between p-2 bg-gray-100 rounded-md text-sm mb-1"
+                  >
                     <span class="flex-1 truncate">{{ file.name }}</span>
-                    <button type="button" @click="removeCertification(index)" class="text-red-500 text-lg ml-2 hover:text-red-700">×</button>
+                    <button
+                      type="button"
+                      @click="removeCertification(index)"
+                      class="text-red-500 text-lg ml-2 hover:text-red-700"
+                    >
+                      ×
+                    </button>
                   </div>
                 </div>
               </div>
@@ -365,7 +431,7 @@
                 type="button"
                 @click="prevStep"
                 :disabled="isLoading"
-                class="cursor-pointer flex-1 p-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="cursor-pointer dark:text-white dark:bg-[#555555] flex-1 p-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -373,7 +439,7 @@
                 type="button"
                 @click="nextStep"
                 :disabled="isLoading"
-                class="cursor-pointer flex-1 p-2 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="cursor-pointer flex-1 p-2 bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -389,15 +455,33 @@
                   class="w-32 h-32 rounded-full border-2 border-gray-300 mx-auto mb-4 overflow-hidden cursor-pointer transition-all duration-300 hover:border-green-500"
                   @click="$refs.profilePicture.click()"
                 >
-                  <div v-if="!profilePicturePreview" class="w-full h-full flex flex-col items-center justify-center bg-gray-100 text-gray-500">
+                  <div
+                    v-if="!profilePicturePreview"
+                    class="w-full h-full flex flex-col items-center justify-center bg-gray-100 text-gray-500"
+                  >
                     <span class="text-5xl">👤</span>
                   </div>
-                  <img v-else :src="profilePicturePreview" alt="Profile Preview" class="w-full h-full object-cover" />
+                  <img
+                    v-else
+                    :src="profilePicturePreview"
+                    alt="Profile Preview"
+                    class="w-full h-full object-cover"
+                  />
                 </div>
-                <label for="profile-picture" class="inline-block px-3 py-2 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white text-sm rounded-md cursor-pointer transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5">
+                <label
+                  for="profile-picture"
+                  class="inline-block px-3 py-2 bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white text-sm rounded-md cursor-pointer transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5"
+                >
                   Choose Profile Picture
                 </label>
-                <input type="file" id="profile-picture" ref="profilePicture" @change="handleProfilePictureUpload" accept="image/*" class="hidden" />
+                <input
+                  type="file"
+                  id="profile-picture"
+                  ref="profilePicture"
+                  @change="handleProfilePictureUpload"
+                  accept="image/*"
+                  class="hidden"
+                />
                 <p v-if="errors.profilePicture" class="text-red-500 text-xs mt-2">
                   {{ errors.profilePicture }}
                 </p>
@@ -406,23 +490,34 @@
 
             <!-- Username -->
             <div class="mb-4">
-              <label for="username" class="block text-sm mb-1">Username</label>
+              <label for="username" class="block text-sm text-black dark:text-white mb-1"
+                >Username</label
+              >
               <input
                 type="text"
                 id="username"
                 v-model="formData.username"
                 @input="checkUsernameAvailability"
                 placeholder="Choose a username"
-                class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                class="w-full p-2 border text-black dark:text-white border-gray-300 placeholder-gray-500 dark:placeholder-gray-400 rounded-md shadow-sm text-sm box-border"
                 :class="errors.username ? 'border-red-500' : 'border-gray-300'"
               />
               <p v-if="errors.username" class="text-red-500 text-xs mt-1">
                 {{ errors.username }}
               </p>
-              <div class="text-xs mt-1 min-h-4" :class="usernameStatus === 'available' ? 'text-green-500' : usernameStatus === 'taken' ? 'text-red-500' : ''">
+              <div
+                class="text-xs mt-1 min-h-4"
+                :class="
+                  usernameStatus === 'available'
+                    ? 'text-green-500'
+                    : usernameStatus === 'taken'
+                      ? 'text-red-500'
+                      : ''
+                "
+              >
                 {{ usernameMessage }}
               </div>
-              <p class="text-xs text-gray-600 mt-2">
+              <p class="text-xs text-gray-600 dark:text-gray-300 mt-2">
                 *Upload your profile picture and choose your username to complete your registration.
                 Once you're done, your account will be reviewed by the admin — you'll be notified as
                 soon as it's approved!
@@ -434,16 +529,16 @@
                 type="button"
                 @click="prevStep"
                 :disabled="isLoading"
-                class="cursor-pointer flex-1 p-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="cursor-pointer dark:text-white dark:bg-[#555555] flex-1 p-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
               <button
                 type="submit"
                 :disabled="isLoading"
-                class="cursor-pointer flex-1 p-2 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="cursor-pointer flex-1 p-2 bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {{ isLoading ? 'Creating...' : 'Create Account' }}
+                {{ isLoading ? "Creating..." : "Create Account" }}
               </button>
             </div>
           </div>
@@ -451,29 +546,53 @@
       </div>
 
       <!-- Success Popup (kept same) -->
-      <div v-if="showSuccess" class="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-50 animate-fade-in">
-        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl animate-scale-in border-4 border-blue-400">
-          <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div
+        v-if="showSuccess"
+        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 animate-fade-in"
+      >
+        <div
+          class="bg-white dark:bg-[#3B3B3B] rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl animate-scale-in border-4 border-blue-400"
+        >
+          <div
+            class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6"
+          >
             <svg class="w-14 h-14 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+              <path
+                fill-rule="evenodd"
+                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
 
           <h2 class="text-2xl font-bold text-green-600 mb-4">Thank you for signing up! 🎉</h2>
 
           <template v-if="formData.role === 'trainer'">
-            <p class="text-gray-700 mb-2 leading-relaxed">Your information is currently being reviewed by our admin team.</p>
-            <p class="text-gray-700 mb-2 leading-relaxed">If your details are valid, your account will be activated within 48 hours.</p>
-            <p class="text-gray-600 mb-6 leading-relaxed">You'll receive an email once your account is approved.</p>
+            <p class="text-gray-700 dark:text-white mb-2 leading-relaxed">
+              Your information is currently being reviewed by our admin team.
+            </p>
+            <p class="text-gray-700 dark:text-white mb-2 leading-relaxed">
+              If your details are valid, your account will be activated within 48 hours.
+            </p>
+            <p class="text-gray-600 dark:text-white mb-6 leading-relaxed">
+              You'll receive an email once your account is approved.
+            </p>
           </template>
 
           <template v-else>
-            <p class="text-gray-700 mb-2 leading-relaxed">Your account has been created successfully!</p>
-            <p class="text-gray-700 mb-2 leading-relaxed">You can now log in and start exploring your profile.</p>
-            <p class="text-gray-600 mb-6 leading-relaxed">Welcome to Trainly! 🚀</p>
+            <p class="text-gray-700 dark:text-white mb-2 leading-relaxed">
+              Your account has been created successfully!
+            </p>
+            <p class="text-gray-700 dark:text-white mb-2 leading-relaxed">
+              You can now log in and start exploring your profile.
+            </p>
+            <p class="text-gray-600 dark:text-white mb-6 leading-relaxed">Welcome to Trainly! 🚀</p>
           </template>
 
-          <button @click="closeSuccessModal" class="cursor-pointer w-full py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105">
+          <button
+            @click="closeSuccessModal"
+            class="cursor-pointer w-full py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
+          >
             Ok
           </button>
         </div>
@@ -482,14 +601,9 @@
   </div>
 </template>
 
-
 <script>
 import { auth, db, storage } from "../Firebase/firebaseConfig.js";
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-  deleteUser
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, deleteUser } from "firebase/auth";
 import {
   doc,
   collection,
@@ -497,9 +611,10 @@ import {
   where,
   getDocs,
   serverTimestamp,
-  runTransaction
+  runTransaction,
 } from "firebase/firestore";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import bgSignup from "../assets/images/signup.png";
 
 export default {
   name: "RegistrationForm",
@@ -533,6 +648,7 @@ export default {
       usernameStatus: "",
       usernameMessage: "",
       usernameTimeout: null,
+      bgSignup,
     };
   },
   computed: {
@@ -540,8 +656,8 @@ export default {
       // Set max date to 13 years ago (minimum age requirement)
       const date = new Date();
       date.setFullYear(date.getFullYear() - 13);
-      return date.toISOString().split('T')[0];
-    }
+      return date.toISOString().split("T")[0];
+    },
   },
   methods: {
     nextStep() {
@@ -798,7 +914,7 @@ export default {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           this.formData.email,
-          this.formData.password
+          this.formData.password,
         );
         authUser = userCredential.user;
 
@@ -807,10 +923,10 @@ export default {
         if (this.profilePicture) {
           const picRef = storageRef(
             storage,
-            `profilePictures/${authUser.uid}/${Date.now()}_${this.profilePicture.name}`
+            `profilePictures/${authUser.uid}/${Date.now()}_${this.profilePicture.name}`,
           );
           await uploadBytes(picRef, this.profilePicture, {
-            contentType: this.profilePicture.type
+            contentType: this.profilePicture.type,
           });
           profilePicUrl = await getDownloadURL(picRef);
         }
@@ -821,10 +937,10 @@ export default {
           for (const file of this.certifications) {
             const certRef = storageRef(
               storage,
-              `certifications/${authUser.uid}/${Date.now()}_${file.name}`
+              `certifications/${authUser.uid}/${Date.now()}_${file.name}`,
             );
             await uploadBytes(certRef, file, {
-              contentType: file.type
+              contentType: file.type,
             });
             const url = await getDownloadURL(certRef);
             certificationsUrls.push(url);
@@ -878,7 +994,6 @@ export default {
 
         // Show success modal
         this.showSuccess = true;
-
       } catch (error) {
         console.error("Sign up error:", error);
 
@@ -929,7 +1044,7 @@ export default {
     if (this.usernameTimeout) {
       clearTimeout(this.usernameTimeout);
     }
-  }
+  },
 };
 </script>
 
@@ -978,5 +1093,4 @@ export default {
     transform: translateY(0);
   }
 }
-
 </style>

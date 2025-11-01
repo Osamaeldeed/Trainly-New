@@ -1,13 +1,24 @@
 <template>
   <nav
-    class="flex justify-between items-center px-[50px] md:px-[70px] h-20 bg-white shadow-sm relative"
+    class="flex justify-between items-center px-[50px] md:px-[70px] h-20 bg-white dark:bg-[#3B3B3B] shadow-sm relative"
   >
     <!-- 🔹 اللوجو -->
     <img src="@/assets/images/Project LOGO.png" alt="Logo" class="w-[140px] h-auto" />
+    <div class="hidden md:flex items-center gap-3">
+      <button @click="toggleDarkMode" class="mx-auto block py-2 cursor-pointer">
+        {{ isDark ? "☀️" : "🌙" }}
+      </button>
 
+      <img
+        src="@/assets/images/language switch(1)(1).png"
+        alt="Language"
+        class="w-[40px] cursor-pointer transition-transform duration-500 hover:rotate-180"
+        @click="switchLang"
+      />
+    </div>
     <!-- 🔹 أيقونة المستخدم مع Dropdown -->
     <div class="hidden md:block relative">
-       <img
+      <img
         class="w-8 h-8 rounded-full cursor-pointer"
         :src="TraineeImage || 'https://media1.tenor.com/m/IfbOs_yh89AAAAAC/loading-buffering.gif'"
         alt="user photo"
@@ -28,7 +39,10 @@
           class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 cursor-pointer"
         >
           <button
-            @click="$router.push('/trainer/home'); showUserMenu = false"
+            @click="
+              $router.push('/trainer/home');
+              showUserMenu = false;
+            "
             class="w-full text-left px-4 py-2 hover:bg-gray-100 transition cursor-pointer"
           >
             My Dashboard
@@ -100,7 +114,11 @@
             <div v-if="showUserMenu" class="flex flex-col w-full bg-white rounded-lg shadow-md">
               <!-- ✅ Dashboard Button -->
               <button
-                @click="$router.push('/trainee/dashboard'); isOpen = false; showUserMenu = false"
+                @click="
+                  $router.push('/trainee/dashboard');
+                  isOpen = false;
+                  showUserMenu = false;
+                "
                 class="px-4 py-2 hover:bg-gray-100 w-full text-left rounded-t-lg"
               >
                 Dashboard
