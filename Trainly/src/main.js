@@ -50,6 +50,16 @@ import TrainerProfile from "./pages/TrainerProfile.vue";
 import TrainerViewHisProfile from "./pages/TrainerViewHisProfile.vue";
 import TrainerInbox from "./pages/trainer/TrainerInbox.vue";
 import TraineeInbox from "./pages/trainee/TraineeInbox.vue";
+// ----------------------------
+// ✅ صفحات الأدمن
+// ----------------------------
+import AdminDashboardLayout from "./pages/admin/AdminDashboardLayout.vue";
+import AdminOverview from "./pages/admin/AdminOverview.vue";
+import ManageTrainers from "./pages/admin/ManageTrainers.vue";
+import ManageTrainees from "./pages/admin/ManageTrainees.vue";
+import AdminReviews from "./pages/admin/AdminReviews.vue";
+import AdminBookings from "./pages/admin/AdminBookings.vue";
+import AdminPayments from "./pages/admin/AdminPayments.vue";
 
 // ----------------------------
 // ✅ إعداد المسارات (Routes)
@@ -100,6 +110,19 @@ const routes = [
       { path: "inbox", name: "traineeinbox", component: TraineeInbox},
     ],
   },
+  {
+    path: "/admin",
+    name: "admin",
+    component: AdminDashboardLayout,
+    children: [
+      { path: "overview", name: "adminoverview", component: AdminOverview },
+      { path: "managetrainers", name: "managetrainers", component: ManageTrainers },
+      { path: "managetrainees", name: "managetrainees", component: ManageTrainees },
+      { path: "reviews", name: "adminreviews", component: AdminReviews },
+      { path: "bookings", name: "adminbookings", component: AdminBookings },
+      { path: "payments", name: "adminpayments", component: AdminPayments },
+    ],
+  },
   { path: "/:pathMatch(.*)*", name: "error", component: ErrorPage },
 ];
 
@@ -114,7 +137,7 @@ const router = createRouter({
 import { auth, db } from "./Firebase/firebaseConfig.js";
 import { getDoc, doc } from "firebase/firestore";
 
-const publicPages = ["/", "/login", "/signup", "/aboutus", "/contactus", "/sports", "/success", "/failed" ];
+const publicPages = ["/", "/login", "/signup", "/aboutus", "/contactus", "/sports", "/success", "/failed"];
 const traineePages = [
   "/traineehome", "/searchresults", "/viewtrainerprofile",
   "/aboutustrainee", "/contactustrainee", "/sportstrainee",
@@ -125,6 +148,7 @@ const trainerPages = [
   "/trainer/clients", "/trainer/customerservice", "/trainer/settings",
   "/myprofile",
 ];
+
 
 // ✅ Helper function: انتظار تحميل حالة المستخدم من Firebase
 const getCurrentUser = () => {
@@ -146,9 +170,12 @@ router.beforeEach(async (to, from, next) => {
 
   // ✅ انتظر Firebase يخلص تحميل حالة المستخدم
   const user = await getCurrentUser();
+  // ✅ لو الصفحة صفحة أدمن، افتحها عادي بدون تسجيل دخول (للتجربة فقط)
+  if (to.path.startsWith("/admin")) return next();
 
   // لو مش عامل تسجيل دخول → يروح login
   if (!user) return next("/login");
+
 
   // لو عامل تسجيل دخول → نعرف هو trainee ولا trainer
   try {
@@ -163,6 +190,11 @@ router.beforeEach(async (to, from, next) => {
 
     // لو trainee حاول يدخل صفحة trainer
     if (role === "trainee" && trainerPages.includes(to.path)) {
+      return next("/error");
+    }
+
+    // لو admin حاول يدخل صفحة trainee أو trainer
+    if (role === "admin" && [...trainerPages, ...traineePages].includes(to.path)) {
       return next("/error");
     }
 
@@ -202,7 +234,7 @@ createApp(App)
   })
   .mount("#app");
 
-  // ✅ إخفاء loading بعد ما كل حاجة تتحمل (including CSS)
+// ✅ إخفاء loading بعد ما كل حاجة تتحمل (including CSS)
 router.isReady().then(() => {
   // نستنى شوية عشان ال CSS و ال components تخلص render
   requestAnimationFrame(() => {
