@@ -154,6 +154,12 @@ const publicPages = [
   "/sports",
   "/success",
   "/failed",
+  "/resetpassword",
+  "/resetpassword2",
+  "/forgetpassword1",
+  "/forgetpassword2",
+  "/:pathMatch(.*)*",
+
 ];
 const traineePages = [
   "/traineehome",
