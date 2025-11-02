@@ -175,16 +175,6 @@
 
           <li>
             <router-link
-              to="/traineeplans"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
-            >
-              <img src="@/assets/images/grommet-icons_plan.png" alt="" class="w-5 h-5" />
-              <span class="ms-3">My Plans</span>
-            </router-link>
-          </li>
-
-          <li>
-            <router-link
               to="/trainee/inbox"
               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
