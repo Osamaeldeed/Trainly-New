@@ -185,6 +185,7 @@
 
           <li>
             <router-link
+<<<<<<< HEAD
               to="/traineeplans"
               class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
@@ -195,6 +196,8 @@
 
           <li>
             <router-link
+=======
+>>>>>>> 488f3ec80c05229293422b32658b14a56e5c5e7f
               to="/trainee/inbox"
               class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >

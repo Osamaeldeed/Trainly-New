@@ -187,9 +187,8 @@
 
     <!-- SideBarAdmin -->
     <SideBarAdmin
-      v-if="['adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
+        v-if="['adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
     />
-
 
 
     <!-- عرض الصفحات -->

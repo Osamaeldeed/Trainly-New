@@ -27,14 +27,8 @@
         class="bg-white dark:bg-[#3b3b3b] dark:text-white p-6 rounded-bl-2xl rounded-br-2xl shadow-sm text-center border-t-6 border-[#0D8BF2]"
       >
         <div class="flex items-center gap-2">
-          <h3 class="text-[#0D8BF2] text-md font-medium mr-18">
-            Total Clients
-          </h3>
-          <img
-            src="@/assets/images/Group 142.png"
-            alt="email"
-            class="w-[40px] h-[40px]"
-          />
+          <h3 class="text-[#0D8BF2] text-md font-medium mr-18">Total Clients</h3>
+          <img src="@/assets/images/Group 142.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
         <p class="text-2xl dark:text-white font-medium text-gray-800 text-left">
           {{ totalClients }}
@@ -52,11 +46,7 @@
       >
         <div class="flex items-center gap-2">
           <h3 class="text-[#0D8BF2] text-md font-medium mr-18">Total Income</h3>
-          <img
-            src="@/assets/images/Group 147.png"
-            alt="email"
-            class="w-[40px] h-[40px]"
-          />
+          <img src="@/assets/images/Group 147.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
         <p class="text-2xl font-medium dark:text-white text-gray-800">{{ totalIncome }} EGP</p>
         <router-link
@@ -71,17 +61,28 @@
         class="bg-white dark:bg-[#3b3b3b] p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]"
       >
         <div class="flex items-center gap-2">
-          <h3 class="text-[#0D8BF2] text-md font-medium mr-13">
-            Average Rating
-          </h3>
-          <img
-            src="@/assets/images/Group 144.png"
-            alt="email"
-            class="w-[40px] h-[40px]"
-          />
+          <h3 class="text-[#0D8BF2] text-md font-medium mr-13">Average Rating</h3>
+          <img src="@/assets/images/Group 144.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
 
-        <p class="text-2xl font-medium dark:text-white text-gray-800">{{ averageRating }}</p>
+        <p class="text-2xl font-medium dark:text-white text-gray-800 flex items-center gap-1">
+          {{ averageRating }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="#FBBF24"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="none"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M11.48 3.499a.562.562 0 01.99 0l2.373 5.061a.563.563 0 00.424.307l5.59.812a.563.563 0 01.312.96l-4.04 3.944a.563.563 0 00-.162.498l.955 5.56a.563.563 0 01-.817.593L12 18.347l-5.008 2.634a.563.563 0 01-.817-.592l.955-5.561a.563.563 0 00-.162-.498L2.93 10.64a.563.563 0 01.312-.96l5.59-.812a.563.563 0 00.424-.307L11.48 3.5z"
+            />
+          </svg>
+        </p>
+
         <router-link
           to="/trainer/reviews"
           class="block text-[#2d8fff] text-sm mt-1 underline text-right cursor-pointer dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] hover:text-[#0D8BF2]"
@@ -95,11 +96,7 @@
       >
         <div class="flex items-center gap-2">
           <h3 class="text-[#0D8BF2] text-md font-medium mr-13">Total Plans</h3>
-          <img
-            src="@/assets/images/Group 143.png"
-            alt="email"
-            class="w-[40px] h-[40px]"
-          />
+          <img src="@/assets/images/Group 143.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
         <p class="text-2xl font-medium dark:text-white text-gray-800">{{ plans.length }}</p>
         <router-link
@@ -181,14 +178,7 @@
 <script>
 import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "@/Firebase/firebaseConfig";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc } from "firebase/firestore";
 
 export default {
   name: "TrainerDashboard",
@@ -237,10 +227,7 @@ export default {
 
         // 🔹 Calculate average rating
         if (this.reviews.length > 0) {
-          const total = this.reviews.reduce(
-            (sum, r) => sum + (r.rating || 0),
-            0
-          );
+          const total = this.reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
           this.averageRating = (total / this.reviews.length).toFixed(1);
         }
 
@@ -250,7 +237,7 @@ export default {
         const bookingsQuery = query(
           bookingsRef,
           where("trainerId", "==", uid),
-          where("status", "==", "paid")
+          where("status", "==", "paid"),
         );
         const bookingsSnap = await getDocs(bookingsQuery);
 
@@ -296,7 +283,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 /* smooth fade-in for sections */
 section {
@@ -315,7 +301,6 @@ section {
   }
 }
 </style>
-
 
 <style scoped>
 /* smooth fade-in for sections */

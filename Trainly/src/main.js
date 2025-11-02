@@ -50,6 +50,8 @@ import TrainerProfile from "./pages/TrainerProfile.vue";
 import TrainerViewHisProfile from "./pages/TrainerViewHisProfile.vue";
 import TrainerInbox from "./pages/trainer/TrainerInbox.vue";
 import TraineeInbox from "./pages/trainee/TraineeInbox.vue";
+import MyTrainers from "./pages/trainee/MyTrainers.vue";
+
 // ----------------------------
 // ✅ صفحات الأدمن
 // ----------------------------
@@ -106,6 +108,7 @@ const routes = [
       },
       { path: "settings", name: "trainersettings", component: TrainerSettings },
       { path: "inbox", name: "trainerinbox", component: TrainerInbox },
+
     ],
   },
   {
@@ -114,6 +117,7 @@ const routes = [
     component: TraineeDashboardLayout,
     children: [
       { path: "dashboard", name: "traineedashboard", component: TraineeDashboard },
+      {path:"mytrainers", name:"mytrainers", component:MyTrainers},
       { path: "settings", name: "traineesettings", component: TraineeSettings },
       {
         path: "customerservice",
@@ -121,6 +125,11 @@ const routes = [
         component: TraineeCustomerservice,
       },
       { path: "inbox", name: "traineeinbox", component: TraineeInbox },
+    {
+      path: 'trainer', // ⬅️ بدل trainer-profile
+      name: 'TrainerProfile',
+      component: TrainerProfile,
+    }
     ],
   },
   {
@@ -159,11 +168,12 @@ const publicPages = [
   "/sports",
   "/success",
   "/failed",
-  "/forgetpassword1",
-  "/forgetpassword2",
   "/resetpassword",
   "/resetpassword2",
-  "/error",
+  "/forgetpassword1",
+  "/forgetpassword2",
+  "/:pathMatch(.*)*",
+
 ];
 const traineePages = [
   "/traineehome",
