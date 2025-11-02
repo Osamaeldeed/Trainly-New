@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
-    <div class="max-w-7xl mx-auto">
+  <div class="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8 rounded-2xl">
+    <div class="max-w-7xl mx-auto ">
       <!-- Header -->
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Manage All Reviews</h1>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6 ">Manage All Reviews</h1>
 
       <!-- Search + Rating Filter -->
       <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
