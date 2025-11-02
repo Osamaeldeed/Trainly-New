@@ -23,7 +23,7 @@
     </div>
 
     <!-- Table for medium+ screens -->
-    <div class="hidden md:block bg-white rounded-b-xl shadow border-t-2 border-[#0D8BF2] overflow-x-auto">
+    <div class="hidden md:block bg-white rounded-xl shadow border-2 border-[#0D8BF2] overflow-x-auto">
       <div class="overflow-y-auto max-h-[600px]">
         <table class="min-w-full table-auto text-sm border-collapse">
           <thead class="bg-[#D9EEFF]">
@@ -149,61 +149,69 @@ const fetchTransactions = async () => {
   try {
     const txList = [];
 
+    // 🔹 Bookings
     const bookingsSnapshot = await getDocs(collection(db, "bookings"));
     bookingsSnapshot.docs.forEach((doc) => {
       const data = doc.data();
-      txList.push({
-        id: doc.id,
-        transactionId: data.stripeSessionId || data.paymentIntent,
-        userName: data.trainee?.firstName + " " + data.trainee?.lastName,
-        type: "Booking",
-        planTitle: data.plan?.title || "N/A",
-        amount: data.amount,
-        currency: data.currency,
-        paymentMethod: "Stripe",
-        status: data.status,
-        date: data.createdAt,
-      });
+      if (data.createdAt && (data.stripeSessionId || data.paymentIntent) && data.trainee) {
+        txList.push({
+          id: doc.id,
+          transactionId: data.stripeSessionId || data.paymentIntent,
+          userName: `${data.trainee.firstName} ${data.trainee.lastName}`,
+          type: "Booking",
+          planTitle: data.plan?.title || "N/A",
+          amount: data.amount,
+          currency: data.currency || "USD",
+          paymentMethod: "Stripe",
+          status: data.status,
+          date: data.createdAt,
+        });
+      }
     });
 
+    // 🔹 Subscribers
     const subscribersSnapshot = await getDocs(collection(db, "subscribers"));
     subscribersSnapshot.docs.forEach((doc) => {
       const data = doc.data();
-      txList.push({
-        id: doc.id,
-        transactionId: data.stripeSessionId || "N/A",
-        userName: data.trainerName || "N/A",
-        type: "Subscription",
-        planTitle: data.planType || "N/A",
-        amount: data.price,
-        currency: data.currency || "USD",
-        paymentMethod: data.stripeSessionId ? "Stripe" : "N/A",
-        status: data.subscriptionStatus || "active",
-        date: data.createdAt,
-      });
+      if (data.trainerName && data.price && data.createdAt) {
+        txList.push({
+          id: doc.id,
+          transactionId: data.stripeSessionId || "N/A",
+          userName: data.trainerName,
+          type: "Subscription",
+          planTitle: data.planType || "N/A",
+          amount: data.price,
+          currency: data.currency || "USD",
+          paymentMethod: data.stripeSessionId ? "Stripe" : "Manual",
+          status: data.subscriptionStatus || "active",
+          date: data.createdAt,
+        });
+      }
     });
 
+    // 🔹 Subscriptions
     const subscriptionsSnapshot = await getDocs(collection(db, "subscriptions"));
     subscriptionsSnapshot.docs.forEach((doc) => {
       const data = doc.data();
-      txList.push({
-        id: doc.id,
-        transactionId: data.stripeSubscriptionId || "N/A",
-        userName: data.trainerName || "N/A",
-        type: "Subscription",
-        planTitle: data.planType || "N/A",
-        amount: data.price,
-        currency: data.currency || "USD",
-        paymentMethod: data.stripeSessionId ? "Stripe" : "N/A",
-        status: data.status || "active",
-        date: data.createdAt,
-      });
+      if (data.trainerName && data.price && data.createdAt) {
+        txList.push({
+          id: doc.id,
+          transactionId: data.stripeSubscriptionId || "N/A",
+          userName: data.trainerName,
+          type: "Subscription",
+          planTitle: data.planType || "N/A",
+          amount: data.price,
+          currency: data.currency || "USD",
+          paymentMethod: data.stripeSubscriptionId ? "Stripe" : "Manual",
+          status: data.status || "active",
+          date: data.createdAt,
+        });
+      }
     });
 
+    // Sort by date descending
     transactions.value = txList.sort(
-      (a, b) =>
-        new Date(b.date.seconds * 1000 || b.date) -
-        new Date(a.date.seconds * 1000 || a.date)
+      (a, b) => b.date.seconds * 1000 - a.date.seconds * 1000
     );
   } catch (error) {
     console.error("Error fetching transactions:", error);
@@ -211,6 +219,7 @@ const fetchTransactions = async () => {
     loading.value = false;
   }
 };
+
 
 onMounted(fetchTransactions);
 

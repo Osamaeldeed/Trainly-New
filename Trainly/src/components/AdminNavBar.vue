@@ -142,7 +142,7 @@ import { useRouter } from "vue-router";
 import ConfirmLogoutModal from "../components/ConfirmLogoutModal.vue";
 
 export default {
-  name: "AdminNavBar",
+  name: "AdminNavbar",
   data() {
     return {
       isOpen: false,
