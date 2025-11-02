@@ -23,56 +23,69 @@
       </div>
     </div>
 
-    <!-- Table for Desktop -->
-    <div class="hidden md:block overflow-x-auto max-h-[500px] border-2 border-[#0D8BF2] rounded-xl">
-      <table class="w-full table-auto text-sm ">
-        <thead class="bg-[#D9EEFF]">
-          <tr class="border-b border-[#2563EB] text-black">
-            <th class="py-4 px-2 text-left">Trainer</th>
-            <th class="py-4 px-2 text-left">Trainee</th>
-            <th class="py-4 px-2 text-left">Sport</th>
-            <th class="py-4 px-2 text-left">Plan</th>
-            <th class="py-4 px-2 text-left">Date</th>
-            <th class="py-4 px-2 text-left">Amount</th>
-            <th class="py-4 px-2 text-left">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="filteredBookings.length === 0">
-            <td colspan="7" class="text-center py-4 text-gray-500">
-              No results found for "{{ searchQuery }}"
-            </td>
-          </tr>
+<!-- Table for Desktop -->
+<div class="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-blue-50">
+      <tr>
+        <th class="px-6 py-3 text-gray-600 font-medium text-left">Trainer</th>
+        <th class="px-6 py-3 text-gray-600 font-medium text-left">Trainee</th>
+        <th class="px-6 py-3 text-gray-600 font-medium text-left">Sport</th>
+        <th class="px-6 py-3 text-gray-600 font-medium text-left">Plan</th>
+        <th class="px-6 py-3 text-gray-600 font-medium text-left">Date</th>
+        <th class="px-6 py-3 text-gray-600 font-medium text-left">Amount</th>
+        <th class="px-6 py-3 text-gray-600 font-medium text-left">Status</th>
+      </tr>
+    </thead>
 
-          <tr v-for="booking in filteredBookings" :key="booking.id" class="border-b hover:bg-gray-50 transition">
-            <td class="py-3 px-2">{{ booking.trainer?.firstName }} {{ booking.trainer?.lastName }}</td>
-            <td class="py-3 px-2">{{ booking.trainee?.firstName }} {{ booking.trainee?.lastName }}</td>
-            <td class="py-3 px-2">{{ booking.trainer?.sport || "N/A" }}</td>
-            <td class="py-3 px-2">{{ booking.plan?.title || "N/A" }}</td>
-            <td class="py-3 px-2">{{ formatDate(booking.createdAt?.seconds) }}</td>
-            <td class="py-3 px-2">{{ booking.amount }} {{ booking.currency }}</td>
-            <td class="py-3 px-2">
-              <span
-                :class="{
-                  'text-green-600 bg-green-100 px-2 py-1 rounded-full text-xs font-medium': booking.status === 'paid',
-                  'text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full text-xs font-medium': booking.status === 'pending',
-                  'text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs font-medium': booking.status === 'cancelled'
-                }"
-              >
-                {{ booking.status }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <tbody class="divide-y divide-gray-200">
+      <tr v-if="filteredBookings.length === 0">
+        <td colspan="7" class="text-center py-4 text-gray-500">
+          No results found for "{{ searchQuery }}"
+        </td>
+      </tr>
+
+      <tr
+        v-for="booking in filteredBookings"
+        :key="booking.id"
+        class="hover:bg-gray-50 transition"
+      >
+        <td class="px-6 py-4 text-gray-900">
+          {{ booking.trainer?.firstName }} {{ booking.trainer?.lastName }}
+        </td>
+        <td class="px-6 py-4 text-gray-700">
+          {{ booking.trainee?.firstName }} {{ booking.trainee?.lastName }}
+        </td>
+        <td class="px-6 py-4 text-gray-700">{{ booking.trainer?.sport || "N/A" }}</td>
+        <td class="px-6 py-4 text-gray-700">{{ booking.plan?.title || "N/A" }}</td>
+        <td class="px-6 py-4 text-gray-700">{{ formatDate(booking.createdAt?.seconds) }}</td>
+        <td class="px-6 py-4 text-gray-700">{{ booking.amount }} {{ booking.currency }}</td>
+
+        <td class="px-6 py-4">
+          <span
+            class="px-3 py-1 text-xs font-medium rounded-full capitalize"
+            :class="{
+              'bg-green-100 text-green-700': booking.status === 'paid',
+              'bg-yellow-100 text-yellow-700': booking.status === 'pending',
+              'bg-red-100 text-red-700': booking.status === 'cancelled',
+            }"
+          >
+            {{ booking.status }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+      
 
    <!-- Mobile Cards -->
 <div class="md:hidden flex flex-col gap-4">
   <div
     v-for="booking in filteredBookings"
     :key="booking.id"
-    class="relative border-3 border-[#0D8BF2] p-4 rounded-lg shadow-sm bg-white "
+    class="relative border-4 border-blue-100 p-4 rounded-lg shadow-sm bg-white "
   >
     <!-- Status Badge Top Right -->
     <span
