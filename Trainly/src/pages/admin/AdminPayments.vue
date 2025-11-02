@@ -1,17 +1,18 @@
 <template>
   <div class="p-4">
-    <!-- Heading + Search Bar -->
+    <!-- Header + Search Bar -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-3">
       <div>
         <h1 class="text-2xl font-semibold mb-1">Payments & Subscriptions</h1>
         <p class="text-gray-500">Manage all transactions for trainees and trainers</p>
       </div>
 
+      <!-- Search -->
       <div class="relative w-full md:w-1/3">
         <img
           src="@/assets/images/ic_outline-search.png"
           alt="Search Icon"
-          class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+          class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
         />
         <input
           v-model="searchQuery"
@@ -22,104 +23,106 @@
       </div>
     </div>
 
-    <!-- Table for medium+ screens -->
-    <div class="hidden md:block bg-white rounded-xl shadow border-2 border-[#0D8BF2] overflow-x-auto">
+    <!-- ✅ Styled Table like “Sessions & Bookings” -->
+    <div class="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
       <div class="overflow-y-auto max-h-[600px]">
-        <table class="min-w-full table-auto text-sm border-collapse">
-          <thead class="bg-[#D9EEFF]">
-            <tr class="border-b border-[#0D8BF2] text-black">
-              <th class="py-3 px-2 text-left">Transaction ID</th>
-              <th class="py-3 px-2 text-left">User</th>
-              <th class="py-3 px-2 text-left">Type</th>
-              <th class="py-3 px-2 text-left">Plan</th>
-              <th class="py-3 px-2 text-left">Amount</th>
-              <th class="py-3 px-2 text-left">Payment Method</th>
-              <th class="py-3 px-2 text-left">Status</th>
-              <th class="py-3 px-2 text-left">Date</th>
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-blue-50 text-gray-600 font-medium">
+            <tr>
+              <th class="px-6 py-3 font-medium">Transaction ID</th>
+              <th class="px-6 py-3 font-medium">User</th>
+              <th class="px-6 py-3 font-medium">Type</th>
+              <th class="px-6 py-3 font-medium">Plan</th>
+              <th class="px-6 py-3 font-medium">Amount</th>
+              <th class="px-6 py-3 font-medium">Payment Method</th>
+              <th class="px-6 py-3 font-medium">Status</th>
+              <th class="px-6 py-3 font-medium">Date</th>
             </tr>
           </thead>
-          <tbody>
+
+          <tbody class="divide-y divide-gray-200">
             <tr v-if="filteredTransactions.length === 0">
-              <td colspan="9" class="text-center py-4 text-gray-500">
+              <td colspan="8" class="text-center py-4 text-gray-500">
                 No results found for "{{ searchQuery }}"
               </td>
             </tr>
 
             <tr
-              v-for="(tx) in filteredTransactions"
+              v-for="tx in filteredTransactions"
               :key="tx.id"
-              class="border-b hover:bg-gray-50 transition"
+              class="hover:bg-blue-50 transition duration-150 ease-in-out group"
             >
-              <td class="py-3 px-2 relative group cursor-pointer">
+              <!-- Hover to show full ID -->
+              <td class="px-6 py-4 relative cursor-pointer text-gray-700">
                 {{ tx.transactionId?.slice(0, 8) || "N/A" }}
                 <div
-                  class="absolute left-0 -top-8 md:-top-8 bg-gray-700 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10"
+                  class="absolute left-0 -top-8 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10"
                 >
                   {{ tx.transactionId }}
                 </div>
               </td>
-              <td class="py-3 px-2">{{ tx.userName }}</td>
-              <td class="py-3 px-2">{{ tx.type }}</td>
-              <td class="py-3 px-2">{{ tx.planTitle || "N/A" }}</td>
-              <td class="py-3 px-2">{{ tx.amount }} {{ tx.currency }}</td>
-              <td class="py-3 px-2">{{ tx.paymentMethod }}</td>
-              <td class="py-3 px-2">
+
+              <td class="px-6 py-4 text-gray-800">{{ tx.userName }}</td>
+              <td class="px-6 py-4 text-gray-800">{{ tx.type }}</td>
+              <td class="px-6 py-4 text-gray-800">{{ tx.planTitle || "N/A" }}</td>
+              <td class="px-6 py-4 text-gray-800">{{ tx.amount }} {{ tx.currency }}</td>
+              <td class="px-6 py-4 text-gray-800">{{ tx.paymentMethod }}</td>
+
+              <td class="px-6 py-4">
                 <span
+                  class="px-3 py-1 text-xs font-medium rounded-full capitalize"
                   :class="{
-                    'text-green-600 bg-green-100 px-2 py-1 rounded-full text-xs font-medium': tx.status === 'paid' || tx.status === 'active',
-                    'text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full text-xs font-medium': tx.status === 'pending',
-                    'text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs font-medium': tx.status === 'cancelled' || tx.status === 'inactive'
+                    'bg-green-100 text-green-700': tx.status === 'paid' || tx.status === 'active',
+                    'bg-yellow-100 text-yellow-700': tx.status === 'pending',
+                    'bg-red-100 text-red-700': tx.status === 'cancelled' || tx.status === 'inactive'
                   }"
                 >
                   {{ tx.status }}
                 </span>
               </td>
-              <td class="py-3 px-2">{{ formatDate(tx.date) }}</td>
+
+              <td class="px-6 py-4 text-gray-800">{{ formatDate(tx.date) }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Card layout for small screens -->
+    <!-- 📱 Mobile Cards (same style as bookings) -->
     <div class="md:hidden flex flex-col gap-4">
       <div
-        v-for="(tx) in filteredTransactions"
+        v-for="tx in filteredTransactions"
         :key="tx.id"
-        class="bg-white shadow rounded-lg p-4 border-4 border-[#0D8BF2] relative group"
+        class="relative border-4 border-blue-100 p-4 rounded-lg shadow-sm bg-white group"
       >
-        <div class="flex justify-between items-center mb-2">
-          <div class="font-bold"><span class="font-bold">User:</span> {{ tx.userName }}</div>
-          <span class="text-gray-400 text-xs cursor-pointer">
-            ID: {{ tx.transactionId?.slice(0, 8) || "N/A" }}
-            <div
-              class="absolute left-4 -top-6 bg-gray-700 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10"
-            >
-              {{ tx.transactionId }}
-            </div>
+        <span
+          class="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium"
+          :class="{
+            'text-green-600 bg-green-100': tx.status === 'paid' || tx.status === 'active',
+            'text-yellow-600 bg-yellow-100': tx.status === 'pending',
+            'text-red-600 bg-red-100': tx.status === 'cancelled' || tx.status === 'inactive'
+          }"
+        >
+          {{ tx.status }}
+        </span>
+
+        <p><span class="font-semibold">User:</span> {{ tx.userName }}</p>
+        <p><span class="font-semibold">Type:</span> {{ tx.type }}</p>
+        <p><span class="font-semibold">Plan:</span> {{ tx.planTitle || "N/A" }}</p>
+        <p><span class="font-semibold">Amount:</span> {{ tx.amount }} {{ tx.currency }}</p>
+        <p><span class="font-semibold">Payment Method:</span> {{ tx.paymentMethod }}</p>
+        <p><span class="font-semibold">Date:</span> {{ formatDate(tx.date) }}</p>
+
+        <p class="text-gray-400 text-xs mt-1 cursor-pointer relative">
+          ID: {{ tx.transactionId?.slice(0, 8) || "N/A" }}
+          <span
+            class="absolute left-0 -top-5 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            {{ tx.transactionId }}
           </span>
-        </div>
-        <div class="flex flex-col gap-1 text-sm">
-          <div><span class="font-medium">Type:</span> {{ tx.type }}</div>
-          <div><span class="font-medium">Plan:</span> {{ tx.planTitle || "N/A" }}</div>
-          <div><span class="font-medium">Amount:</span> {{ tx.amount }} {{ tx.currency }}</div>
-          <div><span class="font-medium">Payment Method:</span> {{ tx.paymentMethod }}</div>
-          <div>
-            <span class="font-medium">Status:</span>
-            <span
-              :class="{
-                'text-green-600 bg-green-100 px-2 py-1 rounded-full text-xs font-medium': tx.status === 'paid' || tx.status === 'active',
-                'text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full text-xs font-medium': tx.status === 'pending',
-                'text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs font-medium': tx.status === 'cancelled' || tx.status === 'inactive'
-              }"
-            >
-              {{ tx.status }}
-            </span>
-          </div>
-          <div><span class="font-medium">Date:</span> {{ formatDate(tx.date) }}</div>
-        </div>
+        </p>
       </div>
-      <!-- No results message -->
+
       <div v-if="filteredTransactions.length === 0" class="text-center py-4 text-gray-500">
         No results found for "{{ searchQuery }}"
       </div>
