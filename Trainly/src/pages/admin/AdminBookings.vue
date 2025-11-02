@@ -17,7 +17,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search by trainer, trainee, or plan..."
+          placeholder="Search by trainer, trainee, or sport..."
           class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
@@ -116,8 +116,8 @@ const filteredBookings = computed(() => {
   return bookings.value.filter((b) => {
     const trainerName = `${b.trainer?.firstName || ""} ${b.trainer?.lastName || ""}`.toLowerCase();
     const traineeName = `${b.trainee?.firstName || ""} ${b.trainee?.lastName || ""}`.toLowerCase();
-    const planTitle = b.plan?.title?.toLowerCase() || "";
-    return trainerName.includes(q) || traineeName.includes(q) || planTitle.includes(q);
+    const sport = b.trainer?.sport?.toLowerCase() || "";
+    return trainerName.includes(q) || traineeName.includes(q) || sport.includes(q);
   });
 });
 

@@ -1,8 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
+  <div class="min-h-screen bg-gray-50 border-1 border-gray-200 p-4 md:p-6 lg:p-8 rounded-2xl">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Manage All Reviews</h1>
+        <h1 class="text-2xl font-semibold mb-1">Manage All Reviews</h1>
+        <p class="text-gray-500 mb-6">View, filter, and remove trainee reviews for trainers</p>
 
       <!-- Search + Rating Filter -->
       <div class="bg-white rounded-lg shadow-sm p-4 mb-6">

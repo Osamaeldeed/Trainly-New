@@ -38,81 +38,8 @@
           <!-- Right Side: Notifications + Profile -->
           <div class="flex items-center">
             <div class="flex items-center ms-3 gap-[24px]">
-              <!-- 🔔 Notification Bell + Badge -->
-              <div class="relative">
-                <button
-                  @click="toggleNotifications"
-                  type="button"
-                  class="relative inline-flex items-center justify-center p-2 text-gray-600 rounded-lg hover:bg-gray-200 focus:outline-none transition duration-200"
-                  aria-label="Notifications"
-                >
-                  <img
-                    src="@/assets/images/mingcute_notification-line.png"
-                    alt="bell"
-                    class="w-7 h-7"
-                  />
-                  <span
-                    v-if="unreadCount > 0"
-                    class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full"
-                  >
-                    {{ unreadCount }}
-                  </span>
-                </button>
-
-                <!-- 📋 Notifications Dropdown -->
-                <div
-                  v-if="showNotifications"
-                  class="absolute right-0 mt-2 w-80 bg-white border shadow-xl rounded-xl overflow-hidden z-50"
-                >
-                  <!-- Header -->
-                  <div
-                    class="p-3 border-b font-semibold flex items-center justify-between bg-blue-50"
-                  >
-                    <div class="text-gray-700">Notifications</div>
-                    <button
-                      v-if="unreadCount > 0"
-                      @click.stop="markAllRead"
-                      class="text-sm text-blue-600 hover:underline"
-                    >
-                      Mark all read
-                    </button>
-                  </div>
-
-                  <!-- Notifications List -->
-                  <div class="max-h-64 overflow-y-auto">
-                    <div
-                      v-if="notifications.length === 0"
-                      class="p-4 text-center text-sm text-gray-400"
-                    >
-                      No notifications
-                    </div>
-
-                    <div
-                      v-for="note in notifications"
-                      :key="note.id"
-                      @click="handleNotificationClick(note)"
-                      class="cursor-pointer p-3 flex flex-col gap-1 border-b hover:bg-blue-50 transition-colors duration-200 rounded-xl mx-2 my-1"
-                      :class="{ 'bg-blue-100': !note.read }"
-                    >
-                      <div class="flex items-center justify-between">
-                        <div class="font-medium text-gray-800 text-sm">
-                          {{ note.title || "Notification" }}
-                        </div>
-                        <div class="text-xs text-gray-400">{{ formatTime(note.createdAt) }}</div>
-                      </div>
-                      <div class="text-sm text-gray-700 mt-1">{{ note.message || "" }}</div>
-                      <div class="self-end mt-1">
-                        <button
-                          @click.stop="toggleRead(note)"
-                          class="text-xs px-2 py-1 border rounded-full text-gray-600 hover:bg-gray-200 transition-colors"
-                        >
-                          {{ note.read ? "Read" : "Mark" }}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+             
+            
 
               <!-- 👤 Admin Profile -->
               <div>
