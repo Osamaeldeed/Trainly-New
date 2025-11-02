@@ -6,7 +6,7 @@
       'login','signup','trainerclient','trainer','trainerreviews','trainersettings','traineesettings','trainee',
       'trainerplans','trainercustomerservice','traineecustomerservice','trainerhome','traineehome','traineedashboard',
       'aboutustrainee','sportstrainee','contactustrainee','search','profile','trainerviewprofile' , 'trainerinbox' , 'traineeinbox',
-      'adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
+      'adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews' , 'mytrainers' , 'TrainerProfile'].includes($route.name)"
     />
 
     <!-- SideBar عام -->
@@ -14,7 +14,7 @@
       v-if="!['landing','payment','failed','error','resetpassword','resetpassword2','forgetpassword1','forgetpassword2',
       'login','signup','aboutus','sports','contactus','traineesettings','trainee','traineehome','traineecustomerservice',
       'traineedashboard','aboutustrainee','sportstrainee','contactustrainee','profile','search','trainerviewprofile',
-      'adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews' , 'traineeinbox' ].includes($route.name)"
+      'adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews' , 'traineeinbox' , 'mytrainers','mytrainers' , 'TrainerProfile' ].includes($route.name)"
     />
 
     <!-- SideBarTrainee -->
@@ -23,7 +23,7 @@
       'login','signup','aboutus','sports','contactus','trainerclient','trainerreviews','trainersettings','trainer',
       'trainerplans','trainerhome','trainercustomerservice','traineehome','aboutustrainee','sportstrainee',
       'contactustrainee','profile','search','trainerviewprofile' , 'trainerinbox','adminoverview','managetrainers','managetrainees',
-      'adminbookings','adminpayments','adminreviews'].includes($route.name)"
+      'adminbookings','adminpayments','adminreviews' ].includes($route.name)"
     />
 
     <!-- TraineeNavbar -->
@@ -31,7 +31,7 @@
       v-if="!['landing','payment','failed','error','resetpassword','resetpassword2','forgetpassword1','forgetpassword2',
       'login','signup','aboutus','sports','contactus','trainerclient','trainerreviews','trainersettings','trainer',
       'trainerplans','trainerhome','trainercustomerservice','traineecustomerservice','traineedashboard','traineesettings',
-      'trainerviewprofile' , 'trainerinbox' , 'traineeinbox','adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
+      'trainerviewprofile' , 'trainerinbox' , 'traineeinbox','adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews' , 'mytrainers' , 'TrainerProfile'].includes($route.name)"
     />
 
     <!-- TrainerNavbar -->
@@ -40,7 +40,7 @@
       'login','signup','aboutus','sports','contactus','trainerclient','trainerreviews','trainersettings','trainer',
       'trainerplans','trainerhome','trainercustomerservice','traineecustomerservice','traineedashboard','traineesettings',
       'trainerdashboard','traineehome','profile','search','aboutustrainee','sportstrainee','contactustrainee' , 'trainerinbox' , 'traineeinbox',
-      'adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
+      'adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews' , 'mytrainers' , 'TrainerProfile'].includes($route.name)"
     />
 
     <!-- SideBarAdmin -->
@@ -58,7 +58,7 @@
     <FooterComp
       v-if="!['payment','failed','error','login','signup','trainerclient','trainer','trainerreviews','trainersettings',
       'traineesettings','trainer','trainee','trainerplans','traineecustomerservice','trainercustomerservice','trainerhome',
-      'traineedashboard' , 'trainerinbox' , 'traineeinbox','adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
+      'traineedashboard' , 'trainerinbox' , 'traineeinbox','adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews' , 'mytrainers' , 'TrainerProfile'].includes($route.name)"
     />
   </div>
 </template>
