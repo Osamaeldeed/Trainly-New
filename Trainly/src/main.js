@@ -48,6 +48,18 @@ import ContactUstrainee from "./pages/NavpagesforTrainee/ContactUstrainee.vue";
 import SportStrainee from "./pages/NavpagesforTrainee/SportsPagetrainee.vue";
 import TrainerProfile from "./pages/TrainerProfile.vue";
 import TrainerViewHisProfile from "./pages/TrainerViewHisProfile.vue";
+import TrainerInbox from "./pages/trainer/TrainerInbox.vue";
+import TraineeInbox from "./pages/trainee/TraineeInbox.vue";
+// ----------------------------
+// ✅ صفحات الأدمن
+// ----------------------------
+import AdminDashboardLayout from "./pages/admin/AdminDashboardLayout.vue";
+import AdminOverview from "./pages/admin/AdminOverview.vue";
+import ManageTrainers from "./pages/admin/ManageTrainers.vue";
+import ManageTrainees from "./pages/admin/ManageTrainees.vue";
+import AdminReviews from "./pages/admin/AdminReviews.vue";
+import AdminBookings from "./pages/admin/AdminBookings.vue";
+import AdminPayments from "./pages/admin/AdminPayments.vue";
 
 // ----------------------------
 // ✅ إعداد المسارات (Routes)
@@ -87,7 +99,13 @@ const routes = [
         name: "trainercustomerservice",
         component: TrainerCustomerservice,
       },
+      {
+        path: "customerservice",
+        name: "trainercustomerservice",
+        component: TrainerCustomerservice,
+      },
       { path: "settings", name: "trainersettings", component: TrainerSettings },
+      { path: "inbox", name: "trainerinbox", component: TrainerInbox },
     ],
   },
   {
@@ -102,6 +120,20 @@ const routes = [
         name: "traineecustomerservice",
         component: TraineeCustomerservice,
       },
+      { path: "inbox", name: "traineeinbox", component: TraineeInbox },
+    ],
+  },
+  {
+    path: "/admin",
+    name: "admin",
+    component: AdminDashboardLayout,
+    children: [
+      { path: "overview", name: "adminoverview", component: AdminOverview },
+      { path: "managetrainers", name: "managetrainers", component: ManageTrainers },
+      { path: "managetrainees", name: "managetrainees", component: ManageTrainees },
+      { path: "reviews", name: "adminreviews", component: AdminReviews },
+      { path: "bookings", name: "adminbookings", component: AdminBookings },
+      { path: "payments", name: "adminpayments", component: AdminPayments },
     ],
   },
   { path: "/:pathMatch(.*)*", name: "error", component: ErrorPage },
@@ -153,6 +185,14 @@ const trainerPages = [
   "/trainer/settings",
   "/myprofile",
 ];
+const adminPages = [
+  "/admin/overview",
+  "/admin/managetrainers",
+  "/admin/managetrainees",
+  "/admin/reviews",
+  "/admin/bookings",
+  "/admin/payments",
+];
 
 // ✅ Helper function: انتظار تحميل حالة المستخدم من Firebase
 const getCurrentUser = () => {
@@ -178,11 +218,16 @@ router.beforeEach(async (to, from, next) => {
   // لو مش عامل تسجيل دخول → يروح login
   if (!user) return next("/login");
 
-  // لو عامل تسجيل دخول → نعرف هو trainee ولا trainer
   try {
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
     const role = snap.exists() ? snap.data().role : null;
+
+    // حماية صفحات الأدمن
+    if (adminPages.includes(to.path)) {
+      if (role === "admin") return next();
+      return next("/error");
+    }
 
     // لو trainer حاول يدخل صفحة trainee
     if (role === "trainer" && traineePages.includes(to.path)) {
@@ -191,6 +236,11 @@ router.beforeEach(async (to, from, next) => {
 
     // لو trainee حاول يدخل صفحة trainer
     if (role === "trainee" && trainerPages.includes(to.path)) {
+      return next("/error");
+    }
+
+    // لو admin حاول يدخل صفحات user
+    if (role === "admin" && [...trainerPages, ...traineePages].includes(to.path)) {
       return next("/error");
     }
 
@@ -243,6 +293,6 @@ router.isReady().then(() => {
         loader.classList.add("loaded");
         setTimeout(() => loader.remove(), 300);
       }
-    }, 50); // زود الوقت شوية عشان نتأكد إن كل حاجة ظهرت
+    }, 50);
   });
 });

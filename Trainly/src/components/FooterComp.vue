@@ -125,7 +125,7 @@
           <div class="relative">
             <button
               @click="toggleDropdown"
-              class="w-22 md:w-36 flex items-center justify-between gap-2 px-4 py-2 bg-white text-black rounded-full shadow-md hover:bg-gray-200 transition"
+              class="w-22 md:w-36 flex items-center cursor-pointer justify-between gap-2 px-4 py-2 bg-white text-black rounded-full shadow-md hover:bg-gray-200 transition"
             >
               <span class="font-medium">
                 {{ $i18n.locale === "en" ? "English" : "العربية" }}

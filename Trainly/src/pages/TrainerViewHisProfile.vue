@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 pb-10">
+  <div class="min-h-screen bg-gray-50 dark:bg-black pb-10">
     <!-- Loading State -->
     <div v-if="loading" class="max-w-7xl mx-auto px-4 py-10">
       <div class="text-center py-20">
@@ -27,7 +27,7 @@
         <p class="text-red-500 text-lg font-medium">{{ error }}</p>
         <button
           @click="retryLoad"
-          class="mt-4 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition cursor-pointer"
+          class="mt-4 px-6 py-2 bg-blue-500 dark:bg-[#3b3b3b] hover:bg-blue-600 text-white rounded-lg transition cursor-pointer"
         >
           Retry
         </button>
@@ -37,10 +37,10 @@
     <!-- Main Content -->
     <div v-else class="max-w-7xl mx-auto px-4 py-10">
       <!-- Info Banner -->
-      <div class="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+      <div class="mb-6 bg-blue-50 border dark:bg-[#3b3b3b] border-blue-200 rounded-xl p-4 flex items-start gap-3">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6 text-blue-500 shrink-0 mt-0.5"
+          class="h-6 w-6 dark:text-white text-blue-500 shrink-0 mt-0.5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -53,19 +53,19 @@
           />
         </svg>
         <div>
-          <h3 class="font-semibold text-blue-900 mb-1">Preview Mode</h3>
-          <p class="text-sm text-blue-700">
+          <h3 class="font-semibold dark:text-white text-blue-900 mb-1">Preview Mode</h3>
+          <p class="text-sm dark:text-white text-blue-700">
             This is how your clients see your profile. Want to make changes? Go to your
             <router-link
               to="/trainer/settings"
-              class="font-semibold text-blue-600 hover:text-blue-800 underline transition-colors cursor-pointer"
+              class="font-semibold dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] text-blue-600 hover:text-blue-800 underline transition-colors cursor-pointer"
             >
               Profile Settings
             </router-link>
             or Add new
             <router-link
               to="/trainer/plans"
-              class="font-semibold text-blue-600 hover:text-blue-800 underline transition-colors cursor-pointer"
+              class="font-semibold dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] text-blue-600 hover:text-blue-800 underline transition-colors cursor-pointer"
             >
               Plans
             </router-link>
@@ -76,7 +76,7 @@
       <!-- HERO -->
       <div class="relative mb-10">
         <div
-          class="bg-linear-to-r from-sky-50 to-blue-50 border border-sky-200 rounded-2xl p-6 pl-36 pr-6 flex items-center shadow-sm"
+          class="bg-linear-to-r from-sky-50 to-blue-50 border dark:from-[#3b3b3b] dark:to-[#1e1e1e]  border-sky-200 rounded-2xl p-6 pl-36 pr-6 flex items-center shadow-sm"
         >
           <!-- Profile Image -->
           <img
@@ -87,10 +87,10 @@
           />
 
           <div class="ml-28 w-full">
-            <h1 class="text-3xl font-bold text-gray-900 mb-1">
+            <h1 class="text-3xl font-bold dark:text-white text-gray-900 mb-1">
               {{ trainer.firstName }} {{ trainer.lastName }}
             </h1>
-            <p class="text-sky-600 font-medium text-lg mb-4">
+            <p class="text-sky-600 dark:text-sky-300 font-medium text-lg mb-4">
               {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
             </p>
 
@@ -98,7 +98,7 @@
               <div class="flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="w-4 h-4 text-gray-500"
+                  class="w-4 h-4 dark:text-white text-gray-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -110,8 +110,8 @@
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
-                <span class="font-semibold">Username:</span>
-                <span class="text-gray-600"
+                <span class=" dark:text-white font-semibold">Username:</span>
+                <span class="dark:text-gray-400 text-gray-600"
                   >@{{ trainer.username || trainer.userName || "N/A" }}</span
                 >
               </div>
@@ -119,7 +119,7 @@
               <div class="flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="w-4 h-4 text-gray-500"
+                  class="w-4 h-4 dark:text-white text-gray-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -131,13 +131,13 @@
                     d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
                   />
                 </svg>
-                <span class="font-semibold">Experience:</span>
-                <span class="text-gray-600">{{ getExperience() }} years</span>
+                <span class="dark:text-white font-semibold">Experience:</span>
+                <span class="text-gray-600 dark:text-gray-400">{{ getExperience() }} years</span>
               </div>
 
               <div class="flex items-center gap-2 text-gray-600">
                 <svg
-                  class="w-4 h-4 text-gray-500"
+                  class="w-4 h-4 dark:text-white text-gray-500"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -148,7 +148,7 @@
                   ></path>
                   <circle cx="12" cy="9" r="2.5"></circle>
                 </svg>
-                <span class="capitalize">{{ getLocation() }}</span>
+                <span class="capitalize dark:text-white">{{ getLocation() }}</span>
               </div>
             </div>
           </div>
@@ -158,8 +158,8 @@
       <!-- Plans -->
       <section class="mb-12">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Your Training Plans</h2>
-          <span class="text-sm text-gray-500">{{ plans.length }} plan(s) available</span>
+          <h2 class="text-2xl font-bold dark:text-white text-gray-900">Your Training Plans</h2>
+          <span class="text-sm dark:text-white text-gray-500">{{ plans.length }} plan(s) available</span>
         </div>
 
         <div v-if="plans.length === 0" class="text-center py-12 bg-white rounded-xl border">
@@ -177,16 +177,16 @@
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <p class="text-gray-500">No training plans created yet.</p>
+          <p class="text-gray-500 dark:text-white">No training plans created yet.</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-else class="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             v-for="plan in plans"
             :key="plan.id"
             class="bg-white rounded-xl overflow-hidden shadow-md border hover:shadow-xl transition-all"
           >
-            <div class="h-48 overflow-hidden bg-gray-100">
+            <div class="h-48 overflow-hidden dark:bg-[#3b3b3b]  bg-gray-100">
               <img
                 :src="plan.image || placeholder"
                 alt="plan image"
@@ -195,25 +195,25 @@
               />
             </div>
 
-            <div class="p-5">
-              <h3 class="font-bold text-lg mb-2 text-gray-900">
+            <div class="p-5 dark:bg-[#3b3b3b] ">
+              <h3 class="font-bold text-lg mb-2 dark:text-white text-gray-900">
                 {{ plan.title || "Untitled Plan" }}
               </h3>
-              <p class="text-sm text-gray-600 mb-4 line-clamp-2">
+              <p class="text-sm dark:text-gray-200 text-gray-600 mb-4 line-clamp-2">
                 {{ plan.description || "No description available." }}
               </p>
 
               <div class="space-y-2 text-sm">
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">Duration:</span>
-                  <span class="font-semibold text-gray-900">{{ plan.duration || "N/A" }}</span>
+                  <span class="text-gray-600 dark:text-gray-200">Duration:</span>
+                  <span class="font-semibold dark:text-gray-300 text-gray-900">{{ plan.duration || "N/A" }}</span>
                 </div>
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">Sessions:</span>
-                  <span class="font-semibold text-gray-900">{{ plan.sessions || "N/A" }}</span>
+                  <span class="text-gray-600 dark:text-gray-200">Sessions:</span>
+                  <span class="font-semibold dark:text-gray-300 text-gray-900">{{ plan.sessions || "N/A" }}</span>
                 </div>
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">Price:</span>
+                  <span class="text-gray-600 dark:text-gray-200">Price:</span>
                   <span class="font-bold text-green-600 text-lg">{{
                     formatPrice(plan.price)
                   }}</span>
@@ -227,8 +227,8 @@
       <!-- Certificates -->
       <section class="mb-12">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Your Certificates & Qualifications</h2>
-          <span class="text-sm text-gray-500"
+          <h2 class="text-2xl font-bold dark:text-white text-gray-900">Your Certificates & Qualifications</h2>
+          <span class="text-sm dark:text-white text-gray-500"
             >{{ (trainer.certifications || []).length }} certificate(s)</span
           >
         </div>
@@ -251,7 +251,7 @@
               d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <p class="text-gray-500">No certificates uploaded yet.</p>
+          <p class="dark:text-white text-gray-500">No certificates uploaded yet.</p>
         </div>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -264,7 +264,7 @@
             <img
               :src="cert"
               alt="certificate"
-              class="w-full h-56 object-contain bg-gray-50 p-2"
+              class="w-full h-56 dark:bg-[#3b3b3b]  object-contain bg-gray-50 p-2"
               @error="handleImageError"
             />
           </div>
@@ -275,7 +275,7 @@
       <section class="mb-20">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">Reviews & Ratings</h2>
+            <h2 class="text-2xl font-bold dark:text-white text-gray-900 mb-2">Reviews & Ratings</h2>
             <div class="flex items-center gap-3">
               <div class="flex items-center gap-2">
                 <span class="text-3xl font-bold text-sky-600">{{ avgRatingDisplay }}</span>
@@ -285,7 +285,7 @@
                   }}</span>
                 </div>
               </div>
-              <span class="text-gray-500 text-sm"
+              <span class="dark:text-white text-gray-500 text-sm"
                 >({{ reviewsCount }} review{{ reviewsCount !== 1 ? "s" : "" }})</span
               >
             </div>
@@ -314,7 +314,7 @@
           <div
             v-for="rev in reviews"
             :key="rev.id"
-            class="bg-white p-6 rounded-xl shadow-md border hover:shadow-lg transition-shadow"
+            class="bg-white p-6 rounded-xl dark:bg-[#3b3b3b]  shadow-md border hover:shadow-lg transition-shadow"
           >
             <div class="flex items-start gap-4">
               <img
@@ -327,7 +327,7 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
                   <div>
-                    <div class="font-semibold text-gray-900">
+                    <div class="font-semibold dark:text-white text-gray-900">
                       {{ rev.traineeName || rev.reviewerName || "Anonymous" }}
                     </div>
                     <div class="flex items-center gap-2 mt-1">
@@ -336,13 +336,13 @@
                           {{ n <= Math.round(rev.rating || 0) ? "★" : "☆" }}
                         </span>
                       </div>
-                      <span class="text-sm text-gray-500">({{ rev.rating || 0 }}/5)</span>
+                      <span class="text-sm dark:text-gray-200 text-gray-500">({{ rev.rating || 0 }}/5)</span>
                     </div>
                   </div>
-                  <div class="text-xs text-gray-400">{{ formatDate(rev.createdAt) }}</div>
+                  <div class="text-xs dark:text-white text-gray-400">{{ formatDate(rev.createdAt) }}</div>
                 </div>
 
-                <p class="text-gray-700 leading-relaxed mb-3">{{ rev.comment }}</p>
+                <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">{{ rev.comment }}</p>
 
                 <div v-if="rev.status || rev.sessionType" class="flex flex-wrap gap-3 text-xs">
                   <span

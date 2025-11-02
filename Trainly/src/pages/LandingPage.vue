@@ -228,7 +228,7 @@
     <section
       class="bg-[#8CDAFE99] w-full h-[570px] md:h-[772px] lg:h-[795px] md:pt-[20px] lg:pt-[100px]"
     >
-      <h2 class="text-[30px] lg:text-[45px] font-[600] text-center mb-17 pt-10 md:pt-0">
+      <h2 class="text-[30px] dark:text-white lg:text-[45px] font-[600] text-center mb-17 pt-10 md:pt-0">
         {{ $t("howItWorks") }}
       </h2>
 
@@ -240,8 +240,8 @@
         <!-- Step 1 -->
         <div class="relative flex items-center md:mb-17 w-full px-[5%] md:px-[10%]">
           <div class="w-1/2 text-end md:pe-12 pe-7">
-            <h3 class="text-md md:text-xl font-semibold">{{ $t("step1Title") }}</h3>
-            <p class="text-gray-700 leading-[150%] text-[13px] md:text-[17px]">
+            <h3 class="text-md md:text-xl dark:text-white font-semibold">{{ $t("step1Title") }}</h3>
+            <p class="text-gray-700 dark:text-gray-200  leading-[150%] text-[13px] md:text-[17px]">
               {{ $t("step1Desc") }} <br />
               {{ $t("step1Desc2") }}
             </p>
@@ -259,8 +259,8 @@
             <img src="@/assets/images/search.png" alt="icon" />
           </div>
           <div class="w-1/2 ps-7 md:ps-12">
-            <h3 class="text-md md:text-xl font-semibold">{{ $t("step2Title") }}</h3>
-            <p class="text-gray-700 leading-[150%] text-[13px] md:text-[17px]">
+            <h3 class="text-md md:text-xl dark:text-white font-semibold">{{ $t("step2Title") }}</h3>
+            <p class="text-gray-700 dark:text-gray-200 leading-[150%] text-[13px] md:text-[17px]">
               {{ $t("step2Desc") }} <br />
               {{ $t("step2Desc2") }}
             </p>
@@ -270,8 +270,8 @@
         <!-- Step 3 -->
         <div class="relative flex items-center md:mb-17 mb-2 w-full px-[5%] md:px-[10%]">
           <div class="w-1/2 text-end md:pe-12 pe-7">
-            <h3 class="text-md md:text-xl font-semibold">{{ $t("step3Title") }}</h3>
-            <p class="text-gray-700 leading-[150%] text-[13px] md:text-[17px]">
+            <h3 class="text-md md:text-xl dark:text-white font-semibold">{{ $t("step3Title") }}</h3>
+            <p class="text-gray-700 dark:text-gray-200 leading-[150%] text-[13px] md:text-[17px]">
               {{ $t("step3Desc") }}
               <br />
               {{ $t("step3Desc2") }}
@@ -290,8 +290,8 @@
             <img src="@/assets/images/cup.png" alt="icon" />
           </div>
           <div class="w-1/2 ps-8 md:ps-12">
-            <h3 class="text-md md:text-xl font-semibold">{{ $t("step4Title") }}</h3>
-            <p class="text-gray-7075 leading-[150%] text-[13px] md:text-[17px]">
+            <h3 class="text-md md:text-xl dark:text-white font-semibold">{{ $t("step4Title") }}</h3>
+            <p class="text-gray-700 dark:text-gray-200 leading-[150%] text-[13px] md:text-[17px]">
               {{ $t("step4Desc") }}
               <br />
               {{ $t("step4Desc2") }}

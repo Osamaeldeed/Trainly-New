@@ -167,7 +167,6 @@ export default {
 
       try {
         await signOut(auth).catch(() => {});
-
         const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
         console.log("✅ Logged in with Email:", user);
@@ -309,7 +308,6 @@ export default {
     const togglePasswordVisibility = () => {
       passwordVisible.value = !passwordVisible.value;
     };
-
     const passwordFieldType = computed(() => (passwordVisible.value ? "text" : "password"));
 
     return {

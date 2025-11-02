@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- NavBar عام -->
     <NavBar
       v-if="
         ![
@@ -17,6 +18,7 @@
           'trainerreviews',
           'trainersettings',
           'traineesettings',
+          'traineeinbox',
           'trainee',
           'trainerplans',
           'trainercustomerservice',
@@ -30,10 +32,13 @@
           'search',
           'profile',
           'trainerviewprofile',
+                    'trainerinbox',
+
         ].includes($route.name)
       "
     />
 
+    <!-- SideBar عام -->
     <SideBar
       v-if="
         ![
@@ -55,6 +60,8 @@
           'traineehome',
           'traineecustomerservice',
           'traineedashboard',
+                    'traineeinbox',
+
           'aboutustrainee',
           'sportstrainee',
           'contactustrainee',
@@ -65,6 +72,7 @@
       "
     />
 
+    <!-- SideBarTrainee -->
     <SideBarTrainee
       v-if="
         ![
@@ -92,6 +100,8 @@
           'aboutustrainee',
           'sportstrainee',
           'contactustrainee',
+                    'trainerinbox',
+
           'profile',
           'search',
           'trainerviewprofile',
@@ -99,6 +109,7 @@
       "
     />
 
+    <!-- TraineeNavbar -->
     <TraineeNavbar
       v-if="
         ![
@@ -125,11 +136,15 @@
           'traineecustomerservice',
           'traineedashboard',
           'traineesettings',
+                    'traineeinbox',
+                    'trainerinbox',
+
           'trainerviewprofile',
         ].includes($route.name)
       "
     />
 
+    <!-- TrainerNavbar -->
     <TrainerNavbar
       v-if="
         ![
@@ -158,6 +173,9 @@
           'traineesettings',
           'trainerdashboard',
           'traineehome',
+'traineeinbox',
+                    'trainerinbox',
+
           'profile',
           'search',
           'aboutustrainee',
@@ -166,8 +184,19 @@
         ].includes($route.name)
       "
     />
+
+    <!-- SideBarAdmin -->
+    <SideBarAdmin
+      v-if="['adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
+    />
+
+
+
+    <!-- عرض الصفحات -->
     <router-view />
 
+
+    <!-- Footer -->
     <FooterComp
       v-if="
         ![
@@ -187,6 +216,7 @@
           'traineecustomerservice',
           'trainercustomerservice',
           'trainerhome',
+          'trainerinbox'
           ,
           'traineedashboard',
         ].includes($route.name)
@@ -195,6 +225,7 @@
   </div>
 </template>
 
+
 <script>
 import FooterComp from "./components/FooterComp.vue";
 import NavBar from "./components/NavBar.vue";
@@ -202,6 +233,7 @@ import SideBar from "./components/SideBar.vue";
 import SideBarTrainee from "./components/SideBarTrainee.vue";
 import TraineeNavbar from "./components/TraineeNavbar.vue";
 import TrainerNavbar from "./components/TrainerNavbar.vue";
+import SideBarAdmin from "./components/SideBarAdmin.vue";
 
 export default {
   name: "App",
@@ -212,6 +244,8 @@ export default {
     SideBarTrainee,
     TraineeNavbar,
     TrainerNavbar,
+    SideBarAdmin,
+
   },
 };
 </script>
