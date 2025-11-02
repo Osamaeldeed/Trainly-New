@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="top-0 z-50 w-full">
+    <nav class="top-0 z-50 w-full dark:bg-[#3B3B3B] bg-white">
       <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
           <!-- ✅ زرار السايد بار -->
@@ -36,16 +36,18 @@
               >
                 {{ isDark ? "☀️" : "🌙" }}
               </button>
-
-              <img
-                src="@/assets/images/language switch(1)(1).png"
-                alt="Language"
-                class="w-[40px] cursor-pointer transition-transform duration-500 hover:rotate-180"
-                @click="switchLang"
-              />
             </div>
+               <!-- 🔹 الأوفرلاي الأبيض -->
+            <div
+              v-if="isSidebarOpen"
+              class="fixed inset-0 filter backdrop-blur-sm bg-opacity-80 z-30 lg:hidden transition-all duration-300"
+              @click="toggleSidebar"
+            ></div>
 
-            <!-- 🔔 النوتيفيكيشن -->
+              <!-- باقي الناف -->
+            <div class="flex items-center">
+              <div class="flex items-center ms-3 gap-[24px]">
+               <!-- 🔔 النوتيفيكيشن -->
             <div class="relative">
               <button
                 @click="toggleNotifications"
@@ -124,6 +126,9 @@
           </div>
         </div>
       </div>
+        </div>
+        </div>
+
     </nav>
 
     <!-- ✅ Overlay أبيض شفاف -->
@@ -182,22 +187,8 @@
               <span class="ms-3">My trainers</span>
             </router-link>
           </li>
-
           <li>
             <router-link
-<<<<<<< HEAD
-              to="/traineeplans"
-              class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
-            >
-              <img src="@/assets/images/grommet-icons_plan.png" alt="" class="w-5 h-5" />
-              <span class="ms-3">My Plans</span>
-            </router-link>
-          </li>
-
-          <li>
-            <router-link
-=======
->>>>>>> 488f3ec80c05229293422b32658b14a56e5c5e7f
               to="/trainee/inbox"
               class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >

@@ -15,14 +15,6 @@
       >
         {{ isDark ? "☀️" : "🌙" }}
       </button>
-
-      <!-- 🌍 زرار تغيير اللغة -->
-      <img
-        src="@/assets/images/language switch(1)(1).png"
-        alt="Language"
-        class="w-[35px] cursor-pointer transition-transform duration-300 hover:rotate-180"
-        @click="switchLang"
-      />
     </div>
 
     <!-- 🔹 أيقونة المستخدم مع Dropdown -->

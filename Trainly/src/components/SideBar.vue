@@ -37,13 +37,6 @@
               >
                 {{ isDark ? "☀️" : "🌙" }}
               </button>
-
-              <img
-                src="@/assets/images/language switch(1)(1).png"
-                alt="Language"
-                class="w-[40px] cursor-pointer transition-transform duration-500 hover:rotate-180"
-                @click="switchLang"
-              />
             </div>
 
             <!-- 🔹 الأوفرلاي الأبيض -->

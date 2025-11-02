@@ -32,8 +32,8 @@
           'search',
           'profile',
           'trainerviewprofile',
-                    'trainerinbox',
-
+          'trainerinbox',
+          'mytrainers',
         ].includes($route.name)
       "
     />
@@ -60,7 +60,8 @@
           'traineehome',
           'traineecustomerservice',
           'traineedashboard',
-                    'traineeinbox',
+          'traineeinbox',
+          'mytrainers',
 
           'aboutustrainee',
           'sportstrainee',
@@ -100,7 +101,7 @@
           'aboutustrainee',
           'sportstrainee',
           'contactustrainee',
-                    'trainerinbox',
+          'trainerinbox',
 
           'profile',
           'search',
@@ -136,8 +137,9 @@
           'traineecustomerservice',
           'traineedashboard',
           'traineesettings',
-                    'traineeinbox',
-                    'trainerinbox',
+          'traineeinbox',
+          'trainerinbox',
+          'mytrainers',
 
           'trainerviewprofile',
         ].includes($route.name)
@@ -173,8 +175,9 @@
           'traineesettings',
           'trainerdashboard',
           'traineehome',
-'traineeinbox',
-                    'trainerinbox',
+          'traineeinbox',
+          'trainerinbox',
+          'mytrainers',
 
           'profile',
           'search',
@@ -187,13 +190,20 @@
 
     <!-- SideBarAdmin -->
     <SideBarAdmin
-        v-if="['adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
+      v-if="
+        [
+          'adminoverview',
+          'managetrainers',
+          'managetrainees',
+          'adminbookings',
+          'adminpayments',
+          'adminreviews',
+        ].includes($route.name)
+      "
     />
-
 
     <!-- عرض الصفحات -->
     <router-view />
-
 
     <!-- Footer -->
     <FooterComp
@@ -215,15 +225,13 @@
           'traineecustomerservice',
           'trainercustomerservice',
           'trainerhome',
-          'trainerinbox'
-          ,
+          'trainerinbox',
           'traineedashboard',
         ].includes($route.name)
       "
     />
   </div>
 </template>
-
 
 <script>
 import FooterComp from "./components/FooterComp.vue";
@@ -244,7 +252,6 @@ export default {
     TraineeNavbar,
     TrainerNavbar,
     SideBarAdmin,
-
   },
 };
 </script>
