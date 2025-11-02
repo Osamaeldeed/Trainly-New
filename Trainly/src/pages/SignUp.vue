@@ -1,9 +1,11 @@
 <template>
-  <div class="min-h-screen relative flex items-center justify-center lg:justify-start px-4 sm:px-6 lg:px-20">
+  <div
+    class="min-h-screen relative flex items-center justify-center lg:justify-start px-4 sm:px-6 lg:px-20"
+  >
     <!-- Background image layer (blur on small screens, normal on desktop) -->
     <div
       class="absolute inset-0 bg-cover bg-center transition-all duration-300"
-      style="background-image: url('/src/assets/images/signup.png')"
+      style="background-image: url(&quot;/src/assets/images/signup.png&quot;)"
       aria-hidden="true"
     ></div>
 
@@ -12,7 +14,9 @@
 
     <!-- Card (form) -->
     <!-- centered on small/tablet via mx-auto; on desktop it's left-aligned because parent uses lg:justify-start and lg:px-20 -->
-    <div class="relative z-10 w-full max-w-md bg-white bg-opacity-95 rounded-lg p-3 mx-auto lg:mx-0">
+    <div
+      class="relative z-10 w-full max-w-md bg-white bg-opacity-95 rounded-lg p-3 mx-auto lg:mx-0"
+    >
       <div class="bg-white rounded-lg p-4">
         <!-- Brand -->
         <div class="mb-4">
@@ -38,14 +42,20 @@
           <div v-for="step in 3" :key="step" class="flex items-center">
             <div
               class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300"
-              :class="currentStep >= step ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white scale-110' : 'bg-gray-300 text-gray-500'"
+              :class="
+                currentStep >= step
+                  ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white scale-110'
+                  : 'bg-gray-300 text-gray-500'
+              "
             >
               {{ step }}
             </div>
             <div
               v-if="step < 3"
               class="w-10 h-0.5 mx-1 transition-all duration-300"
-              :class="currentStep > step ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF]' : 'bg-gray-300'"
+              :class="
+                currentStep > step ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF]' : 'bg-gray-300'
+              "
             ></div>
           </div>
         </div>
@@ -69,11 +79,19 @@
                   <label
                     for="trainee"
                     class="flex flex-col items-center cursor-pointer text-center transition-all duration-300 rounded-md"
-                    :class="formData.role === 'trainee' ? 'border-green-500 bg-green-50 transform -translate-y-1 scale-105 shadow-md' : ''"
+                    :class="
+                      formData.role === 'trainee'
+                        ? 'border-green-500 bg-green-50 transform -translate-y-1 scale-105 shadow-md'
+                        : ''
+                    "
                   >
                     <span
                       class="w-full p-3 text-lg rounded-md transition-all duration-300"
-                      :class="formData.role === 'trainee' ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white' : 'bg-[#E9F5EE] text-black'"
+                      :class="
+                        formData.role === 'trainee'
+                          ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white'
+                          : 'bg-[#E9F5EE] text-black'
+                      "
                     >
                       I'm a Trainee
                     </span>
@@ -92,11 +110,19 @@
                   <label
                     for="trainer"
                     class="flex flex-col items-center cursor-pointer text-center transition-all duration-300 rounded-md"
-                    :class="formData.role === 'trainer' ? 'border-green-500 bg-green-50 transform -translate-y-1 scale-105 shadow-md' : ''"
+                    :class="
+                      formData.role === 'trainer'
+                        ? 'border-green-500 bg-green-50 transform -translate-y-1 scale-105 shadow-md'
+                        : ''
+                    "
                   >
                     <span
                       class="w-full p-3 text-lg rounded-md transition-all duration-300"
-                      :class="formData.role === 'trainer' ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white' : 'bg-[#E9F5EE] text-black'"
+                      :class="
+                        formData.role === 'trainer'
+                          ? 'bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white'
+                          : 'bg-[#E9F5EE] text-black'
+                      "
                     >
                       I'm a Trainer
                     </span>
@@ -296,7 +322,10 @@
             </div>
 
             <!-- Trainer Only Section -->
-            <div v-if="formData.role === 'trainer'" class="border-t border-gray-300 pt-4 mt-4 animate-slide-down">
+            <div
+              v-if="formData.role === 'trainer'"
+              class="border-t border-gray-300 pt-4 mt-4 animate-slide-down"
+            >
               <div class="mb-4">
                 <label for="sport" class="block text-sm mb-1">Sport</label>
                 <select
@@ -352,9 +381,19 @@
                   {{ certificationsError }}
                 </div>
                 <div class="mt-2">
-                  <div v-for="(file, index) in certifications" :key="index" class="flex items-center justify-between p-2 bg-gray-100 rounded-md text-sm mb-1">
+                  <div
+                    v-for="(file, index) in certifications"
+                    :key="index"
+                    class="flex items-center justify-between p-2 bg-gray-100 rounded-md text-sm mb-1"
+                  >
                     <span class="flex-1 truncate">{{ file.name }}</span>
-                    <button type="button" @click="removeCertification(index)" class="text-red-500 text-lg ml-2 hover:text-red-700">×</button>
+                    <button
+                      type="button"
+                      @click="removeCertification(index)"
+                      class="text-red-500 text-lg ml-2 hover:text-red-700"
+                    >
+                      ×
+                    </button>
                   </div>
                 </div>
               </div>
@@ -389,15 +428,33 @@
                   class="w-32 h-32 rounded-full border-2 border-gray-300 mx-auto mb-4 overflow-hidden cursor-pointer transition-all duration-300 hover:border-green-500"
                   @click="$refs.profilePicture.click()"
                 >
-                  <div v-if="!profilePicturePreview" class="w-full h-full flex flex-col items-center justify-center bg-gray-100 text-gray-500">
+                  <div
+                    v-if="!profilePicturePreview"
+                    class="w-full h-full flex flex-col items-center justify-center bg-gray-100 text-gray-500"
+                  >
                     <span class="text-5xl">👤</span>
                   </div>
-                  <img v-else :src="profilePicturePreview" alt="Profile Preview" class="w-full h-full object-cover" />
+                  <img
+                    v-else
+                    :src="profilePicturePreview"
+                    alt="Profile Preview"
+                    class="w-full h-full object-cover"
+                  />
                 </div>
-                <label for="profile-picture" class="inline-block px-3 py-2 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white text-sm rounded-md cursor-pointer transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5">
+                <label
+                  for="profile-picture"
+                  class="inline-block px-3 py-2 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white text-sm rounded-md cursor-pointer transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5"
+                >
                   Choose Profile Picture
                 </label>
-                <input type="file" id="profile-picture" ref="profilePicture" @change="handleProfilePictureUpload" accept="image/*" class="hidden" />
+                <input
+                  type="file"
+                  id="profile-picture"
+                  ref="profilePicture"
+                  @change="handleProfilePictureUpload"
+                  accept="image/*"
+                  class="hidden"
+                />
                 <p v-if="errors.profilePicture" class="text-red-500 text-xs mt-2">
                   {{ errors.profilePicture }}
                 </p>
@@ -419,7 +476,16 @@
               <p v-if="errors.username" class="text-red-500 text-xs mt-1">
                 {{ errors.username }}
               </p>
-              <div class="text-xs mt-1 min-h-4" :class="usernameStatus === 'available' ? 'text-green-500' : usernameStatus === 'taken' ? 'text-red-500' : ''">
+              <div
+                class="text-xs mt-1 min-h-4"
+                :class="
+                  usernameStatus === 'available'
+                    ? 'text-green-500'
+                    : usernameStatus === 'taken'
+                      ? 'text-red-500'
+                      : ''
+                "
+              >
                 {{ usernameMessage }}
               </div>
               <p class="text-xs text-gray-600 mt-2">
@@ -443,7 +509,7 @@
                 :disabled="isLoading"
                 class="cursor-pointer flex-1 p-2 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white rounded-md transition-all duration-300 hover:opacity-90 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {{ isLoading ? 'Creating...' : 'Create Account' }}
+                {{ isLoading ? "Creating..." : "Create Account" }}
               </button>
             </div>
           </div>
@@ -451,29 +517,53 @@
       </div>
 
       <!-- Success Popup (kept same) -->
-      <div v-if="showSuccess" class="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-50 animate-fade-in">
-        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl animate-scale-in border-4 border-blue-400">
-          <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div
+        v-if="showSuccess"
+        class="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-50 animate-fade-in"
+      >
+        <div
+          class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl animate-scale-in border-4 border-blue-400"
+        >
+          <div
+            class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6"
+          >
             <svg class="w-14 h-14 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+              <path
+                fill-rule="evenodd"
+                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
 
           <h2 class="text-2xl font-bold text-green-600 mb-4">Thank you for signing up! 🎉</h2>
 
           <template v-if="formData.role === 'trainer'">
-            <p class="text-gray-700 mb-2 leading-relaxed">Your information is currently being reviewed by our admin team.</p>
-            <p class="text-gray-700 mb-2 leading-relaxed">If your details are valid, your account will be activated within 48 hours.</p>
-            <p class="text-gray-600 mb-6 leading-relaxed">You'll receive an email once your account is approved.</p>
+            <p class="text-gray-700 mb-2 leading-relaxed">
+              Your information is currently being reviewed by our admin team.
+            </p>
+            <p class="text-gray-700 mb-2 leading-relaxed">
+              If your details are valid, your account will be activated within 48 hours.
+            </p>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+              You'll receive an email once your account is approved.
+            </p>
           </template>
 
           <template v-else>
-            <p class="text-gray-700 mb-2 leading-relaxed">Your account has been created successfully!</p>
-            <p class="text-gray-700 mb-2 leading-relaxed">You can now log in and start exploring your profile.</p>
+            <p class="text-gray-700 mb-2 leading-relaxed">
+              Your account has been created successfully!
+            </p>
+            <p class="text-gray-700 mb-2 leading-relaxed">
+              You can now log in and start exploring your profile.
+            </p>
             <p class="text-gray-600 mb-6 leading-relaxed">Welcome to Trainly! 🚀</p>
           </template>
 
-          <button @click="closeSuccessModal" class="cursor-pointer w-full py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105">
+          <button
+            @click="closeSuccessModal"
+            class="cursor-pointer w-full py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
+          >
             Ok
           </button>
         </div>
@@ -482,14 +572,9 @@
   </div>
 </template>
 
-
 <script>
 import { auth, db, storage } from "../Firebase/firebaseConfig.js";
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-  deleteUser
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, deleteUser } from "firebase/auth";
 import {
   doc,
   collection,
@@ -497,7 +582,7 @@ import {
   where,
   getDocs,
   serverTimestamp,
-  runTransaction
+  runTransaction,
 } from "firebase/firestore";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -540,8 +625,8 @@ export default {
       // Set max date to 13 years ago (minimum age requirement)
       const date = new Date();
       date.setFullYear(date.getFullYear() - 13);
-      return date.toISOString().split('T')[0];
-    }
+      return date.toISOString().split("T")[0];
+    },
   },
   methods: {
     nextStep() {
@@ -798,7 +883,7 @@ export default {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           this.formData.email,
-          this.formData.password
+          this.formData.password,
         );
         authUser = userCredential.user;
 
@@ -807,10 +892,10 @@ export default {
         if (this.profilePicture) {
           const picRef = storageRef(
             storage,
-            `profilePictures/${authUser.uid}/${Date.now()}_${this.profilePicture.name}`
+            `profilePictures/${authUser.uid}/${Date.now()}_${this.profilePicture.name}`,
           );
           await uploadBytes(picRef, this.profilePicture, {
-            contentType: this.profilePicture.type
+            contentType: this.profilePicture.type,
           });
           profilePicUrl = await getDownloadURL(picRef);
         }
@@ -821,10 +906,10 @@ export default {
           for (const file of this.certifications) {
             const certRef = storageRef(
               storage,
-              `certifications/${authUser.uid}/${Date.now()}_${file.name}`
+              `certifications/${authUser.uid}/${Date.now()}_${file.name}`,
             );
             await uploadBytes(certRef, file, {
-              contentType: file.type
+              contentType: file.type,
             });
             const url = await getDownloadURL(certRef);
             certificationsUrls.push(url);
@@ -876,9 +961,37 @@ export default {
           photoURL: profilePicUrl || null,
         });
 
+        // Send email notification if trainer
+        if (this.formData.role === "trainer") {
+          try {
+            const registrationDate = new Date().toLocaleString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            });
+
+            await fetch("http://localhost:3000/send-trainer-registration-email", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                trainerName: `${this.formData.firstName} ${this.formData.lastName}`,
+                sport: this.formData.sport,
+                registrationDate: registrationDate,
+              }),
+            });
+          } catch (emailError) {
+            console.warn("Failed to send registration email:", emailError);
+            // Don't block registration if email fails
+          }
+        }
+
         // Show success modal
         this.showSuccess = true;
-
       } catch (error) {
         console.error("Sign up error:", error);
 
@@ -929,7 +1042,7 @@ export default {
     if (this.usernameTimeout) {
       clearTimeout(this.usernameTimeout);
     }
-  }
+  },
 };
 </script>
 
@@ -978,5 +1091,4 @@ export default {
     transform: translateY(0);
   }
 }
-
 </style>

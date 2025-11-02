@@ -37,7 +37,7 @@
           class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 cursor-pointer"
         >
           <button
-            @click="$router.push('/trainee/dashboard'); showUserMenu = false"
+            @click="$router.push('/trainee/mytrainers'); showUserMenu = false"
             class="w-full text-left px-4 py-2 hover:bg-gray-100 transition cursor-pointer"
           >
             My Dashboard
