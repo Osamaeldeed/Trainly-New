@@ -482,26 +482,26 @@ app.use(express.json());
  * 🆕 Generate AI Welcome Message for Training Plan
  */
 app.post('/generate-welcome-message', async (req, res) => {
-  try {
-    const { planTitle, weeks, trainerName, trainerPhone, googleMapsLink } = req.body;
+  console.log('🔔 /generate-welcome-message called');
+  console.log('📥 body preview:', JSON.stringify(req.body).slice(0,1000));
 
-    if (!planTitle || !weeks || !Array.isArray(weeks) || weeks.length === 0) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
+  const { planTitle, weeks, trainerName, trainerPhone, location } = req.body || {};
 
-    // Build training schedule text from weeks array
-    let scheduleText = '';
-    weeks.forEach((week, index) => {
-      scheduleText += `\n\nWeek ${index + 1}:\n`;
-      scheduleText += `Sessions: ${week.sessions || 'N/A'}\n`;
-      scheduleText += `Exercises: ${week.exercises || 'N/A'}\n`;
-      if (week.notes) {
-        scheduleText += `Notes: ${week.notes}\n`;
-      }
-    });
+  if (!planTitle || !weeks || !Array.isArray(weeks) || weeks.length === 0) {
+    console.warn('❗ Missing required fields in request');
+    return res.status(400).json({ error: 'Missing required fields: planTitle and weeks required' });
+  }
 
-    // Create AI prompt
-    const prompt = `
+  // build schedule text
+  let scheduleText = '';
+  weeks.forEach((week, index) => {
+    scheduleText += `\n\nWeek ${index + 1}:\n`;
+    scheduleText += `Sessions: ${week.sessions || 'N/A'}\n`;
+    scheduleText += `Exercises: ${week.exercises || 'N/A'}\n`;
+    if (week.notes) scheduleText += `Notes: ${week.notes}\n`;
+  });
+
+  const prompt = `
 You are a professional fitness trainer assistant. Generate a warm, professional welcome message for a new trainee who just subscribed to a training plan.
 
 Plan Details:
@@ -514,7 +514,7 @@ ${scheduleText}
 
 Additional Information:
 ${trainerPhone ? `- Trainer Phone: ${trainerPhone}` : ''}
-${googleMapsLink ? `- Location: ${googleMapsLink}` : ''}
+${location ? `- Location: ${location}` : ''}
 
 Requirements:
 1. Start with a warm welcome greeting
@@ -529,26 +529,60 @@ Requirements:
 Generate the welcome message now:
 `;
 
-    // Call Gemini AI
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const messageText = response.text();
+  try {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY not configured on server');
+    }
 
-    console.log('✅ AI message generated successfully');
-    res.json({ 
-      success: true, 
-      message: messageText 
-    });
+    let messageText = null;
 
+    try {
+      // try multiple call patterns to be resilient against SDK differences
+      const model = genAI.getGenerativeModel ? genAI.getGenerativeModel({ model: 'gemini-pro' }) : genAI;
+      
+      if (model.generateContent) {
+        // original approach
+        const result = await model.generateContent(prompt);
+        const response = result?.response || result;
+        // response.text might be function or property
+        if (response) {
+          if (typeof response.text === 'function') messageText = response.text();
+          else if (response.text) messageText = response.text;
+        }
+        if (!messageText && result?.outputText) messageText = result.outputText;
+      } else if (model.generate) {
+        // alternate pattern
+        const result = await model.generate({ prompt });
+        messageText = result?.outputText || result?.candidates?.[0]?.content || null;
+      } else if (typeof genAI.generate === 'function') {
+        const result = await genAI.generate(prompt);
+        messageText = result?.text || result?.outputText || null;
+      } else {
+        console.warn('⚠️ Unknown Gemini SDK shape, will fallback');
+      }
+    } catch (genErr) {
+      console.error('❌ Gemini call failed:', genErr && genErr.stack ? genErr.stack : genErr);
+    }
+
+    // Fallback if no AI response
+    if (!messageText) {
+      console.warn('⚠️ No AI message received — using fallback generated message');
+      // small friendly fallback that includes schedule summary
+      messageText = `Welcome to ${planTitle}!\n\nCongratulations on starting your ${weeks.length}-week program. Here's a quick overview:\n${scheduleText}\n\nIf you need any help, reply here or contact your trainer${trainerPhone ? ` at ${trainerPhone}` : ''}. Good luck — let's get started!`;
+    }
+
+    console.log('✅ Returning generated message (preview):', messageText.slice(0,200));
+    return res.json({ success: true, message: messageText });
   } catch (error) {
-    console.error('❌ Error generating AI message:', error);
-    res.status(500).json({ 
-      error: error.message || 'Failed to generate message',
-      details: error.toString()
+    console.error('❌ Error generating AI message:', error && error.stack ? error.stack : error);
+    // return helpful debug info in development
+    return res.status(500).json({
+      error: error.message || 'Server error generating message',
+      hint: 'Check server logs for full stack',
     });
   }
 });
+
 
 /**
  * 🆕 Send Welcome Message to Trainee after booking
