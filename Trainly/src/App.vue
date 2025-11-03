@@ -47,7 +47,7 @@
     <SideBarAdmin
         v-if="['adminoverview','managetrainers','managetrainees','adminbookings','adminpayments','adminreviews'].includes($route.name)"
     />
- 
+
 
     <!-- عرض الصفحات -->
     <router-view />
@@ -87,4 +87,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+body {
+  background-color: white;
+}
+
+.dark body {
+  background-color: black;
+}
+</style>

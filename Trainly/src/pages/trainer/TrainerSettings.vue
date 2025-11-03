@@ -1,26 +1,22 @@
 <template>
   <section class="max-w-5xl mx-auto flex flex-col gap-12">
     <div class="">
-      <h2 class="text-[24px] font-medium text-gray-900">Settings</h2>
-      <p class="mt-2 text-[16px] text-gray-500">
+      <h2 class="text-[24px] font-medium dark:text-white text-gray-900">Settings</h2>
+      <p class="mt-2 text-[16px] dark:text-gray-300 text-gray-500">
         Manage your account settings and preferences here.
       </p>
     </div>
     <!-- ========= Personal Info Section ========= -->
-    <div
-      class="w-full border border-gray-200 rounded-3xl shadow-xl bg-white p-7"
-    >
+    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-7">
       <div class="flex items-center gap-3 mb-6">
         <div
-          class="bg-[#D9EEFF] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
+          class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
         >
           <img src="../../assets/images/page-1.png" alt="" class="w-5 h-5" />
         </div>
         <div>
-          <h2 class="text-lg font-medium text-gray-900">
-            Personal Information
-          </h2>
-          <p class="text-sm text-gray-500">Update your personal details</p>
+          <h2 class="text-lg font-medium dark:text-white text-gray-900">Personal Information</h2>
+          <p class="text-sm dark:text-gray-300 text-gray-500">Update your personal details</p>
         </div>
       </div>
 
@@ -58,49 +54,45 @@
               class="absolute top-0 left-0 w-full h-full rounded-full object-cover"
             />
           </label>
-          <span class="text-sm text-gray-500">Upload your photo</span>
+          <span class="text-sm dark:text-white text-gray-500">Upload your photo</span>
         </div>
 
         <!-- Inputs -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-900"
+            <label class="block text-sm font-medium dark:text-white text-gray-900"
               >First Name</label
             >
             <input
               v-model="formData.firstName"
               type="text"
-              class="mt-2 w-full rounded-xl border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              class="mt-2 w-full rounded-xl border text-black dark:text-white border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-900"
-              >Last Name</label
-            >
+            <label class="block text-sm font-medium dark:text-white text-gray-900">Last Name</label>
             <input
               v-model="formData.lastName"
               type="text"
-              class="mt-2 w-full rounded-xl border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              class="mt-2 w-full rounded-xl border text-black dark:text-white border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-900">Email</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-900">Email</label>
             <input
               v-model="formData.email"
               type="email"
-              class="mt-2 w-full rounded-xl border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              class="mt-2 w-full rounded-xl border text-black dark:text-white border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-900"
-              >Gender</label
-            >
+            <label class="block text-sm font-medium dark:text-white text-gray-900">Gender</label>
             <select
               v-model="formData.gender"
-              class="mt-2 w-full rounded-xl border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              class="mt-2 w-full rounded-xl border text-black dark:text-white dark:bg-[#3b3b3b] border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
               <option value="">Select</option>
               <option value="male">Male</option>
@@ -112,55 +104,49 @@
         <!-- City / Country / Birthday -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-900">City</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-900">City</label>
             <input
               v-model="formData.city"
               type="text"
-              class="mt-2 w-full rounded-xl border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              class="mt-2 w-full rounded-xl border text-black dark:text-white border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-900"
-              >Country</label
-            >
+            <label class="block text-sm font-medium text-gray-900">Country</label>
             <input
               v-model="formData.country"
               type="text"
-              class="mt-2 w-full rounded-xl border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              class="mt-2 w-full rounded-xl border text-black dark:text-white border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-900"
-              >Birthday</label
-            >
+            <label class="block text-sm font-medium dark:text-white text-gray-900">Birthday</label>
             <input
               v-model="formData.birthdate"
               type="date"
-              class="mt-2 w-full rounded-xl border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50"
+              class="mt-2 w-full rounded-xl border text-black dark:text-white border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none scheme-light dark:scheme-dark dark:bg-[#3B3B3B] bg-gray-50"
             />
           </div>
         </div>
 
         <!-- Experience -->
         <div>
-          <label class="block text-sm font-medium text-gray-900"
+          <label class="block text-sm font-medium dark:text-white text-gray-900"
             >Years of Experience</label
           >
           <input
             v-model="formData.experience"
             type="number"
-            class="mt-2 w-full rounded-xl border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            class="mt-2 w-full rounded-xl border text-black dark:text-white border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
         <!-- Upload Certificate -->
         <!-- Upload Certificate -->
         <div>
-          <h2 class="text-sm font-medium text-gray-900 mt-8">
-            Upload Certificate
-          </h2>
+          <h2 class="text-sm font-medium dark:text-white text-gray-900 mt-8">Upload Certificate</h2>
           <div
             class="flex text-center border-2 border-dashed border-gray-300 p-5 rounded-xl hover:border-blue-400 transition mt-3"
           >
@@ -173,11 +159,11 @@
               />
               <label
                 for="certificate"
-                class="cursor-pointer inline-block bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-400 transition text-sm"
+                class="cursor-pointer inline-block bg-blue-500 dark:bg-[#3B3B3B] text-white py-2 px-4 rounded-lg hover:bg-blue-400 transition text-sm"
               >
                 Upload
               </label>
-              <p class="text-xs text-gray-500 mt-2">PDF, JPG up to 10MB</p>
+              <p class="text-xs dark:text-gray-300 text-gray-500 mt-2">PDF, JPG up to 10MB</p>
 
               <!-- Certificate List with Remove Buttons -->
               <div
@@ -187,7 +173,7 @@
                 <div
                   v-for="(cert, index) in formData.certifications"
                   :key="index"
-                  class="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
+                  class="flex items-center justify-between dark:bg-gray-300 bg-gray-50 p-3 rounded-lg"
                 >
                   <a
                     :href="cert"
@@ -224,9 +210,7 @@
         </div>
 
         <!-- Buttons -->
-        <div
-          class="flex flex-col md:flex-row mt-10 justify-between w-full gap-4 md:gap-0"
-        >
+        <div class="flex flex-col md:flex-row mt-10 justify-between w-full gap-4 md:gap-0">
           <button
             type="submit"
             class="text-white bg-[#00B0FF] hover:bg-[#36ace2] cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm py-2 px-6 rounded-lg transition mx-auto md:mx-0"
@@ -245,19 +229,17 @@
     </div>
 
     <!-- ========= Security Section ========= -->
-    <div
-      class="w-full border border-gray-200 rounded-3xl shadow-xl bg-white p-7"
-    >
+    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-7">
       <div class="flex">
         <div
-          class="bg-[#D9EEFF] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
+          class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
         >
           <img src="../../assets/images/security.png" alt="" class="w-5 h-5" />
         </div>
 
         <div>
-          <h2 class="text-xl font-[500] mb-1">Security</h2>
-          <p class="mb-6 font-[400] text-[13px] text-gray-500">
+          <h2 class="text-xl dark:text-white font-[500] mb-1">Security</h2>
+          <p class="mb-6 font-[400] text-[13px] dark:text-gray-300 text-gray-500">
             Manage your password and security settings
           </p>
         </div>
@@ -266,14 +248,14 @@
       <form class="max-w-[95%] ps-[50px]" @submit.prevent="onSubmit">
         <!-- Current password -->
         <div class="mb-5">
-          <label class="block mb-2 text-sm font-medium text-gray-900"
+          <label class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
             >Current Password</label
           >
           <div class="relative">
             <input
               :type="showCurrent ? 'text' : 'password'"
               v-model="form.current"
-              class="shadow-xs border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10"
+              class="shadow-xs border border-gray-300 dark:text-white text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10"
               required
             />
             <button
@@ -331,14 +313,14 @@
 
         <!-- New password -->
         <div class="mb-5">
-          <label class="block mb-2 text-sm font-medium text-gray-900"
+          <label class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
             >New Password</label
           >
           <div class="relative">
             <input
               :type="showNew ? 'text' : 'password'"
               v-model="form.new"
-              class="shadow-xs border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10"
+              class="shadow-xs border border-gray-300 dark:text-white text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10"
               required
               minlength="8"
             />
@@ -399,14 +381,14 @@
 
         <!-- Repeat password -->
         <div class="mb-5">
-          <label class="block mb-2 text-sm font-medium text-gray-900"
+          <label class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
             >Confirm Password</label
           >
           <div class="relative">
             <input
               :type="showRepeat ? 'text' : 'password'"
               v-model="form.repeat"
-              class="shadow-xs border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10"
+              class="shadow-xs border border-gray-300 text-black dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10"
               required
               minlength="8"
             />
@@ -473,24 +455,18 @@
           Update Password
         </button>
 
-        <p
-          v-if="message"
-          class="text-sm mt-3 text-center"
-          :class="messageColor"
-        >
+        <p v-if="message" class="text-sm mt-3 text-center" :class="messageColor">
           {{ message }}
         </p>
       </form>
     </div>
 
     <!-- ========= subsecribtion Section ========= -->
-    <div
-      class="w-full border border-gray-200 rounded-3xl shadow-xl bg-white p-8"
-    >
+    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8">
       <!-- Header -->
       <div class="flex items-start mb-8">
         <div
-          class="bg-[#D9EEFF] w-11 h-11 rounded-xl flex items-center justify-center mr-3"
+          class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-11 h-11 rounded-xl flex items-center justify-center mr-3"
         >
           <img
             src="../../assets/images/stash_plan-duotone.png"
@@ -499,8 +475,8 @@
           />
         </div>
         <div>
-          <h2 class="text-xl font-[500] mb-1 text-gray-800">Subscription</h2>
-          <p class="text-sm text-gray-500">
+          <h2 class="text-xl font-[500] mb-1 dark:text-white text-gray-800">Subscription</h2>
+          <p class="text-sm dark:text-gray-300 text-gray-500">
             Manage your current subscription and plan details here.
           </p>
         </div>
@@ -509,14 +485,14 @@
       <!-- Content -->
       <div class="flex flex-col md:flex-row justify-between gap-10">
         <!-- Left side: Plan details -->
-        <div class="flex-1 bg-[#F9FAFB] p-6 rounded-2xl border border-gray-100">
-          <h3 class="text-lg font-medium mb-3 text-gray-800">Current Plan</h3>
-          <ul class="space-y-3 text-gray-600 text-sm">
-            <li><span class="font-medium text-gray-800">$29.99/month</span></li>
+        <div class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100">
+          <h3 class="text-lg font-medium mb-3 dark:text-white text-gray-800">Current Plan</h3>
+          <ul class="space-y-3 text-gray-600 dark:text-gray-300 text-sm">
+            <li><span class="font-medium dark:text-gray-300 text-gray-800">$29.99/month</span></li>
             <li>
-              Next renewal: <span class="font-medium">November 15, 2025</span>
+              Next renewal: <span class="font-medium dark:text-gray-300">November 15, 2025</span>
             </li>
-            <ul class="space-y-2 text-gray-600 text-sm mt-4">
+            <ul class="space-y-2 text-gray-600 dark:text-gray-100 text-sm mt-4">
               <li class="flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -526,11 +502,7 @@
                   stroke="currentColor"
                   stroke-width="2"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 6 plans/month
               </li>
@@ -544,11 +516,7 @@
                   stroke="currentColor"
                   stroke-width="2"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 Unlimited clients
               </li>
@@ -562,11 +530,7 @@
                   stroke="currentColor"
                   stroke-width="2"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 Priority support
               </li>
@@ -598,123 +562,129 @@
     </div>
 
     <!-- ========= payment Section ========= -->
- <div class="w-full border border-gray-200 rounded-3xl shadow-xl bg-white p-8">
-  <!-- Header -->
-  <div class="flex items-start mb-8">
-    <div class="bg-[#D9EEFF] w-11 h-11 rounded-xl flex items-center justify-center mr-3">
-      <img
-        src="../../assets/images/streamline-flex-color_subscription-cashflow-flat.png"
-        alt="payment icon"
-        class="w-5 h-5"
-      />
-    </div>
-    <div>
-      <h2 class="text-xl font-medium mb-1 text-gray-800">Payment Management</h2>
-      <p class="text-sm text-gray-500">
-        Manage your payment methods and track your total income.
-      </p>
-    </div>
-  </div>
-
-  <!-- Green Income Section (Full Width) -->
-  <div class="bg-gradient-to-r from-[#22C55E] to-[#16A34A] text-white p-4 rounded-2xl shadow-md mb-10">
-    <p class="text-sm opacity-90">Total Income</p>
-    <h3 class="text-3xl font-semibold mt-1 mb-1">$12,450.00</h3>
-    <p class="text-sm opacity-90">This month: <span class="font-medium">+$2,340.00</span></p>
-  </div>
-
-  <!-- Content Section -->
-  <div class="flex flex-col md:flex-row justify-between gap-10">
-    <!-- Left side: Payment Methods -->
-    <div class="flex-1 bg-[#F9FAFB] p-6 rounded-2xl border border-gray-100">
-      <h3 class="text-lg font-semibold mb-4 text-gray-800">Payment Methods</h3>
-
-      <!-- Card Method -->
-     <!-- Card Method -->
-<div
-  class="flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-4 mb-4 shadow-sm"
->
-  <img src="../../assets/images/i.png" alt="card" class="w-8 h-8" />
-  <div>
-    <p class="font-medium text-gray-800">•••• •••• •••• 4242</p>
-    <p class="text-sm text-gray-500">Expires 12/25</p>
-  </div>
-</div>
-
-<!-- PayPal Method -->
-<div
-  class="flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm"
->
-  <img src="../../assets/images/ip.png" alt="paypal" class="w-8 h-8 opacity-90" />
-  <div class="flex flex-col w-full">
-    <p class="font-medium text-gray-800 mb-1">PayPal Account</p>
-    <input
-      v-model="formData.email" class="text-sm text-gray-500">
-  </div>
-</div>
-
-
-      <!-- Buttons -->
-      <div class="flex flex-col gap-3">
-        <button
-          class="text-white bg-[#22C55E] hover:bg-[#16A34A] focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8">
+      <!-- Header -->
+      <div class="flex items-start mb-8">
+        <div
+          class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-11 h-11 rounded-xl flex items-center justify-center mr-3"
         >
-          Add Payment Method
-        </button>
-
-        <button
-          class="border border-gray-300 text-gray-800 bg-white hover:bg-gray-50 focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
-        >
-          Withdraw Earnings
-        </button>
-      </div>
-    </div>
-
-    <!-- Right side: Recent Transactions -->
-    <div class="flex-1 bg-[#F9FAFB] p-6 rounded-2xl border border-gray-100">
-      <h3 class="text-lg font-semibold mb-4 text-gray-800">Recent Transactions</h3>
-
-      <div class="flex flex-col gap-4">
-        <div class="flex justify-between items-center bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-          <div>
-            <p class="font-medium text-gray-800">Training Session</p>
-            <p class="text-sm text-gray-500">Oct 15, 2025</p>
-          </div>
-          <p class="text-green-600 font-semibold">+$80.00</p>
+          <img
+            src="../../assets/images/streamline-flex-color_subscription-cashflow-flat.png"
+            alt="payment icon"
+            class="w-5 h-5"
+          />
         </div>
-
-        <div class="flex justify-between items-center bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-          <div>
-            <p class="font-medium text-gray-800">Monthly Membership</p>
-            <p class="text-sm text-gray-500">Oct 12, 2025</p>
-          </div>
-          <p class="text-green-600 font-semibold">+$150.00</p>
-        </div>
-
-        <div class="flex justify-between items-center bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-          <div>
-            <p class="font-medium text-gray-800">Platform Fee</p>
-            <p class="text-sm text-gray-500">Oct 11, 2025</p>
-          </div>
-          <p class="text-red-500 font-semibold">- $15.00</p>
+        <div>
+          <h2 class="text-xl font-medium mb-1 dark:text-white text-gray-800">Payment Management</h2>
+          <p class="text-sm dark:text-gray-300 text-gray-500">
+            Manage your payment methods and track your total income.
+          </p>
         </div>
       </div>
+
+      <!-- Green Income Section (Full Width) -->
+      <div
+        class="bg-gradient-to-r from-[#22C55E] to-[#16A34A] dark:from-[#065F46] dark:to-[#064E3B] text-white p-4 rounded-2xl shadow-md mb-10"
+      >
+        <p class="text-sm opacity-90">Total Income</p>
+        <h3 class="text-3xl font-semibold mt-1 mb-1">$12,450.00</h3>
+        <p class="text-sm opacity-90 dark:text-gray-300">
+          This month: <span class="font-medium dark:text-gray-300">+$2,340.00</span>
+        </p>
+      </div>
+
+      <!-- Content Section -->
+      <div class="flex flex-col md:flex-row justify-between gap-10">
+        <!-- Left side: Payment Methods -->
+        <div class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100">
+          <h3 class="text-lg font-semibold mb-4 dark:text-white text-gray-800">Payment Methods</h3>
+
+          <!-- Card Method -->
+          <!-- Card Method -->
+          <div
+            class="flex items-center gap-4 bg-white dark:bg-[#242424] border border-gray-200 rounded-xl p-4 mb-4 shadow-sm"
+          >
+            <img src="../../assets/images/i.png" alt="card" class="w-8 h-8" />
+            <div>
+              <p class="font-medium dark:text-white text-gray-800">•••• •••• •••• 4242</p>
+              <p class="text-sm dark:text-gray-300 text-gray-500">Expires 12/25</p>
+            </div>
+          </div>
+
+          <!-- PayPal Method -->
+          <div
+            class="flex items-center gap-4 dark:bg-[#242424] bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm"
+          >
+            <img src="../../assets/images/ip.png" alt="paypal" class="w-8 h-8 opacity-90" />
+            <div class="flex flex-col w-full">
+              <p class="font-medium dark:text-white text-gray-800 mb-1">PayPal Account</p>
+              <input v-model="formData.email" class="text-sm dark:text-gray-300 text-gray-500" />
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex flex-col gap-3">
+            <button
+              class="text-white bg-[#22C55E] hover:bg-[#16A34A] focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+            >
+              Add Payment Method
+            </button>
+
+            <button
+              class="border border-gray-300 text-gray-800 bg-white hover:bg-gray-50 focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+            >
+              Withdraw Earnings
+            </button>
+          </div>
+        </div>
+
+        <!-- Right side: Recent Transactions -->
+        <div class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100">
+          <h3 class="text-lg font-semibold mb-4 dark:text-white text-gray-800">
+            Recent Transactions
+          </h3>
+
+          <div class="flex flex-col gap-4">
+            <div
+              class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
+            >
+              <div>
+                <p class="font-medium dark:text-white text-gray-800">Training Session</p>
+                <p class="text-sm dark:text-gray-300 text-gray-500">Oct 15, 2025</p>
+              </div>
+              <p class="text-green-600 font-semibold">+$80.00</p>
+            </div>
+
+            <div
+              class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
+            >
+              <div>
+                <p class="font-medium dark:text-white text-gray-800">Monthly Membership</p>
+                <p class="text-sm dark:text-gray-300 text-gray-500">Oct 12, 2025</p>
+              </div>
+              <p class="text-green-600 font-semibold">+$150.00</p>
+            </div>
+
+            <div
+              class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
+            >
+              <div>
+                <p class="font-medium dark:text-white text-gray-800">Platform Fee</p>
+                <p class="text-sm dark:text-gray-300 text-gray-500">Oct 11, 2025</p>
+              </div>
+              <p class="text-red-500 font-semibold">- $15.00</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-
   </section>
 </template>
 
 <script>
 import { db, storage } from "@/Firebase/firebaseConfig.js";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   getAuth,
   updatePassword,
@@ -793,7 +763,7 @@ export default {
       try {
         const fileRef = storageRef(
           storage,
-          `users/${this.userId}/${type}-${Date.now()}-${file.name}`
+          `users/${this.userId}/${type}-${Date.now()}-${file.name}`,
         );
         await uploadBytes(fileRef, file);
         return await getDownloadURL(fileRef);
@@ -835,10 +805,7 @@ export default {
 
         // handle new profile photo
         if (this.newProfilePhoto) {
-          const photoUrl = await this.uploadFile(
-            this.newProfilePhoto,
-            "profilePhoto"
-          );
+          const photoUrl = await this.uploadFile(this.newProfilePhoto, "profilePhoto");
           if (photoUrl) {
             updateData.profilePicture = photoUrl;
             this.formData.profilePicture = photoUrl;
@@ -847,13 +814,9 @@ export default {
 
         // handle new certificate
         if (this.newCertificate) {
-          const certUrl = await this.uploadFile(
-            this.newCertificate,
-            "certificate"
-          );
+          const certUrl = await this.uploadFile(this.newCertificate, "certificate");
           if (certUrl) {
-            if (!this.formData.certifications)
-              this.formData.certifications = [];
+            if (!this.formData.certifications) this.formData.certifications = [];
             this.formData.certifications.push(certUrl);
             updateData.certifications = this.formData.certifications;
           }
@@ -894,14 +857,7 @@ export default {
     // success modal (same structure as confirmBox but single OK button)
     showSuccessModal() {
       const modal = document.createElement("div");
-      modal.classList.add(
-        "fixed",
-        "inset-0",
-        "flex",
-        "items-center",
-        "justify-center",
-        "z-50"
-      );
+      modal.classList.add("fixed", "inset-0", "flex", "items-center", "justify-center", "z-50");
       modal.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
       modal.style.backdropFilter = "blur(3px)";
 
@@ -936,7 +892,7 @@ export default {
         "flex",
         "items-center",
         "justify-center",
-        "z-50"
+        "z-50",
       );
       confirmBox.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
       confirmBox.style.backdropFilter = "blur(3px)";
@@ -1019,10 +975,7 @@ export default {
       }
 
       try {
-        const credential = EmailAuthProvider.credential(
-          user.email,
-          this.form.current
-        );
+        const credential = EmailAuthProvider.credential(user.email, this.form.current);
         await reauthenticateWithCredential(user, credential);
         await updatePassword(user, this.form.new);
 
@@ -1036,5 +989,3 @@ export default {
   },
 };
 </script>
-
-

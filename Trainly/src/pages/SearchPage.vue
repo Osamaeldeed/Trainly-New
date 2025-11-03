@@ -1,14 +1,28 @@
 <template>
-  <div class="min-h-screen flex flex-col md:flex-row bg-gray-50">
+  <div class="min-h-screen flex flex-col md:flex-row bg-gray-50 dark:bg-[#1e1e1e]">
     <!-- Mobile Filter Button -->
-    <div v-if="userRole === 'trainee'" class="md:hidden sticky top-0 z-10 bg-white border-b p-4">
+    <div
+      v-if="userRole === 'trainee'"
+      class="md:hidden sticky top-0 z-10 bg-white dark:bg-black border-b p-4"
+    >
       <button
         type="button"
         @click="toggleMobileFilters"
-        class="w-full bg-[#0D8BF2] hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition"
+        class="w-full bg-[#0D8BF2] hover:bg-blue-600 text-white dark:text-black font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+          />
         </svg>
         <span>Filters</span>
       </button>
@@ -21,7 +35,7 @@
       @click="showMobileFilters = false"
     >
       <div
-        class="absolute left-0 top-0 bottom-0 w-80 max-w-[85%] bg-white p-6 overflow-y-auto"
+        class="absolute left-0 top-0 bottom-0 w-80 max-w-[85%] bg-white dark:bg-black p-6 overflow-y-auto"
         @click.stop
       >
         <div class="flex items-center justify-between mb-6">
@@ -31,8 +45,19 @@
             @click="showMobileFilters = false"
             class="p-2 hover:bg-gray-100 rounded-lg transition"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -41,13 +66,21 @@
           <h3 class="text-blue-600 font-semibold mb-3">Sports</h3>
           <div class="space-y-3">
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="radio" value="bodybuilding" v-model="filters.sport" class="cursor-pointer" /> Bodybuilding
+              <input
+                type="radio"
+                value="bodybuilding"
+                v-model="filters.sport"
+                class="cursor-pointer"
+              />
+              Bodybuilding
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="radio" value="tennis" v-model="filters.sport" class="cursor-pointer" /> Tennis
+              <input type="radio" value="tennis" v-model="filters.sport" class="cursor-pointer" />
+              Tennis
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="radio" value="padel" v-model="filters.sport" class="cursor-pointer" /> Padel
+              <input type="radio" value="padel" v-model="filters.sport" class="cursor-pointer" />
+              Padel
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="radio" value="" v-model="filters.sport" class="cursor-pointer" /> All
@@ -59,16 +92,24 @@
           <h3 class="text-blue-600 font-semibold mb-3">City</h3>
           <div class="space-y-3">
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="radio" value="cairo" v-model="filters.city" class="cursor-pointer" /> Cairo
+              <input type="radio" value="cairo" v-model="filters.city" class="cursor-pointer" />
+              Cairo
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="radio" value="giza" v-model="filters.city" class="cursor-pointer" /> Giza
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="radio" value="alexandria" v-model="filters.city" class="cursor-pointer" /> Alexandria
+              <input
+                type="radio"
+                value="alexandria"
+                v-model="filters.city"
+                class="cursor-pointer"
+              />
+              Alexandria
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="radio" value="ismailia" v-model="filters.city" class="cursor-pointer" /> Ismailia
+              <input type="radio" value="ismailia" v-model="filters.city" class="cursor-pointer" />
+              Ismailia
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="radio" value="" v-model="filters.city" class="cursor-pointer" /> All
@@ -79,15 +120,29 @@
         <div class="mb-6">
           <h3 class="text-blue-600 font-semibold mb-3">Ratings (min)</h3>
           <div class="space-y-2">
-            <label v-for="n in [5,4,3,2,1]" :key="n" class="flex items-center gap-1 cursor-pointer">
-              <input type="radio" :value="n" v-model.number="filters.rating" class="cursor-pointer" />
+            <label
+              v-for="n in [5, 4, 3, 2, 1]"
+              :key="n"
+              class="flex items-center gap-1 cursor-pointer"
+            >
+              <input
+                type="radio"
+                :value="n"
+                v-model.number="filters.rating"
+                class="cursor-pointer"
+              />
               <span class="flex items-center text-yellow-500">
                 <span v-for="i in n" :key="i">★</span>
               </span>
               <span class="text-sm text-gray-600 ml-2"> & Up</span>
             </label>
             <label class="flex items-center gap-1 cursor-pointer">
-              <input type="radio" :value="0" v-model.number="filters.rating" class="cursor-pointer" />
+              <input
+                type="radio"
+                :value="0"
+                v-model.number="filters.rating"
+                class="cursor-pointer"
+              />
               <span class="text-sm text-gray-600 ml-2">All</span>
             </label>
           </div>
@@ -112,20 +167,31 @@
     </div>
 
     <!-- Desktop Sidebar Filters -->
-    <aside class="hidden md:block w-64 bg-white rounded-xl m-4 p-6 border-[#0D8BF2] border-2 h-fit sticky top-4" v-if="userRole === 'trainee'">
-      <h2 class="font-semibold text-lg mb-4">Filter By</h2>
+    <aside
+      class="hidden md:block w-64 bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-xl m-4 p-6 border-[#0D8BF2] border-2 h-fit sticky top-4"
+      v-if="userRole === 'trainee'"
+    >
+      <h2 class="font-semibold dark:text-gray-200 text-lg mb-4">Filter By</h2>
 
       <div class="mb-6">
-        <h3 class="text-blue-600 font-semibold mb-2">Sports</h3>
+        <h3 class="text-blue-600 dark:text-gray-200 font-semibold mb-2">Sports</h3>
         <div class="space-y-2">
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" value="bodybuilding" v-model="filters.sport" class="cursor-pointer" /> Bodybuilding
+            <input
+              type="radio"
+              value="bodybuilding"
+              v-model="filters.sport"
+              class="cursor-pointer"
+            />
+            Bodybuilding
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" value="tennis" v-model="filters.sport" class="cursor-pointer" /> Tennis
+            <input type="radio" value="tennis" v-model="filters.sport" class="cursor-pointer" />
+            Tennis
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" value="padel" v-model="filters.sport" class="cursor-pointer" /> Padel
+            <input type="radio" value="padel" v-model="filters.sport" class="cursor-pointer" />
+            Padel
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
             <input type="radio" value="" v-model="filters.sport" class="cursor-pointer" /> All
@@ -134,7 +200,7 @@
       </div>
 
       <div class="mb-6">
-        <h3 class="text-blue-600 font-semibold mb-2">City</h3>
+        <h3 class="text-blue-600 font-semibold dark:text-gray-200 mb-2">City</h3>
         <div class="space-y-2">
           <label class="flex items-center gap-2 cursor-pointer">
             <input type="radio" value="cairo" v-model="filters.city" class="cursor-pointer" /> Cairo
@@ -143,10 +209,12 @@
             <input type="radio" value="giza" v-model="filters.city" class="cursor-pointer" /> Giza
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" value="alexandria" v-model="filters.city" class="cursor-pointer" /> Alexandria
+            <input type="radio" value="alexandria" v-model="filters.city" class="cursor-pointer" />
+            Alexandria
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" value="ismailia" v-model="filters.city" class="cursor-pointer" /> Ismailia
+            <input type="radio" value="ismailia" v-model="filters.city" class="cursor-pointer" />
+            Ismailia
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
             <input type="radio" value="" v-model="filters.city" class="cursor-pointer" /> All
@@ -155,18 +223,22 @@
       </div>
 
       <div>
-        <h3 class="text-blue-600 font-semibold mb-2">Ratings (min)</h3>
+        <h3 class="text-blue-600 font-semibold dark:text-gray-200 mb-2">Ratings (min)</h3>
         <div class="space-y-1">
-          <label v-for="n in [5,4,3,2,1]" :key="n" class="flex items-center gap-1 cursor-pointer">
+          <label
+            v-for="n in [5, 4, 3, 2, 1]"
+            :key="n"
+            class="flex items-center gap-1 cursor-pointer"
+          >
             <input type="radio" :value="n" v-model.number="filters.rating" class="cursor-pointer" />
             <span class="flex items-center text-yellow-500">
               <span v-for="i in n" :key="i">★</span>
             </span>
-            <span class="text-sm text-gray-600 ml-2"> & Up</span>
+            <span class="text-sm text-gray-600 dark:text-gray-200 ml-2"> & Up</span>
           </label>
           <label class="flex items-center gap-1 cursor-pointer">
             <input type="radio" :value="0" v-model.number="filters.rating" class="cursor-pointer" />
-            <span class="text-sm text-gray-600 ml-2">All</span>
+            <span class="text-sm text-gray-600 dark:text-gray-200 ml-2">All</span>
           </label>
         </div>
       </div>
@@ -174,7 +246,7 @@
       <!-- Clear Filters Button -->
       <button
         @click="clearFilters"
-        class="w-full mt-6 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition"
+        class="w-full mt-6 bg-gray-300 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition cursor-pointer"
       >
         Clear Filters
       </button>
@@ -185,17 +257,34 @@
       <div class="max-w-6xl mx-auto">
         <!-- Search input top -->
         <div class="flex justify-center mb-6">
-          <div class="max-w-xl w-full flex items-center border rounded-full px-4 py-2 bg-white shadow-sm">
+          <div
+            class="max-w-xl w-full flex items-center border rounded-full px-4 py-2 bg-white dark:bg-[#3B3B3B] text-black dark:text-white shadow-sm"
+          >
             <input
               v-model="searchQuery"
               type="text"
               placeholder="Search trainers by name or sport..."
-              class="flex-1 outline-none px-2"
+              class="flex-1 outline-none placeholder-gray-400 px-2"
               @keyup.enter="onSearchClicked"
             />
-            <button @click="onSearchClicked" type="button" class="p-2 rounded-full hover:bg-gray-100 transition">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <button
+              @click="onSearchClicked"
+              type="button"
+              class="p-2 rounded-full hover:bg-gray-100 transition"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 text-black cursor-pointer"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </button>
           </div>
@@ -203,13 +292,18 @@
 
         <div class="mb-4 text-center" v-if="displayQuery">
           <h2 class="font-semibold text-lg">
-            Search Results for "<span class="text-blue-600">{{ displayQuery }}</span>"
+            Search Results for "<span class="text-blue-600">{{ displayQuery }}</span
+            >"
           </h2>
-          <p class="text-sm text-gray-500 mt-1">{{ filteredTrainers.length }} trainer(s) found</p>
+          <p class="text-sm text-gray-500 dark:text-gray-300 mt-1">
+            {{ filteredTrainers.length }} trainer(s) found
+          </p>
         </div>
 
         <div v-if="loading" class="text-center py-12">
-          <div class="inline-block animate-pulse text-gray-500">Loading trainers...</div>
+          <div class="inline-block animate-pulse text-gray-500 dark:text-gray-300">
+            Loading trainers...
+          </div>
         </div>
 
         <div v-else-if="error" class="text-center py-12">
@@ -224,18 +318,29 @@
 
         <div v-else>
           <div v-if="filteredTrainers.length === 0" class="text-center py-12 text-gray-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-16 w-16 mx-auto mb-4 text-gray-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
-            <p class="text-lg font-medium">No trainers found</p>
-            <p class="text-sm mt-2">Try adjusting your search or filters</p>
+            <p class="text-lg font-medium dark:text-gray-300">No trainers found</p>
+            <p class="text-sm mt-2 dark:text-gray-300">Try adjusting your search or filters</p>
           </div>
 
           <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <div
               v-for="trainer in filteredTrainers"
               :key="trainer.id"
-              class="bg-white rounded-xl shadow-md overflow-hidden border hover:shadow-lg transition-shadow"
+              class="bg-white dark:bg-[#3B3B3B] rounded-xl shadow-md overflow-hidden border hover:shadow-lg transition-shadow"
             >
               <img
                 :src="trainer.profilePicture || placeholder"
@@ -244,15 +349,37 @@
                 @error="handleImageError"
               />
               <div class="p-4">
-                <h3 class="font-semibold text-lg truncate">{{ trainer.firstName }} {{ trainer.lastName }}</h3>
-                <p class="text-[#00B0FF] text-sm font-medium mb-2 capitalize">{{ trainer.sport || 'N/A' }}</p>
+                <h3 class="font-semibold text-lg truncate dark:text-white">
+                  {{ trainer.firstName }} {{ trainer.lastName }}
+                </h3>
+                <p class="text-[#00B0FF] dark:text-gray-200 text-sm font-medium mb-2 capitalize">
+                  {{ trainer.sport || "N/A" }}
+                </p>
 
                 <div class="flex items-center text-sm text-gray-700 mb-2" v-if="trainer.city">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 mr-2 dark:text-gray-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                   </svg>
-                  <span class="capitalize">{{ trainer.city }}{{ trainer.country ? `, ${trainer.country}` : '' }}</span>
+                  <span class="capitalize dark:text-gray-200"
+                    >{{ trainer.city }}{{ trainer.country ? `, ${trainer.country}` : "" }}</span
+                  >
                 </div>
 
                 <div class="flex items-center justify-between mt-3">
@@ -261,12 +388,14 @@
                     <span class="font-semibold text-[#00B0FF]">
                       {{ trainer.avgRating !== null ? trainer.avgRating.toFixed(1) : "N/A" }}
                     </span>
-                    <span class="text-gray-500 text-xs">({{ trainer.reviewsCount || 0 }})</span>
+                    <span class="text-gray-500 dark:text-gray-300 text-xs"
+                      >({{ trainer.reviewsCount || 0 }})</span
+                    >
                   </div>
 
                   <router-link
                     :to="{ path: '/viewtrainerprofile', query: { uid: trainer.id } }"
-                    class="bg-[#00B0FF] hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-[12px] text-sm transition"
+                    class="bg-[#00B0FF] dark:bg-[#1e1e1e] hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-[12px] text-sm transition"
                   >
                     View Profile
                   </router-link>
@@ -388,7 +517,7 @@ const fetchTrainers = async () => {
           t.avgRating = null;
           t.reviewsCount = 0;
         }
-      })
+      }),
     );
 
     trainers.value = list;
@@ -469,10 +598,9 @@ watch(
     searchQuery.value = newQ || "";
     displayQuery.value = searchQuery.value || "";
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
-
 
 <style scoped>
 input[type="radio"] {
