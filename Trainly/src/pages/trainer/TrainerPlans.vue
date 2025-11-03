@@ -207,27 +207,22 @@
       </div>
     </div>
 
-    <!-- Create Plan Modal -->
+<!-- ================= Create Plan Modal with AI ================= -->
     <div
       v-if="showCreateModal"
       class="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4"
       @click.self="() => (showCreateModal = false)"
     >
-      <div
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl animate-fadeIn max-h-[90vh] overflow-y-auto"
-      >
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl animate-fadeIn max-h-[90vh] overflow-y-auto">
         <!-- Modal Header -->
-        <div
-          class="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white z-10"
-        >
+        <div class="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
           <div class="flex items-center gap-3">
             <div class="bg-blue-100 p-2 rounded-lg">
               <span class="text-blue-600 text-xl">📋</span>
             </div>
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800 cursor-pointer">
-              Create a New Plan
-            </h2>
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800">Create a New Plan</h2>
           </div>
+          <button @click="showCreateModal = false" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
         </div>
 
         <!-- Modal Body -->
@@ -296,19 +291,17 @@
               <input
                 v-model="newPlan.location"
                 type="text"
-                placeholder="Description"
+                placeholder="Google Maps Link"
                 class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
-                onclick="window.open('https://www.google.com/maps?q=My+Location', '_blank')"
-                class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
-              >
+                 onclick="window.open('https://www.google.com/maps?q=My+Location', '_blank')"
+                 class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer">
                 📍
               </button>
             </div>
           </div>
 
-          <!-- Description Field -->
           <div>
             <label class="block text-sm font-medium text-gray-600 mb-2">Plan Description</label>
             <textarea
@@ -320,15 +313,12 @@
             <p class="text-xs text-gray-500 mt-1">This will be visible to trainees</p>
           </div>
 
-          <!-- Image Upload -->
           <div>
             <label class="block text-sm font-medium text-gray-600 mb-2">Plan Image</label>
             <div class="space-y-3">
               <div class="flex items-center gap-3">
                 <label class="flex-1 cursor-pointer">
-                  <div
-                    class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors text-center"
-                  >
+                  <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors text-center">
                     <input
                       type="file"
                       accept="image/*"
@@ -344,7 +334,6 @@
                 </label>
               </div>
 
-              <!-- Image Preview -->
               <div v-if="imagePreviewUrl" class="relative">
                 <img
                   :src="imagePreviewUrl"
@@ -352,54 +341,137 @@
                   class="w-full h-48 object-cover rounded-lg border border-gray-200"
                 />
                 <button
-                  @click="
-                    selectedImageFile = null;
-                    imagePreviewUrl = null;
-                  "
+                  @click="selectedImageFile = null; imagePreviewUrl = null"
                   class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors"
                   type="button"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
             </div>
-            <p class="text-xs text-gray-500 mt-1">This will be visible to trainees</p>
+          </div>
+
+          <!-- 🆕 AI Welcome Message Section -->
+          <div class="border-t pt-4 mt-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">🤖</span>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800">AI Welcome Message Generator</h3>
+                  <p class="text-xs text-gray-500">Generate a personalized welcome message for new trainees</p>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" v-model="useAIWelcome" @change="toggleAIWelcome" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+
+            <div v-if="useAIWelcome" class="space-y-4 animate-fadeIn">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p class="text-sm text-blue-800">
+                  <strong>📝 Instructions:</strong> Fill in the training schedule below. The AI will generate a professional welcome message that will be automatically sent to trainees when they subscribe to this plan.
+                </p>
+              </div>
+
+              <!-- Training Schedule Table -->
+              <div v-if="trainingWeeks.length > 0" class="space-y-3">
+                <h4 class="font-semibold text-gray-700">Training Schedule ({{ trainingWeeks.length }} weeks)</h4>
+
+                <div class="space-y-3 max-h-96 overflow-y-auto">
+                  <div
+                    v-for="(week, index) in trainingWeeks"
+                    :key="index"
+                    class="bg-gray-50 border border-gray-200 rounded-lg p-4"
+                  >
+                    <h5 class="font-medium text-gray-800 mb-3">Week {{ week.weekNumber }}</h5>
+                    <div class="grid grid-cols-1 gap-3">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Sessions per week</label>
+                        <input
+                          v-model="week.sessions"
+                          type="text"
+                          placeholder="e.g., 3 sessions"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Exercises/Focus</label>
+                        <input
+                          v-model="week.exercises"
+                          type="text"
+                          placeholder="e.g., Upper body strength, Cardio"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Notes (optional)</label>
+                        <input
+                          v-model="week.notes"
+                          type="text"
+                          placeholder="e.g., Focus on form, Rest day on Sunday"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  @click="generateAIMessage"
+                  :disabled="generatingAI"
+                  class="w-full py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold rounded-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                >
+                  <span v-if="generatingAI" class="animate-spin">⚙️</span>
+                  <span v-else>✨</span>
+                  <span>{{ generatingAI ? 'Generating...' : 'Generate AI Welcome Message' }}</span>
+                </button>
+              </div>
+
+              <div v-else class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p class="text-sm text-yellow-800">
+                  ⚠️ Please select a duration first to generate the training schedule.
+                </p>
+              </div>
+
+              <!-- AI Message Preview -->
+              <div v-if="showAIPreview && aiGeneratedMessage" class="space-y-3 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-semibold text-gray-700">Generated Message Preview</h4>
+                  <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">✓ Generated</span>
+                </div>
+                <div class="bg-white border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto">
+                  <textarea
+                    v-model="aiGeneratedMessage"
+                    rows="10"
+                    class="w-full text-sm text-gray-700 focus:outline-none resize-none"
+                    placeholder="AI generated message will appear here..."
+                  ></textarea>
+                </div>
+                <p class="text-xs text-gray-500">
+                  💡 You can edit the message above before creating the plan.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Modal Footer -->
-        <div
-          class="flex flex-col sm:flex-row justify-end gap-3 p-4 sm:p-6 border-t bg-gray-50 sticky bottom-0"
-        >
+        <div class="flex flex-col sm:flex-row justify-end gap-3 p-4 sm:p-6 border-t bg-gray-50 sticky bottom-0">
           <button
-            @click="
-              showCreateModal = false;
-              selectedImageFile = null;
-              imagePreviewUrl = null;
-            "
+            @click="showCreateModal = false; selectedImageFile = null; imagePreviewUrl = null; useAIWelcome = false; trainingWeeks = []; aiGeneratedMessage = ''; showAIPreview = false"
             class="w-full sm:w-auto px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer"
           >
             Cancel
           </button>
           <button
             @click="attemptCreatePlan"
-            :disabled="uploadingImage"
+            :disabled="uploadingImage || generatingAI"
             class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ uploadingImage ? "Uploading..." : "Create a New Plan" }}
+            {{ uploadingImage ? 'Uploading...' : generatingAI ? 'Generating...' : 'Create Plan' }}
           </button>
         </div>
       </div>
@@ -874,26 +946,27 @@ export default {
     };
 
     // Toggle AI Welcome feature
-    const toggleAIWelcome = () => {
-      useAIWelcome.value = !useAIWelcome.value;
+    // استبدل الدالة الحالية بهذه
+const toggleAIWelcome = () => {
+  // لا تقلب القيمة هنا — v-model هو اللي يضبطها
+  if (useAIWelcome.value && newPlan.value.duration) {
+    const weeksMatch = newPlan.value.duration.match(/(\d+)\s*week/i);
+    if (weeksMatch) {
+      const numWeeks = parseInt(weeksMatch[1]);
+      trainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
+        weekNumber: i + 1,
+        sessions: '',
+        exercises: '',
+        notes: ''
+      }));
+    }
+  } else {
+    trainingWeeks.value = [];
+    aiGeneratedMessage.value = "";
+    showAIPreview.value = false;
+  }
+};
 
-      if (useAIWelcome.value && newPlan.value.duration) {
-        const weeksMatch = newPlan.value.duration.match(/(\d+)\s*week/i);
-        if (weeksMatch) {
-          const numWeeks = parseInt(weeksMatch[1]);
-          trainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
-            weekNumber: i + 1,
-            sessions: '',
-            exercises: '',
-            notes: ''
-          }));
-        }
-      } else {
-        trainingWeeks.value = [];
-        aiGeneratedMessage.value = "";
-        showAIPreview.value = false;
-      }
-    };
 
     // Generate AI Welcome Message
     const generateAIMessage = async () => {
@@ -932,7 +1005,7 @@ export default {
           weeks: trainingWeeks.value,
           trainerName: trainerName,
           trainerPhone: trainerPhone,
-          googleMapsLink: newPlan.value.location || ""
+          location: newPlan.value.location || ""
         };
 
         const response = await fetch(`${API_URL}/generate-welcome-message`, {
