@@ -6,7 +6,9 @@
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
           <div>
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">My Plans</h1>
-            <p class="text-gray-500 mt-1 text-sm sm:text-base">Easily manage, edit, and organize all your training plans in one place</p>
+            <p class="text-gray-500 mt-1 text-sm sm:text-base">
+              Easily manage, edit, and organize all your training plans in one place
+            </p>
           </div>
           <button
             @click="showCreateModal = true"
@@ -54,9 +56,7 @@
           </thead>
           <tbody>
             <tr v-if="filteredPlans.length === 0">
-              <td colspan="5" class="text-center p-12 text-gray-400 text-lg">
-                No plans found
-              </td>
+              <td colspan="5" class="text-center p-12 text-gray-400 text-lg">No plans found</td>
             </tr>
             <tr
               v-for="plan in filteredPlans"
@@ -75,9 +75,11 @@
               <td class="p-5 text-gray-600">{{ plan.clientsCount || 0 }}</td>
               <td class="p-5">
                 <span
-                  :class="plan.status === 'Active'
-                    ? 'text-green-600 bg-green-50'
-                    : 'text-red-600 bg-red-50'"
+                  :class="
+                    plan.status === 'Active'
+                      ? 'text-green-600 bg-green-50'
+                      : 'text-red-600 bg-red-50'
+                  "
                   class="px-3 py-1 rounded-full text-sm font-medium"
                 >
                   {{ plan.status }}
@@ -98,7 +100,10 @@
 
       <!-- Cards Section - Mobile & Tablet -->
       <div class="md:hidden space-y-4">
-        <div v-if="filteredPlans.length === 0" class="bg-white shadow-sm rounded-2xl p-8 text-center text-gray-400">
+        <div
+          v-if="filteredPlans.length === 0"
+          class="bg-white shadow-sm rounded-2xl p-8 text-center text-gray-400"
+        >
           No plans found
         </div>
         <div
@@ -114,9 +119,9 @@
               <span class="font-medium text-gray-800 text-lg">{{ plan.title }}</span>
             </div>
             <span
-              :class="plan.status === 'Active'
-                ? 'text-green-600 bg-green-50'
-                : 'text-red-600 bg-red-50'"
+              :class="
+                plan.status === 'Active' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'
+              "
               class="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap"
             >
               {{ plan.status }}
@@ -143,10 +148,7 @@
     </div>
 
     <!-- ================= Upgrade Modal (shown when over free limit) ================= -->
-    <div
-      v-if="showUpgradeModal"
-      class="fixed inset-0 z-60 flex items-center justify-center"
-    >
+    <div v-if="showUpgradeModal" class="fixed inset-0 z-60 flex items-center justify-center">
       <!-- blur background -->
       <div class="absolute inset-0 backdrop-blur-sm bg-black/30"></div>
 
@@ -155,7 +157,8 @@
           <div>
             <h3 class="text-xl font-bold">Upgrade to add more plans</h3>
             <p class="text-sm text-gray-600 mt-1">
-              You have reached the free plan limit (1 plan). Choose a subscription to create more plans.
+              You have reached the free plan limit (1 plan). Choose a subscription to create more
+              plans.
             </p>
           </div>
           <button @click="closeUpgradeModal" class="text-gray-500 hover:text-gray-700">✕</button>
@@ -166,7 +169,9 @@
             v-for="opt in subscriptionOptions"
             :key="opt.id"
             class="border rounded-2xl p-4 flex flex-col justify-between hover:shadow-md transition"
-            :class="{'ring-2 ring-blue-200': selectedSubscription && selectedSubscription.id === opt.id}"
+            :class="{
+              'ring-2 ring-blue-200': selectedSubscription && selectedSubscription.id === opt.id,
+            }"
             @click="selectedSubscription = opt"
           >
             <div>
@@ -177,7 +182,9 @@
               <p class="mt-3 text-sm text-gray-600">{{ opt.description }}</p>
 
               <ul class="mt-4 text-sm space-y-1 text-gray-700">
-                <li>• Up to <span class="font-semibold">{{ opt.planLimit }}</span> plans</li>
+                <li>
+                  • Up to <span class="font-semibold">{{ opt.planLimit }}</span> plans
+                </li>
                 <li>• Billed monthly</li>
                 <li v-if="opt.extra" class="text-gray-600">• {{ opt.extra }}</li>
               </ul>
@@ -206,14 +213,20 @@
       class="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4"
       @click.self="() => (showCreateModal = false)"
     >
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl animate-fadeIn max-h-[90vh] overflow-y-auto">
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl animate-fadeIn max-h-[90vh] overflow-y-auto"
+      >
         <!-- Modal Header -->
-        <div class="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
+        <div
+          class="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white z-10"
+        >
           <div class="flex items-center gap-3">
             <div class="bg-blue-100 p-2 rounded-lg">
               <span class="text-blue-600 text-xl">📋</span>
             </div>
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800 cursor-pointer">Create a New Plan</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800 cursor-pointer">
+              Create a New Plan
+            </h2>
           </div>
         </div>
 
@@ -287,8 +300,9 @@
                 class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
-                 onclick="window.open('https://www.google.com/maps?q=My+Location', '_blank')"
-                 class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer">
+                onclick="window.open('https://www.google.com/maps?q=My+Location', '_blank')"
+                class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
+              >
                 📍
               </button>
             </div>
@@ -312,7 +326,9 @@
             <div class="space-y-3">
               <div class="flex items-center gap-3">
                 <label class="flex-1 cursor-pointer">
-                  <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors text-center">
+                  <div
+                    class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors text-center"
+                  >
                     <input
                       type="file"
                       accept="image/*"
@@ -336,12 +352,26 @@
                   class="w-full h-48 object-cover rounded-lg border border-gray-200"
                 />
                 <button
-                  @click="selectedImageFile = null; imagePreviewUrl = null"
+                  @click="
+                    selectedImageFile = null;
+                    imagePreviewUrl = null;
+                  "
                   class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors"
                   type="button"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -351,9 +381,15 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="flex flex-col sm:flex-row justify-end gap-3 p-4 sm:p-6 border-t bg-gray-50 sticky bottom-0">
+        <div
+          class="flex flex-col sm:flex-row justify-end gap-3 p-4 sm:p-6 border-t bg-gray-50 sticky bottom-0"
+        >
           <button
-            @click="showCreateModal = false; selectedImageFile = null; imagePreviewUrl = null"
+            @click="
+              showCreateModal = false;
+              selectedImageFile = null;
+              imagePreviewUrl = null;
+            "
             class="w-full sm:w-auto px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer"
           >
             Cancel
@@ -363,7 +399,7 @@
             :disabled="uploadingImage"
             class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ uploadingImage ? 'Uploading...' : 'Create a New Plan' }}
+            {{ uploadingImage ? "Uploading..." : "Create a New Plan" }}
           </button>
         </div>
       </div>
@@ -375,9 +411,13 @@
       class="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4"
       @click.self="showManageModal = false"
     >
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl animate-fadeIn max-h-[90vh] overflow-y-auto">
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl animate-fadeIn max-h-[90vh] overflow-y-auto"
+      >
         <!-- Modal Header -->
-        <div class="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
+        <div
+          class="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white z-10"
+        >
           <div class="flex items-center gap-3">
             <div class="bg-blue-100 p-2 rounded-lg">
               <span class="text-blue-600 text-xl">📋</span>
@@ -483,7 +523,9 @@
                   alt="Current plan image"
                   class="w-full h-48 object-cover rounded-lg border border-gray-200"
                 />
-                <div class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                <div
+                  class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded"
+                >
                   Current Image
                 </div>
               </div>
@@ -491,7 +533,9 @@
               <!-- Upload New Image -->
               <div class="flex items-center gap-3">
                 <label class="flex-1 cursor-pointer">
-                  <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors text-center">
+                  <div
+                    class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors text-center"
+                  >
                     <input
                       type="file"
                       accept="image/*"
@@ -501,7 +545,7 @@
                     <div class="flex flex-col items-center gap-2">
                       <span class="text-3xl">📸</span>
                       <span class="text-sm text-gray-600">
-                        {{ selectedPlan.image ? 'Change image' : 'Upload image' }}
+                        {{ selectedPlan.image ? "Change image" : "Upload image" }}
                       </span>
                       <span class="text-xs text-gray-400">Max size: 5MB</span>
                     </div>
@@ -517,12 +561,26 @@
                   class="w-full h-48 object-cover rounded-lg border border-gray-200"
                 />
                 <button
-                  @click="selectedImageFile = null; imagePreviewUrl = null"
+                  @click="
+                    selectedImageFile = null;
+                    imagePreviewUrl = null;
+                  "
                   class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors"
                   type="button"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
                 <div class="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
@@ -534,7 +592,9 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="flex flex-col sm:flex-row justify-between gap-3 p-4 sm:p-6 border-t bg-gray-50 sticky bottom-0">
+        <div
+          class="flex flex-col sm:flex-row justify-between gap-3 p-4 sm:p-6 border-t bg-gray-50 sticky bottom-0"
+        >
           <button
             @click="confirmDelete"
             class="w-full sm:w-auto px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors order-2 sm:order-1 cursor-pointer"
@@ -543,7 +603,11 @@
           </button>
           <div class="flex flex-col sm:flex-row gap-3 order-1 sm:order-2">
             <button
-              @click="showManageModal = false; selectedImageFile = null; imagePreviewUrl = null"
+              @click="
+                showManageModal = false;
+                selectedImageFile = null;
+                imagePreviewUrl = null;
+              "
               class="w-full sm:w-auto px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer"
             >
               Discard Changes
@@ -553,7 +617,7 @@
               :disabled="uploadingImage"
               class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ uploadingImage ? 'Uploading...' : 'Save Changes' }}
+              {{ uploadingImage ? "Uploading..." : "Save Changes" }}
             </button>
           </div>
         </div>
@@ -566,13 +630,17 @@
       class="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4"
       @click.self="showDeleteModal = false"
     >
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn text-center p-6 sm:p-8">
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn text-center p-6 sm:p-8"
+      >
         <div class="flex justify-center mb-4">
           <div class="bg-red-100 p-3 sm:p-4 rounded-full">
             <span class="text-red-600 text-3xl sm:text-4xl">🗑️</span>
           </div>
         </div>
-        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Are you sure you want to delete this plan?</h2>
+        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">
+          Are you sure you want to delete this plan?
+        </h2>
         <p class="text-sm sm:text-base text-gray-500 mb-6">This action cannot be undone.</p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
           <button
@@ -596,7 +664,9 @@
       v-if="showSuccessModal"
       class="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4"
     >
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn text-center p-6 sm:p-8">
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn text-center p-6 sm:p-8"
+      >
         <div class="flex justify-center mb-4">
           <div class="bg-green-100 p-3 sm:p-4 rounded-full">
             <span class="text-green-600 text-4xl sm:text-5xl">✓</span>
@@ -609,7 +679,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import {
   getFirestore,
   collection,
@@ -632,7 +702,7 @@ export default {
   name: "TrainerPlans",
   setup() {
     // ----- CONFIG: ضع هنا عنوان السيرفر بتاعك -----
-    const API_URL = "https://elenora-unexampled-carmon.ngrok-free.dev"; // غيّره لو لازم
+    const API_URL = "https://elenora-unexampled-carmon.ngrok-free.dev";
     // --------------------------------------------
 
     const db = getFirestore();
@@ -664,6 +734,13 @@ export default {
       image: null,
     });
 
+    // AI Welcome Message Feature
+    const useAIWelcome = ref(false);
+    const trainingWeeks = ref([]);
+    const generatingAI = ref(false);
+    const aiGeneratedMessage = ref("");
+    const showAIPreview = ref(false);
+
     // Upgrade modal state
     const showUpgradeModal = ref(false);
     const subscriptionOptions = ref([
@@ -674,7 +751,7 @@ export default {
         priceLabel: "$100 / month",
         planLimit: 3,
         description: "Ideal for trainers starting out - up to 3 plans.",
-        priceId: "PRICE_ID_3_PLANS", // <<< استبدل الـ placeholder بقيمة Stripe Price ID الحقيقية
+        priceId: "PRICE_ID_3_PLANS",
       },
       {
         id: "sub_pro_30",
@@ -683,13 +760,28 @@ export default {
         priceLabel: "$150 / month",
         planLimit: 6,
         description: "For growing trainers - up to 6 plans.",
-        priceId: "PRICE_ID_6_PLANS", // <<< استبدل الـ placeholder بقيمة Stripe Price ID الحقيقية
+        priceId: "PRICE_ID_6_PLANS",
       },
     ]);
     const selectedSubscription = ref(null);
 
-    // حفظ unsubscribe للـ bookings listener علشان نقدر نعمل cleanup
     let bookingsUnsubscribe = null;
+
+    // Watch duration changes to auto-generate weeks structure
+    watch(() => newPlan.value.duration, (newDuration) => {
+      if (!newDuration || !useAIWelcome.value) return;
+
+      const weeksMatch = newDuration.match(/(\d+)\s*week/i);
+      if (weeksMatch) {
+        const numWeeks = parseInt(weeksMatch[1]);
+        trainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
+          weekNumber: i + 1,
+          sessions: '',
+          exercises: '',
+          notes: ''
+        }));
+      }
+    });
 
     const fetchPlans = async () => {
       if (!trainerUid.value) return;
@@ -737,7 +829,6 @@ export default {
       }
     };
 
-    // helper: check active subscription
     const getActiveSubscription = async () => {
       if (!trainerUid.value) return null;
       try {
@@ -745,7 +836,6 @@ export default {
         const q = query(subsRef, where("trainerUid", "==", trainerUid.value), where("subscriptionStatus", "==", "active"));
         const snap = await getDocs(q);
         if (!snap.empty) {
-          // return the subscription with highest planLimit
           let best = null;
           snap.forEach(d => {
             const data = d.data();
@@ -761,13 +851,10 @@ export default {
       return null;
     };
 
-    // Attempt to create plan but check limits first
     const attemptCreatePlan = async () => {
-      // count current plans
       const currentCount = plans.value.length;
       const willBe = currentCount + 1;
 
-      // check active subscription
       let activeSub = null;
       try {
         activeSub = await getActiveSubscription();
@@ -775,23 +862,104 @@ export default {
         console.warn("couldn't fetch active subscription", e);
       }
 
-      // Determine allowed limit
       const allowedLimit = activeSub && activeSub.planLimit ? activeSub.planLimit : 1;
 
       if (willBe > allowedLimit) {
-        // show upgrade modal
         showUpgradeModal.value = true;
-        // pick default option (first)
         selectedSubscription.value = subscriptionOptions.value[0];
         return;
       }
 
-      // else allowed -> create plan normally
-      await createPlanCore();
+      await createPlanCoreWithAI();
     };
 
-    // core create plan (image upload + addDoc)
-    const createPlanCore = async () => {
+    // Toggle AI Welcome feature
+    const toggleAIWelcome = () => {
+      useAIWelcome.value = !useAIWelcome.value;
+
+      if (useAIWelcome.value && newPlan.value.duration) {
+        const weeksMatch = newPlan.value.duration.match(/(\d+)\s*week/i);
+        if (weeksMatch) {
+          const numWeeks = parseInt(weeksMatch[1]);
+          trainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
+            weekNumber: i + 1,
+            sessions: '',
+            exercises: '',
+            notes: ''
+          }));
+        }
+      } else {
+        trainingWeeks.value = [];
+        aiGeneratedMessage.value = "";
+        showAIPreview.value = false;
+      }
+    };
+
+    // Generate AI Welcome Message
+    const generateAIMessage = async () => {
+      if (!newPlan.value.title.trim()) {
+        toast.error("Please enter a plan title first", { position: "top-center", autoClose: 2000 });
+        return;
+      }
+
+      if (!newPlan.value.duration) {
+        toast.error("Please select a duration first", { position: "top-center", autoClose: 2000 });
+        return;
+      }
+
+      const hasContent = trainingWeeks.value.some(w => w.sessions || w.exercises);
+      if (!hasContent) {
+        toast.error("Please fill in at least some training details", { position: "top-center", autoClose: 2000 });
+        return;
+      }
+
+      generatingAI.value = true;
+
+      try {
+        const userRef = doc(db, "users", trainerUid.value);
+        const userSnap = await getDoc(userRef);
+        let trainerName = "Your Trainer";
+        let trainerPhone = "";
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          trainerName = `${userData.firstName || ""} ${userData.lastName || ""}`.trim();
+          trainerPhone = userData.phone || "";
+        }
+
+        const payload = {
+          planTitle: newPlan.value.title,
+          weeks: trainingWeeks.value,
+          trainerName: trainerName,
+          trainerPhone: trainerPhone,
+          googleMapsLink: newPlan.value.location || ""
+        };
+
+        const response = await fetch(`${API_URL}/generate-welcome-message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to generate AI message');
+        }
+
+        const data = await response.json();
+        aiGeneratedMessage.value = data.message;
+        showAIPreview.value = true;
+
+        toast.success("AI message generated successfully!", { position: "top-center", autoClose: 2000 });
+
+      } catch (error) {
+        console.error("Error generating AI message:", error);
+        toast.error("Failed to generate AI message. Please try again.", { position: "top-center", autoClose: 3000 });
+      } finally {
+        generatingAI.value = false;
+      }
+    };
+
+    const createPlanCoreWithAI = async () => {
       if (!newPlan.value.title.trim()) {
         toast.error("Please enter a plan title", { position: "top-center", autoClose: 2000 });
         return;
@@ -809,6 +977,11 @@ export default {
         return;
       }
 
+      if (useAIWelcome.value && !aiGeneratedMessage.value) {
+        toast.error("Please generate the AI welcome message first", { position: "top-center", autoClose: 2000 });
+        return;
+      }
+
       try {
         let imageUrl = null;
         if (selectedImageFile.value) {
@@ -819,12 +992,19 @@ export default {
           }
         }
 
-        await addDoc(collection(db, "plans"), {
+        const planData = {
           ...newPlan.value,
           image: imageUrl,
           trainer_uid: trainerUid.value,
           clientsCount: 0,
-        });
+        };
+
+        if (useAIWelcome.value && aiGeneratedMessage.value) {
+          planData.aiWelcomeMessage = aiGeneratedMessage.value;
+          planData.hasAIWelcome = true;
+        }
+
+        await addDoc(collection(db, "plans"), planData);
 
         newPlan.value = {
           title: "",
@@ -838,7 +1018,12 @@ export default {
         };
         selectedImageFile.value = null;
         imagePreviewUrl.value = null;
+        useAIWelcome.value = false;
+        trainingWeeks.value = [];
+        aiGeneratedMessage.value = "";
+        showAIPreview.value = false;
         showCreateModal.value = false;
+
         showSuccess("The plan is created successfully");
         fetchPlans();
       } catch (err) {
@@ -847,14 +1032,12 @@ export default {
       }
     };
 
-  // start subscription checkout flow (calls server to create checkout session and redirects)
     const startSubscriptionCheckout = async (opt) => {
       if (!trainerUid.value) {
         toast.error("User not authenticated", { position: "top-center", autoClose: 2000 });
         return;
       }
       try {
-        // Get trainer data from Firestore
         const userRef = doc(db, "users", trainerUid.value);
         const userSnap = await getDoc(userRef);
         let trainerEmail = "";
@@ -866,7 +1049,6 @@ export default {
           trainerName = `${userData.firstName || ""} ${userData.lastName || ""}`.trim();
         }
 
-        // store pending subscription locally so we can finalize after redirect
         const pending = {
           trainerUid: trainerUid.value,
           trainerEmail: trainerEmail,
@@ -880,7 +1062,6 @@ export default {
         };
         localStorage.setItem("pendingSubscription", JSON.stringify(pending));
 
-        // create checkout session on server
         const payload = {
           mode: "subscription",
           priceId: opt.priceId,
@@ -897,7 +1078,6 @@ export default {
             planType: opt.title,
             planLimit: opt.planLimit.toString()
           },
-          // success URL should return to this same page — we'll read localStorage to finalize
           success_url: `${window.location.origin + window.location.pathname}?sub_complete=1`,
           cancel_url: `${window.location.origin + window.location.pathname}?sub_canceled=1`
         };
@@ -916,7 +1096,6 @@ export default {
 
         const data = await res.json();
         if (data.url) {
-          // redirect user to Stripe checkout
           window.location.href = data.url;
         } else {
           console.error("Unexpected response from checkout session:", data);
@@ -928,14 +1107,12 @@ export default {
       }
     };
 
-    // After user returns from checkout, finalize the pending subscription (optimistic)
     const finalizePendingSubscription = async () => {
       try {
         const raw = localStorage.getItem("pendingSubscription");
         if (!raw) return;
         const pending = JSON.parse(raw);
 
-        // create subscribers doc
         await addDoc(collection(db, "subscribers"), {
           trainerUid: pending.trainerUid,
           planType: pending.planType,
@@ -946,11 +1123,9 @@ export default {
           createdAt: serverTimestamp()
         });
 
-        // cleanup and UI
         localStorage.removeItem("pendingSubscription");
         showUpgradeModal.value = false;
         showSuccess("Subscription activated — you can now add more plans!");
-        // refresh plans/subscriptions
         fetchPlans();
       } catch (err) {
         console.error("finalizePendingSubscription error:", err);
@@ -1040,15 +1215,9 @@ export default {
       });
     });
 
-    /**
-     * --- new: startBookingsListener ---
-     * (unchanged) نعمل listener على collection bookings بس للـ trainer الحالي
-     */
     const startBookingsListener = () => {
-      // safety
       if (!trainerUid.value) return;
 
-      // clean existing listener
       if (bookingsUnsubscribe) {
         bookingsUnsubscribe();
         bookingsUnsubscribe = null;
@@ -1109,7 +1278,6 @@ export default {
       }
     };
 
-    // cleanup on unmount
     onUnmounted(() => {
       if (bookingsUnsubscribe) {
         bookingsUnsubscribe();
@@ -1117,7 +1285,6 @@ export default {
       }
     });
 
-    // on mount: auth + fetch plans + listener + finalize pending subscription if present
     onMounted(() => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -1125,13 +1292,9 @@ export default {
           await fetchPlans();
           startBookingsListener();
 
-          // if returned from Stripe checkout and we have pending subscription in localStorage -> finalize
-          // We rely on localStorage pendingSubscription saved before redirect
           const urlParams = new URLSearchParams(window.location.search);
           if (urlParams.has("sub_complete")) {
-            // finalize pending subscription (optimistic)
             await finalizePendingSubscription();
-            // remove query params to clean URL (nice-to-have)
             const cleanUrl = window.location.origin + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
           }
@@ -1158,17 +1321,23 @@ export default {
       imagePreviewUrl,
       handleImageSelect,
       attemptCreatePlan,
-      createPlanCore,
       openManageModal,
       updatePlan,
       confirmDelete,
       deletePlan,
-      // upgrade modal
       showUpgradeModal,
       subscriptionOptions,
       selectedSubscription,
       startSubscriptionCheckout,
       closeUpgradeModal,
+      // AI Welcome Message
+      useAIWelcome,
+      trainingWeeks,
+      generatingAI,
+      aiGeneratedMessage,
+      showAIPreview,
+      toggleAIWelcome,
+      generateAIMessage,
     };
   },
 };
