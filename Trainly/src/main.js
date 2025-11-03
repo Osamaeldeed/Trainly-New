@@ -194,6 +194,7 @@ const trainerPages = [
   "/trainer/customerservice",
   "/trainer/settings",
   "/myprofile",
+  
 ];
 const adminPages = [
   "/admin/overview",
@@ -202,6 +203,7 @@ const adminPages = [
   "/admin/reviews",
   "/admin/bookings",
   "/admin/payments",
+  "/myprofile",
 ];
 
 // ✅ Helper function: انتظار تحميل حالة المستخدم من Firebase
