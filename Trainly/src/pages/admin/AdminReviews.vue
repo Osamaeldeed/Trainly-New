@@ -1,9 +1,13 @@
 <template>
-  <div class="min-h-screen bg-gray-50 border-1 border-gray-200 p-4 md:p-6 lg:p-8 rounded-2xl">
+  <div
+    class="min-h-screen bg-gray-50 border-1 border-gray-200 p-4 md:p-6 lg:p-8 rounded-2xl"
+  >
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
-        <h1 class="text-2xl font-semibold mb-1">Manage All Reviews</h1>
-        <p class="text-gray-500 mb-6">View, filter, and remove trainee reviews for trainers</p>
+      <h1 class="text-2xl font-semibold mb-1">Manage All Reviews</h1>
+      <p class="text-gray-500 mb-6">
+        View, filter, and remove trainee reviews for trainers
+      </p>
 
       <!-- Search + Rating Filter -->
       <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
@@ -32,22 +36,33 @@
           </div>
 
           <!-- Rating Filter -->
-    <div class="relative w-48">
-  <select
-    v-model="ratingFilter"
-    class="block w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-  >
-    <option value="all">All Ratings</option>
-    <option v-for="n in 5" :key="n" :value="n">{{ n }} Stars</option>
-  </select>
-  <!-- SVG Arrow -->
-  <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-    </svg>
-  </div>
-</div>
-
+          <div class="relative w-48">
+            <select
+              v-model="ratingFilter"
+              class="block w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All Ratings</option>
+              <option v-for="n in 5" :key="n" :value="n">{{ n }} Stars</option>
+            </select>
+            <!-- SVG Arrow -->
+            <div
+              class="pointer-events-none absolute inset-y-0 right-3 flex items-center"
+            >
+              <svg
+                class="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -58,7 +73,9 @@
           :key="review.id"
           class="bg-white rounded-lg shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow duration-200"
         >
-          <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+          <div
+            class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4"
+          >
             <!-- Left Section: User Info + Review -->
             <div class="flex gap-4 flex-1">
               <!-- Avatar -->
@@ -82,11 +99,15 @@
               <!-- Review Content -->
               <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-2">
-                  <span class="font-semibold text-gray-900 text-base md:text-lg">
+                  <span
+                    class="font-semibold text-gray-900 text-base md:text-lg"
+                  >
                     {{ review.traineeName }}
                   </span>
                   <span class="text-gray-500 text-sm">reviewed</span>
-                  <span class="font-semibold text-gray-900 text-base md:text-lg">
+                  <span
+                    class="font-semibold text-gray-900 text-base md:text-lg"
+                  >
                     {{ review.trainerName }}
                   </span>
 
@@ -102,7 +123,9 @@
                         d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
                       />
                     </svg>
-                    <span class="text-[#FFA534] font-medium ml-1 text-sm">{{ review.rating }}</span>
+                    <span class="text-[#FFA534] font-medium ml-1 text-sm">{{
+                      review.rating
+                    }}</span>
                   </div>
                 </div>
 
@@ -112,7 +135,9 @@
                 </p>
 
                 <!-- Session Info -->
-                <div class="flex flex-wrap gap-2 text-xs md:text-sm text-gray-500">
+                <div
+                  class="flex flex-wrap gap-2 text-xs md:text-sm text-gray-500"
+                >
                   <span>Session: {{ review.sessionType }}</span>
                   <span>•</span>
                   <span>{{ formatDate(review.createdAt) }}</span>
@@ -150,9 +175,12 @@
           class="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
         >
           <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">Delete Review</h3>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">
+              Delete Review
+            </h3>
             <p class="text-gray-600 mb-6">
-              Are you sure you want to delete this review? This action cannot be undone.
+              Are you sure you want to delete this review? This action cannot be
+              undone.
             </p>
             <div class="flex gap-3 justify-end">
               <button
@@ -220,7 +248,9 @@ const filteredReviews = computed(() => {
   }
 
   if (ratingFilter.value !== "all") {
-    filtered = filtered.filter((review) => review.rating === parseInt(ratingFilter.value));
+    filtered = filtered.filter(
+      (review) => review.rating === parseInt(ratingFilter.value)
+    );
   }
 
   return filtered;
@@ -235,7 +265,9 @@ const deleteReview = async () => {
   if (reviewToDelete.value) {
     try {
       await deleteDoc(doc(db, "reviews", reviewToDelete.value.id));
-      reviews.value = reviews.value.filter(r => r.id !== reviewToDelete.value.id);
+      reviews.value = reviews.value.filter(
+        (r) => r.id !== reviewToDelete.value.id
+      );
       showDeleteModal.value = false;
       reviewToDelete.value = null;
     } catch (error) {
@@ -251,7 +283,9 @@ const cancelDelete = () => {
 
 const formatDate = (timestamp) => {
   if (!timestamp) return "";
-  const date = timestamp.seconds ? new Date(timestamp.seconds * 1000) : new Date(timestamp);
+  const date = timestamp.seconds
+    ? new Date(timestamp.seconds * 1000)
+    : new Date(timestamp);
   return date.toLocaleDateString() + " " + date.toLocaleTimeString();
 };
 </script>
