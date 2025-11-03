@@ -5,6 +5,10 @@ const cors = require("cors");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Initialize Firebase Admin
 const serviceAccount = require("./serviceAccountKey.json");
@@ -17,8 +21,8 @@ const db = admin.firestore();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // your gmail
-    pass: process.env.EMAIL_PASS, // your app password (not regular password)
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -36,7 +40,7 @@ app.use(
   })
 );
 
-// Helper function to send email
+// Helper function to send subscription email
 async function sendSubscriptionEmail(subscriptionData) {
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -84,6 +88,7 @@ async function sendSubscriptionEmail(subscriptionData) {
     console.error("❌ Error sending email:", error);
   }
 }
+
 // Helper function to send new trainer registration email
 async function sendNewTrainerEmail(trainerData) {
   const mailOptions = {
@@ -190,18 +195,14 @@ app.post(
             console.warn("Could not fetch trainer data:", e);
           }
 
-          // compute a default nextBillingDate (30 days from now) as Firestore Timestamp
-          const defaultNextBillingDate = admin.firestore.Timestamp.fromDate(
-            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-          );
-
           // Create subscription document
           const subscriptionData = {
             trainerUid: trainerUid || null,
             trainerEmail: trainerData.email || session.customer_email || null,
             trainerName:
-              `${trainerData.firstName || ""} ${trainerData.lastName || ""}`.trim() ||
-              "Unknown",
+              `${trainerData.firstName || ""} ${
+                trainerData.lastName || ""
+              }`.trim() || "Unknown",
             planType: planType || "Unknown",
             planLimit: parseInt(planLimit) || 0,
             price: (session.amount_total || 0) / 100,
@@ -212,9 +213,6 @@ app.post(
             stripeCustomerId: session.customer || null,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            // NEW: store nextBillingDate and cancel flag so frontend shows correct info
-            nextBillingDate: defaultNextBillingDate,
-            cancelScheduled: false,
           };
 
           const subscriptionRef = await db
@@ -236,9 +234,6 @@ app.post(
                       planLimit: parseInt(planLimit),
                       subscriptionId: subscriptionRef.id,
                       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-                      // NEW: nextBillingDate + cancelScheduled for UI correctness
-                      nextBillingDate: defaultNextBillingDate,
-                      cancelScheduled: false,
                     },
                   },
                   { merge: true }
@@ -270,7 +265,7 @@ app.post(
             console.warn("Could not create notification:", e);
           }
         } else {
-          // Handle regular plan booking (existing code)
+          // Handle regular plan booking
           const { planId, trainerId, traineeId, planName } =
             session.metadata || {};
 
@@ -377,6 +372,7 @@ app.post(
             }
           }
 
+          // Create notification for trainer
           try {
             await db.collection("notifications").add({
               userId: trainerId || null,
@@ -392,6 +388,33 @@ app.post(
           } catch (e) {
             console.warn("Could not create notification:", e);
           }
+
+          // 🆕 Send AI welcome message if available
+          try {
+            const planDocFresh = await db.collection("plans").doc(planId).get();
+            if (planDocFresh.exists) {
+              const freshPlanData = planDocFresh.data();
+              if (freshPlanData.aiWelcomeMessage) {
+                console.log("📨 Attempting to send AI welcome message...");
+                
+                // Call internal endpoint to send welcome message
+                const fetch = (await import('node-fetch')).default;
+                await fetch(`http://localhost:${process.env.PORT || 3000}/send-welcome-message`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    trainerId: trainerId,
+                    traineeId: traineeId,
+                    welcomeMessage: freshPlanData.aiWelcomeMessage
+                  })
+                }).catch(err => console.warn('Failed to send welcome message:', err));
+                
+                console.log('✅ AI Welcome message queued for trainee');
+              }
+            }
+          } catch (e) {
+            console.warn('Could not send welcome message:', e);
+          }
         }
       }
 
@@ -403,7 +426,6 @@ app.post(
         const subscription = event.data.object;
         console.log(`🔔 ${event.type}:`, subscription.id);
 
-        // Update subscription status in Firestore
         const subscriptionQuery = await db
           .collection("subscriptions")
           .where("stripeSubscriptionId", "==", subscription.id)
@@ -417,55 +439,26 @@ app.post(
               ? "canceled"
               : subscription.status;
 
-          // prepare update data
-          const updatePayload = {
+          await subscriptionDoc.ref.update({
             status: newStatus,
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-          };
+          });
 
-          // if Stripe gives current_period_end, use it to set nextBillingDate
-          if (subscription.current_period_end) {
-            try {
-              const millis = Number(subscription.current_period_end) * 1000;
-              updatePayload.nextBillingDate = admin.firestore.Timestamp.fromMillis(
-                millis
-              );
-            } catch (e) {
-              console.warn("Could not parse current_period_end:", e);
-            }
-          }
-
-          // also reflect cancel_at_period_end if present
-          if (typeof subscription.cancel_at_period_end === "boolean") {
-            updatePayload.cancelScheduled = subscription.cancel_at_period_end;
-          }
-
-          await subscriptionDoc.ref.update(updatePayload);
-
-          // Update trainer's subscription status
           const subscriptionData = subscriptionDoc.data();
           if (subscriptionData.trainerUid) {
-            const userUpdate = {
-              subscription: {
-                active: newStatus === "active",
-                status: newStatus,
-                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-              },
-            };
-
-            // set nextBillingDate in users collection if we have it
-            if (updatePayload.nextBillingDate) {
-              userUpdate.subscription.nextBillingDate = updatePayload.nextBillingDate;
-            }
-
-            if (typeof updatePayload.cancelScheduled === "boolean") {
-              userUpdate.subscription.cancelScheduled = updatePayload.cancelScheduled;
-            }
-
             await db
               .collection("users")
               .doc(subscriptionData.trainerUid)
-              .set(userUpdate, { merge: true });
+              .set(
+                {
+                  subscription: {
+                    active: newStatus === "active",
+                    status: newStatus,
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                  },
+                },
+                { merge: true }
+              );
           }
 
           console.log(
@@ -484,6 +477,163 @@ app.post(
 
 // After webhook route we can parse JSON
 app.use(express.json());
+
+/**
+ * 🆕 Generate AI Welcome Message for Training Plan
+ */
+app.post('/generate-welcome-message', async (req, res) => {
+  try {
+    const { planTitle, weeks, trainerName, trainerPhone, googleMapsLink } = req.body;
+
+    if (!planTitle || !weeks || !Array.isArray(weeks) || weeks.length === 0) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Build training schedule text from weeks array
+    let scheduleText = '';
+    weeks.forEach((week, index) => {
+      scheduleText += `\n\nWeek ${index + 1}:\n`;
+      scheduleText += `Sessions: ${week.sessions || 'N/A'}\n`;
+      scheduleText += `Exercises: ${week.exercises || 'N/A'}\n`;
+      if (week.notes) {
+        scheduleText += `Notes: ${week.notes}\n`;
+      }
+    });
+
+    // Create AI prompt
+    const prompt = `
+You are a professional fitness trainer assistant. Generate a warm, professional welcome message for a new trainee who just subscribed to a training plan.
+
+Plan Details:
+- Plan Name: ${planTitle}
+- Duration: ${weeks.length} weeks
+- Trainer: ${trainerName || 'Your Trainer'}
+
+Training Schedule:
+${scheduleText}
+
+Additional Information:
+${trainerPhone ? `- Trainer Phone: ${trainerPhone}` : ''}
+${googleMapsLink ? `- Location: ${googleMapsLink}` : ''}
+
+Requirements:
+1. Start with a warm welcome greeting
+2. Congratulate them on starting their fitness journey
+3. Present the training schedule in a clear, organized format (week by week)
+4. Include the trainer's contact information at the end
+5. Keep the tone motivating and professional
+6. Write in clear, simple English
+7. Use proper formatting with line breaks for readability
+8. Make it around 200-300 words
+
+Generate the welcome message now:
+`;
+
+    // Call Gemini AI
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const messageText = response.text();
+
+    console.log('✅ AI message generated successfully');
+    res.json({ 
+      success: true, 
+      message: messageText 
+    });
+
+  } catch (error) {
+    console.error('❌ Error generating AI message:', error);
+    res.status(500).json({ 
+      error: error.message || 'Failed to generate message',
+      details: error.toString()
+    });
+  }
+});
+
+/**
+ * 🆕 Send Welcome Message to Trainee after booking
+ */
+app.post('/send-welcome-message', async (req, res) => {
+  try {
+    const { trainerId, traineeId, welcomeMessage } = req.body;
+
+    if (!trainerId || !traineeId || !welcomeMessage) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Get trainer and trainee info
+    const trainerDoc = await db.collection('users').doc(trainerId).get();
+    const traineeDoc = await db.collection('users').doc(traineeId).get();
+
+    if (!trainerDoc.exists || !traineeDoc.exists) {
+      return res.status(404).json({ error: 'Trainer or trainee not found' });
+    }
+
+    const trainerData = trainerDoc.data();
+    const traineeData = traineeDoc.data();
+
+    // Find or create conversation
+    const conversationsRef = db.collection('conversations');
+    const participants = [trainerId, traineeId].sort();
+    
+    let conversationId = null;
+    const existingConvQuery = await conversationsRef
+      .where('participants', '==', participants)
+      .limit(1)
+      .get();
+
+    if (!existingConvQuery.empty) {
+      conversationId = existingConvQuery.docs[0].id;
+    } else {
+      // Create new conversation
+      const newConvRef = await conversationsRef.add({
+        participants: participants,
+        traineeInfo: {
+          id: traineeId,
+          name: `${traineeData.firstName || ''} ${traineeData.lastName || ''}`.trim() || 'Trainee',
+          avatar: traineeData.profilePicture || traineeData.avatar || null
+        },
+        trainerInfo: {
+          id: trainerId,
+          name: `${trainerData.firstName || ''} ${trainerData.lastName || ''}`.trim() || 'Trainer',
+          avatar: trainerData.profilePicture || trainerData.avatar || null
+        },
+        lastMessage: '',
+        lastMessageTime: admin.firestore.FieldValue.serverTimestamp(),
+        unreadCount: {
+          [trainerId]: 0,
+          [traineeId]: 0
+        },
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      conversationId = newConvRef.id;
+    }
+
+    // Send welcome message in conversation
+    const messagesRef = db.collection('conversations').doc(conversationId).collection('messages');
+    await messagesRef.add({
+      senderId: trainerId,
+      text: welcomeMessage,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      read: false,
+      isWelcomeMessage: true
+    });
+
+    // Update conversation's lastMessage
+    await conversationsRef.doc(conversationId).update({
+      lastMessage: welcomeMessage.substring(0, 100) + '...',
+      lastMessageTime: admin.firestore.FieldValue.serverTimestamp(),
+      [`unreadCount.${traineeId}`]: admin.firestore.FieldValue.increment(1)
+    });
+
+    console.log('✅ Welcome message sent successfully');
+    res.json({ success: true, conversationId });
+
+  } catch (error) {
+    console.error('❌ Error sending welcome message:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 /**
  * Send New Trainer Registration Email
@@ -510,7 +660,7 @@ app.post("/send-trainer-registration-email", async (req, res) => {
 });
 
 /**
- * Create Subscription Checkout Session (Dynamic Pricing)
+ * Create Subscription Checkout Session
  */
 app.post("/create-subscription-checkout", async (req, res) => {
   try {
@@ -531,7 +681,6 @@ app.post("/create-subscription-checkout", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Create dynamic price for subscription
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -542,7 +691,7 @@ app.post("/create-subscription-checkout", async (req, res) => {
               name: `${planType} Subscription`,
               description: `Up to ${planLimit} training plans per month`,
             },
-            unit_amount: Math.round(price * 100), // Convert to cents
+            unit_amount: Math.round(price * 100),
             recurring: {
               interval: "month",
             },
@@ -724,6 +873,9 @@ app.get("/", (req, res) => {
   res.json({
     message: "🚀 Server is running!",
     endpoints: [
+      "POST /generate-welcome-message",
+      "POST /send-welcome-message",
+      "POST /send-trainer-registration-email",
       "POST /create-subscription-checkout",
       "POST /create-checkout-session",
       "POST /verify-payment",
@@ -737,7 +889,6 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(
-    `📧 Email notifications configured for: osamaeldeeb728@gmail.com`
-  );
+  console.log(`📧 Email notifications configured for: osamaeldeeb728@gmail.com`);
+  console.log(`🤖 AI features enabled with Gemini API`);
 });
