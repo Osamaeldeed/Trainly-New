@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div v-if="showToast" class="toast flex justify-center items-center">
+    <div v-if="showToast" class="toast flex justify-center items-center bg-white dark:bg-[#3B3B3B]">
       {{ toastMessage }}
     </div>
     <div
       class="bg-[url('/src/assets/images/couple-training-together-gym.jpg')] bg-cover bg-no-repeat bg-[position-x:100%] w-full h-screen flex items-center justify-start pl-20 max-[768px]:pl-0 max-[768px]:justify-center"
     >
       <div
-        class="w-[480px] max-w-[calc(100%-40px)] mx-0 rounded-[10px] bg-white/95 p-3 flex items-start justify-center relative animate-slideUp"
+        class="w-[480px] max-w-[calc(100%-40px)] mx-0 rounded-[10px] bg-white dark:bg-[#3B3B3B]/80 p-3 flex items-start justify-center relative animate-slideUp"
       >
         <div
-          class="w-[446px] h-[546px] bg-white p-9 rounded-lg flex flex-col justify-center shadow-[0_0_10px_rgba(0,0,0,0.1)]"
+          class="w-[446px] h-[546px] bg-white dark:bg-[#3B3B3B] p-9 rounded-lg flex flex-col justify-center shadow-[0_0_10px_rgba(0,0,0,0.1)]"
         >
-          <h2 class="mb-5 text-[22px] font-semibold">
+          <h2 class="mb-5 text-[22px] text-black dark:text-white font-semibold">
             Welcome back To
             <span
               class="bg-gradient-to-r from-[#00C853] to-[#00B0FF] bg-clip-text text-transparent"
@@ -23,26 +23,30 @@
 
           <form @submit.prevent="handleLogin" class="w-full">
             <!-- Email -->
-            <label for="email" class="text-sm block mt-2 mb-1">Email</label>
+            <label for="email" class="text-sm text-black dark:text-white block mt-2 mb-1"
+              >Email</label
+            >
             <input
               type="email"
               id="email"
               v-model="email"
               placeholder="Enter email"
               required
-              class="w-full p-3 mb-2 border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
+              class="w-full p-3 mb-2 border placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
             />
 
             <!-- Password -->
             <div class="relative">
-              <label for="password" class="text-sm block mt-2 mb-1">Password</label>
+              <label for="password" class="text-sm block text-black dark:text-white mt-2 mb-1"
+                >Password</label
+              >
               <input
                 :type="passwordFieldType"
                 id="password"
                 v-model="password"
                 placeholder="Enter your password"
                 required
-                class="w-full p-3 mb-2 border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
+                class="w-full p-3 mb-2 placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white border border-gray-300 rounded-md shadow-[0_0_6px_rgba(0,0,0,0.1)]"
               />
               <button
                 type="button"
@@ -64,7 +68,7 @@
             <!-- Forgot Password -->
             <a
               href="/forgetpassword1"
-              class="text-xs text-[#2d8fff] hover:underline block text-right mb-4 cursor-pointer"
+              class="text-xs text-[#2d8fff] dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] transition-colors duration-300 hover:underline block text-right mb-4 cursor-pointer"
             >
               Forgot Password?
             </a>
@@ -105,16 +109,18 @@
             <button
               type="button"
               @click="handleGoogleLogin"
-              class="flex items-center justify-center gap-2 border border-gray-300 p-2 cursor-pointer rounded-md bg-white w-full"
+              class="flex items-center dark:text-white dark:bg-[#555555] justify-center gap-2 border border-gray-300 p-2 cursor-pointer rounded-md bg-white w-full"
             >
               <img src="/src/assets/images/g-logo.png" alt="google" class="w-5 h-5" />
               Continue with Google
             </button>
 
             <!-- Sign Up Link -->
-            <p class="text-left text-sm mt-7">
+            <p class="text-left text-black dark:text-white text-sm mt-7">
               Don't have an account?
-              <a href="/signup" class="text-[#2d8fff] hover:underline">Sign up</a>
+              <a href="/signup"
+                class="text-[#2d8fff] hover:underline dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] transition-colors duration-300"
+               >Sign up</a>
             </p>
           </form>
         </div>

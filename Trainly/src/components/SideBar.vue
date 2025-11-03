@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- ✅ Navbar -->
-    <nav class="top-0 z-50 w-full bg-white">
+    <nav class="top-0 z-50 w-full dark:bg-[#3B3B3B] bg-white">
       <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
           <!-- 🔹 زرار فتح السايد بار (مظبوط ومنسق) -->
@@ -9,7 +9,7 @@
             <button
               @click="toggleSidebar"
               type="button"
-              class="inline-flex items-center justify-center p-2 text-gray-600 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-200"
+              class="inline-flex items-center justify-center p-2 dark:text-white text-gray-600 rounded-lg dark:bg-[#3B3B3B] hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-200"
             >
               <span class="sr-only">Open sidebar</span>
               <svg
@@ -27,109 +27,122 @@
               </svg>
             </button>
           </div>
+          <div class="flex items-center gap-4 justify-end">
+            <!-- دارك مود + اللغة -->
+            <div class="flex items-center gap-3">
+              <button
+                @click="toggleDarkMode"
+                class="py-2 text-xl cursor-pointer dark:text-white hover:scale-110 transition-transform"
+              >
+                {{ isDark ? "☀️" : "🌙" }}
+              </button>
+            </div>
 
-          <!-- 🔹 الأوفرلاي الأبيض -->
-          <div
-            v-if="isSidebarOpen"
-            class="fixed inset-0 filter backdrop-blur-sm bg-opacity-80 z-30 lg:hidden transition-all duration-300"
-            @click="toggleSidebar"
-          ></div>
+            <!-- 🔹 الأوفرلاي الأبيض -->
+            <div
+              v-if="isSidebarOpen"
+              class="fixed inset-0 filter backdrop-blur-sm bg-opacity-80 z-30 lg:hidden transition-all duration-300"
+              @click="toggleSidebar"
+            ></div>
 
-          <!-- باقي الناف -->
-          <div class="flex items-center">
-            <div class="flex items-center ms-3 gap-[24px]">
-              <!-- notification bell + badge -->
-              <div class="relative">
-                <button
-                  @click="toggleNotifications"
-                  type="button"
-                  class="relative inline-flex items-center justify-center p-2 text-gray-600 rounded-lg hover:bg-gray-200 focus:outline-none transition duration-200"
-                  aria-label="Notifications"
-                >
-                  <img
-                    src="@/assets/images/mingcute_notification-line.png"
-                    alt="bell"
-                    class="w-7 h-7"
-                  />
-                  <span
-                    v-if="unreadCount > 0"
-                    class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full"
+            <!-- باقي الناف -->
+            <div class="flex items-center">
+              <div class="flex items-center ms-3 gap-[24px]">
+                <!-- notification bell + badge -->
+                <div class="relative">
+                  <button
+                    @click="toggleNotifications"
+                    type="button"
+                    class="relative cursor-pointer inline-flex items-center justify-center p-2 text-gray-600 rounded-lg hover:bg-gray-200 focus:outline-none transition duration-200"
+                    aria-label="Notifications"
                   >
-                    {{ unreadCount }}
-                  </span>
-                </button>
-
-                <!-- dropdown notifications -->
-                <div
-                  v-if="showNotifications"
-                  class="absolute right-0 mt-2 w-80 bg-white border shadow-xl rounded-xl overflow-hidden z-50"
-                >
-                  <!-- header -->
-                  <div
-                    class="p-3 border-b font-semibold flex items-center justify-between bg-blue-50"
-                  >
-                    <div class="text-gray-700">Notifications</div>
-                    <button
+                    <img
+                      src="@/assets/images/mingcute_notification-line.png"
+                      alt="bell"
+                      class="w-7 h-7"
+                    />
+                    <span
                       v-if="unreadCount > 0"
-                      @click.stop="markAllRead"
-                      class="text-sm text-blue-600 hover:underline"
+                      class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full"
                     >
-                      Mark all read
-                    </button>
-                  </div>
+                      {{ unreadCount }}
+                    </span>
+                  </button>
 
-                  <!-- notifications list -->
-                  <div class="max-h-64 overflow-y-auto">
+                  <!-- dropdown notifications -->
+                  <div
+                    v-if="showNotifications"
+                    class="absolute right-0 mt-2 w-80 dark:bg-[#3B3B3B] bg-white border shadow-xl rounded-xl overflow-hidden z-50"
+                  >
+                    <!-- header -->
                     <div
-                      v-if="notifications.length === 0"
-                      class="p-4 text-center text-sm text-gray-400"
+                      class="p-3 border-b font-semibold flex items-center justify-between bg-blue-50"
                     >
-                      No notifications
+                      <div class="text-gray-700 dark:text-white">Notifications</div>
+                      <button
+                        v-if="unreadCount > 0"
+                        @click.stop="markAllRead"
+                        class="text-sm text-blue-600 hover:underline"
+                      >
+                        Mark all read
+                      </button>
                     </div>
 
-                    <div
-                      v-for="note in notifications"
-                      :key="note.id"
-                      @click="handleNotificationClick(note)"
-                      class="cursor-pointer p-3 flex flex-col gap-1 border-b hover:bg-blue-50 transition-colors duration-200 rounded-xl mx-2 my-1"
-                      :class="{ 'bg-blue-100': !note.read }"
-                    >
-                      <div class="flex items-center justify-between">
-                        <div class="font-medium text-gray-800 text-sm">
-                          {{ note.title || "Notification" }}
-                        </div>
-                        <div class="text-xs text-gray-400">{{ formatTime(note.createdAt) }}</div>
+                    <!-- notifications list -->
+                    <div class="max-h-64 overflow-y-auto">
+                      <div
+                        v-if="notifications.length === 0"
+                        class="p-4 text-center text-sm dark:text-white text-gray-400"
+                      >
+                        No notifications
                       </div>
-                      <div class="text-sm text-gray-700 mt-1">{{ note.message || "" }}</div>
-                      <div class="self-end mt-1">
-                        <button
-                          @click.stop="toggleRead(note)"
-                          class="text-xs px-2 py-1 border rounded-full text-gray-600 hover:bg-gray-200 transition-colors"
-                        >
-                          {{ note.read ? "Read" : "Mark" }}
-                        </button>
+
+                      <div
+                        v-for="note in notifications"
+                        :key="note.id"
+                        @click="handleNotificationClick(note)"
+                        class="cursor-pointer p-3 flex flex-col gap-1 border-b hover:bg-blue-50 transition-colors duration-200 rounded-xl mx-2 my-1"
+                        :class="{ 'bg-blue-100': !note.read }"
+                      >
+                        <div class="flex items-center justify-between">
+                          <div class="font-medium text-gray-800 text-sm">
+                            {{ note.title || "Notification" }}
+                          </div>
+                          <div class="text-xs text-gray-400">{{ formatTime(note.createdAt) }}</div>
+                        </div>
+                        <div class="text-sm dark:text-white text-gray-700 mt-1">
+                          {{ note.message || "" }}
+                        </div>
+                        <div class="self-end mt-1">
+                          <button
+                            @click.stop="toggleRead(note)"
+                            class="text-xs px-2 py-1 border rounded-full dark:text-white text-gray-600 hover:bg-gray-200 transition-colors"
+                          >
+                            {{ note.read ? "Read" : "Mark" }}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div>
-                <button
-                  type="button"
-                  class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                  aria-expanded="false"
-                  data-dropdown-toggle="dropdown-user"
-                >
-                  <img
-                    class="w-8 h-8 rounded-full"
-                    :src="
-                      trainerImage ||
-                      'https://media1.tenor.com/m/IfbOs_yh89AAAAAC/loading-buffering.gif'
-                    "
-                    alt="user photo"
-                  />
-                </button>
+                <div>
+                  <button
+                    type="button"
+                    class="flex text-sm dark:text-white bg-gray-800 dark:bg-[#3B3B3B] rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                    aria-expanded="false"
+                    data-dropdown-toggle="dropdown-user"
+                  >
+                    <img
+                      class="w-8 h-8 rounded-full"
+                      :src="
+                        trainerImage ||
+                        'https://media1.tenor.com/m/IfbOs_yh89AAAAAC/loading-buffering.gif'
+                      "
+                      alt="user photo"
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -146,17 +159,17 @@
       ]"
       aria-label="Sidebar"
     >
-      <div class="h-full px-3 py-4">
-        <ul class="space-y-4 font-light text-[14px] mx-5">
+      <div class="h-full px-3 dark:bg-[#3B3B3B] py-4">
+        <ul class="space-y-4 font-light dark:bg-[#3B3B3B] dark:text-white text-[14px] mx-5">
           <li class="mb-11 mt-3 mx-2">
-            <img src="@/assets/images/Project LOGO.png" class="h-8 w-25 me-3" alt="Logo" />
+            <img :src="logoSrc" class="h-8 w-25 me-3" alt="Logo" />
           </li>
 
           <!-- ✅ View My Profile - الرابط الصح -->
           <li>
             <router-link
               to="/myprofile"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -179,7 +192,7 @@
           <li>
             <router-link
               to="/trainer/home"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/bx_home.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Home</span>
@@ -189,7 +202,7 @@
           <li>
             <router-link
               to="/trainer/plans"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/grommet-icons_plan.png" alt="" class="w-5 h-5" />
               <span class="ms-3">My Plans</span>
@@ -199,7 +212,7 @@
           <li>
             <router-link
               to="/trainer/inbox"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/wpf_message-outline.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Inbox</span>
@@ -216,7 +229,7 @@
           <li>
             <router-link
               to="/trainer/clients"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/fluent_people-24-filled.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Clients</span>
@@ -226,7 +239,7 @@
           <li>
             <router-link
               to="/trainer/reviews"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/carbon_star-review.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Reviews</span>
@@ -236,7 +249,7 @@
           <li>
             <router-link
               to="/trainer/settings"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/mdi_settings-outline.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Settings</span>
@@ -246,7 +259,7 @@
           <li>
             <router-link
               to="/trainer/customerservice"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/mdi_customer-service.png" alt=" " class="w-6 h-6" />
               <span class="ms-3">Customer Service</span>
@@ -294,6 +307,9 @@ import {
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
 import ConfirmLogoutModal from "../components/ConfirmLogoutModal.vue";
+import logoLight from "@/assets/images/Project LOGO.png";
+import logoDark from "@/assets/images/LOGO for (Dark mode).png";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "SideBar",
@@ -302,6 +318,33 @@ export default {
     const trainerImage = ref("");
     const showLogoutModal = ref(false);
     const isSidebarOpen = ref(false);
+    const logoSrc = computed(() => (isDark.value ? logoDark : logoLight));
+    const { locale } = useI18n();
+    const isDark = ref(false);
+
+    // ✅ حفظ وضع الـ dark mode
+    const saveDark = (val) => {
+      localStorage.setItem("darkMode", val);
+      document.documentElement.classList.toggle("dark", val);
+    };
+
+    // ✅ تفعيل أو إلغاء الـ dark mode
+    const toggleDarkMode = () => {
+      isDark.value = !isDark.value;
+      saveDark(isDark.value);
+    };
+
+    // ✅ تبديل اللغة بين عربي / إنجليزي
+    const switchLang = () => {
+      const newLocale = locale.value === "en" ? "ar" : "en";
+      locale.value = newLocale;
+      localStorage.setItem("lang", newLocale);
+
+      document.dir = newLocale === "ar" ? "rtl" : "ltr";
+      document.documentElement.lang = newLocale;
+      document.body.style.fontFamily =
+        newLocale === "ar" ? "'Tajawal', sans-serif" : "'Poppins', sans-serif";
+    };
 
     // notifications
     const notifications = ref([]);
@@ -657,6 +700,19 @@ export default {
           console.warn("No user logged in");
         }
       });
+      const savedLang = localStorage.getItem("lang");
+      if (savedLang) {
+        locale.value = savedLang;
+        document.dir = savedLang === "ar" ? "rtl" : "ltr";
+        document.documentElement.lang = savedLang;
+        document.body.style.fontFamily =
+          savedLang === "ar" ? "'Tajawal', sans-serif" : "'Poppins', sans-serif";
+      }
+
+      // الـ dark mode
+      const savedDark = localStorage.getItem("darkMode") === "true";
+      isDark.value = savedDark;
+      saveDark(savedDark);
     });
 
     return {
@@ -677,6 +733,10 @@ export default {
       formatTime,
       // new prop for template
       unreadConversations,
+      isDark,
+      logoSrc,
+      toggleDarkMode,
+      switchLang,
     };
   },
 };
