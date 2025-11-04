@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-white dark:bg-gray-900 ">
+  <main class="min-h-screen bg-white dark:bg-black ">
     <!-- Header -->
     <section>
       <div>
@@ -13,7 +13,7 @@
 
       <!-- Cards Section -->
       <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-4">
+        <div class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow p-4">
           <h3 class="text-gray-700 dark:text-gray-300 font-medium text-[16px]">
             Total Trainers
           </h3>
@@ -22,7 +22,7 @@
           </p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-4">
+        <div class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow p-4">
           <h3 class="text-gray-700 dark:text-gray-300 font-medium text-[16px]">
             Total Trainees
           </h3>
@@ -31,7 +31,7 @@
           </p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-4">
+        <div class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow p-4">
           <h3 class="text-gray-700 dark:text-gray-300 font-medium text-[16px]">
             Active Plans
           </h3>
@@ -43,7 +43,7 @@
           </p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-4">
+        <div class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow p-4">
           <h3 class="text-gray-700 dark:text-gray-300 font-medium text-[16px]">
             Monthly Revenue
           </h3>
@@ -60,7 +60,7 @@
     </section>
 
     <!-- 🆕 Recent Activity Section -->
-    <section class="mt-10 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow">
+    <section class="mt-10 bg-white dark:bg-[#3b3b3b] rounded-2xl p-6 shadow">
       <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
         Recent Activity
       </h3>
@@ -69,7 +69,7 @@
         <div
           v-for="(activity, i) in activities"
           :key="i"
-          class="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition"
+          class="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-[#232323] hover:bg-gray-100 dark:hover:bg-gray-600 transition"
         >
           <div class="flex items-center gap-4">
             <img

@@ -538,7 +538,7 @@
     <!-- Manage Plan Modal (unchanged) -->
     <div
       v-if="showManageModal"
-      class="fixed inset-0 bg-white dark:bg-[#3B3B3B] bg-opacity-50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-white dark:bg-[#010101] bg-opacity-50 flex items-center justify-center z-50 p-4"
       @click.self="showManageModal = false"
     >
       <div
@@ -546,41 +546,41 @@
       >
         <!-- Modal Header -->
         <div
-          class="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white z-10"
+          class="flex justify-between items-center dark:bg-[#3B3B3B]  p-4 sm:p-6 border-b sticky top-0 bg-white z-10"
         >
           <div class="flex items-center gap-3">
             <div class="bg-blue-100 dark:bg-[#3B3B3B] p-2 rounded-lg">
-              <span class="text-blue-600 text-xl">📋</span>
+              <span class="text-blue-600 dark:text-white text-xl">📋</span>
             </div>
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800">Plan Details</h2>
+            <h2 class="text-lg sm:text-xl dark:text-white font-bold text-gray-800">Plan Details</h2>
           </div>
         </div>
 
         <!-- Modal Body -->
-        <div class="p-4 sm:p-6 space-y-4">
+        <div class="p-4 sm:p-6 dark:bg-[#3B3B3B]  space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="sm:col-span-1">
-              <label class="block text-sm font-medium text-gray-600 mb-2">Title of The Plan</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Title of The Plan</label>
               <input
                 v-model="selectedPlan.title"
                 type="text"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-600 mb-2">Active Clients</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Active Clients</label>
               <input
                 :value="selectedPlan.clientsCount || 0"
                 type="text"
                 disabled
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:bg-[#3B3B3B] bg-gray-50"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:text-white dark:bg-[#3B3B3B] bg-gray-50"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-600 mb-2">Status</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Status</label>
               <select
                 v-model="selectedPlan.status"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:bg-[#3b3b3b] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 <option value="Active">Active</option>
                 <option value="Pending">Pending</option>
@@ -590,18 +590,18 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-600 mb-2">Number of Sessions</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Number of Sessions</label>
               <input
                 v-model.number="selectedPlan.sessions"
                 type="number"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-600 mb-2">Duration</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Duration</label>
               <select
                 v-model="selectedPlan.duration"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:bg-[#3b3b3b] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 <option value="3 weeks">3 weeks</option>
                 <option value="6 weeks">6 weeks</option>
@@ -612,46 +612,46 @@
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-600 mb-2">Price</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Price</label>
               <input
                 v-model.number="selectedPlan.price"
                 type="number"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-600 mb-2">Location</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Location</label>
             <input
               v-model="selectedPlan.location"
               type="text"
               placeholder="Description"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <!-- Description Field -->
           <div>
-            <label class="block text-sm font-medium text-gray-600 mb-2">Plan Description</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Plan Description</label>
             <textarea
               v-model="selectedPlan.description"
               rows="3"
               placeholder="Enter a detailed description of the plan..."
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             ></textarea>
           </div>
 
           <!-- Image Upload -->
           <div>
-            <label class="block text-sm font-medium text-gray-600 mb-2">Plan Image</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Plan Image</label>
             <div class="space-y-3">
               <!-- Current Image Preview -->
               <div v-if="selectedPlan.image && !imagePreviewUrl" class="relative">
                 <img
                   :src="selectedPlan.image"
                   alt="Current plan image"
-                  class="w-full h-48 object-cover rounded-lg border border-gray-200"
+                  class="w-full h-48 object-cover rounded-lg dark:text-white border border-gray-200"
                 />
                 <div
                   class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded"
@@ -664,7 +664,7 @@
               <div class="flex items-center gap-3">
                 <label class="flex-1 cursor-pointer">
                   <div
-                    class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors text-center"
+                    class="border-2 border-dashed border-gray-300 rounded-lg dark:text-white p-4 hover:border-blue-500 transition-colors text-center"
                   >
                     <input
                       type="file"
@@ -674,10 +674,10 @@
                     />
                     <div class="flex flex-col items-center gap-2">
                       <span class="text-3xl">📸</span>
-                      <span class="text-sm text-gray-600">
+                      <span class="text-sm dark:text-gray-200 text-gray-600">
                         {{ selectedPlan.image ? "Change image" : "Upload image" }}
                       </span>
-                      <span class="text-xs text-gray-400">Max size: 5MB</span>
+                      <span class="text-xs dark:text-gray-300 text-gray-400">Max size: 5MB</span>
                     </div>
                   </div>
                 </label>
@@ -723,7 +723,7 @@
 
         <!-- Modal Footer -->
         <div
-          class="flex flex-col sm:flex-row justify-between gap-3 p-4 sm:p-6 border-t bg-gray-50 sticky bottom-0"
+          class="flex flex-col sm:flex-row justify-between gap-3 p-4 dark:bg-[#3b3b3b] sm:p-6 border-t bg-gray-50 sticky bottom-0"
         >
           <button
             @click="confirmDelete"
@@ -738,7 +738,7 @@
                 selectedImageFile = null;
                 imagePreviewUrl = null;
               "
-              class="w-full sm:w-auto px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer"
+              class="w-full sm:w-auto px-6 py-2 border dark:bg-white border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer"
             >
               Discard Changes
             </button>

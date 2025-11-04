@@ -1,26 +1,24 @@
 <template>
-  <div class="bg-white w-full relative p-1 mb-15">
+  <div class="bg-white dark:bg-black w-full relative p-1 mb-15">
     <!-- Header -->
     <header class="mb-6">
-      <h1 class="text-2xl font-medium text-gray-900">Manage Trainers</h1>
-      <p class="text-gray-500 mt-1">View and manage all registered trainers</p>
+      <h1 class="text-2xl font-medium dark:text-white text-gray-900">Manage Trainers</h1>
+      <p class="text-gray-500 dark:text-gray-300 mt-1">View and manage all registered trainers</p>
     </header>
 
     <!-- Search & Filter -->
-    <div
-      class="flex flex-col md:flex-row justify-between items-center mb-6 gap-3"
-    >
-      <h2 class="text-xl font-medium text-gray-900">Trainers List</h2>
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
+      <h2 class="text-xl font-medium dark:text-white text-gray-900">Trainers List</h2>
       <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search trainers..."
-          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          class="flex-1 px-4 py-2 border dark:text-white border-gray-300 dark:bg-[#3b3b3b] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         <select
           v-model="filterStatus"
-          class="px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-left "
+          class="px-4 py-2 pr-8 border border-gray-300 dark:text-white dark:bg-[#3b3b3b] cursor-pointer rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-left"
         >
           <option value="">All Status</option>
           <option value="active">Active</option>
@@ -30,10 +28,10 @@
     </div>
 
     <!-- TABLE VIEW (desktop & tablet) -->
-    <div class="hidden sm:block overflow-x-auto bg-white shadow-lg rounded-xl">
+    <div class="hidden sm:block overflow-x-auto bg-white dark:bg-[#292929] shadow-lg rounded-xl">
       <table class="min-w-full divide-y divide-gray-200 text-sm sm:text-base">
-        <thead class="bg-blue-50">
-          <tr class="text-gray-600 text-sm font-semibold">
+        <thead class="dark:bg-[#292929] bg-blue-50">
+          <tr class="text-gray-600 dark:text-white text-sm font-semibold">
             <th class="px-4 py-3 text-left">Trainer</th>
             <th class="px-4 py-3 text-left">Sport</th>
             <th class="px-4 py-3 text-left hidden md:table-cell">Email</th>
@@ -48,7 +46,7 @@
           <tr
             v-for="trainer in filteredTrainers"
             :key="trainer.id"
-            class="hover:bg-gray-50 transition-all"
+            class="hover:bg-gray-50 dark:hover:bg-gray-600 transition-all"
           >
             <!-- Trainer -->
             <td class="px-4 py-4 align-middle">
@@ -69,26 +67,24 @@
                 >
                   {{ getInitials(trainer.firstName, trainer.lastName) }}
                 </div>
-                <p class="font-medium text-gray-800 whitespace-nowrap">
+                <p class="font-medium dark:text-white text-gray-800 whitespace-nowrap">
                   {{ trainer.firstName }} {{ trainer.lastName }}
                 </p>
               </div>
             </td>
 
             <!-- Sport -->
-            <td class="px-4 py-4 text-gray-700 align-middle">
+            <td class="px-4 py-4 dark:text-white  text-gray-700 align-middle">
               {{ trainer.sport || "-" }}
             </td>
 
             <!-- Email -->
-            <td
-              class="px-4 py-4 text-gray-700 align-middle hidden md:table-cell"
-            >
+            <td class="px-4 py-4 dark:text-white text-gray-700 align-middle hidden md:table-cell">
               {{ trainer.email }}
             </td>
 
             <!-- Rating -->
-            <td class="px-4 py-4 text-gray-700 align-middle text-center">
+            <td class="px-4 py-4 dark:text-white text-gray-700 align-middle text-center">
               <div class="flex items-center justify-center gap-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -106,13 +102,13 @@
 
             <!-- Clients -->
             <td
-              class="px-4 py-4 text-gray-700 align-middle text-center hidden sm:table-cell"
+              class="px-4 py-4 dark:text-white text-gray-700 align-middle text-center hidden sm:table-cell"
             >
               {{ trainer.clients || 0 }}
             </td>
 
             <!-- Status -->
-            <td class="px-4 py-4 text-center align-middle">
+            <td class="px-4 py-4 text-center dark:text-white align-middle">
               <span
                 class="px-3 py-1 rounded-full text-xs sm:text-sm font-medium capitalize"
                 :class="{
@@ -129,7 +125,7 @@
             <td class="px-4 py-4 text-right align-middle relative">
               <button
                 @click="toggleMenu(trainer.id, $event)"
-                class="text-gray-500 hover:text-gray-700 hover:scale-110"
+                class="text-gray-500 dark:text-white cursor-pointer hover:text-gray-700 hover:scale-110"
               >
                 ⋮
               </button>
@@ -141,17 +137,17 @@
                   :style="dropdownStyle"
                   class="fixed w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]"
                 >
-                
+
                   <button @click="goToTrainer(trainer)"
                     class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
                   >
                     View Account
                   </button>
-                  
+
                   <button
                     v-if="trainer.status === 'pending'"
                     @click="openModal('accept', trainer)"
-                    class="block w-full text-left px-4 py-2 text-green-600 hover:bg-gray-100"
+                    class="block w-full text-left px-4 py-2 cursor-pointer text-green-600 hover:bg-gray-100"
                   >
                     Accept
                   </button>
@@ -191,9 +187,7 @@
             <p class="text-sm text-gray-600">
               {{ trainer.sport || "No sport" }}
             </p>
-            <p class="text-sm text-gray-500">
-              Clients: {{ trainer.clients || 0 }}
-            </p>
+            <p class="text-sm text-gray-500">Clients: {{ trainer.clients || 0 }}</p>
             <p class="text-sm text-gray-500">Rating: ⭐ {{ trainer.rating }}</p>
             <span
               class="mt-2 inline-block px-3 py-1 rounded-full text-xs font-medium capitalize"
@@ -232,24 +226,19 @@
           <p class="text-gray-600">{{ modalMessageText }}</p>
         </template>
         <template v-if="modalState === 'confirm'">
-          
           <h2 class="text-xl font-semibold mb-4 text-gray-800">
             {{
               modalType === "accept"
                 ? "Activate Trainer"
                 : modalType === "suspend"
-                ? "Suspend Trainer"
-                : "Delete Trainer"
+                  ? "Suspend Trainer"
+                  : "Delete Trainer"
             }}
           </h2>
           <p class="text-gray-600 mb-6">
             Are you sure you want to
             {{
-              modalType === "accept"
-                ? "activate"
-                : modalType === "suspend"
-                ? "suspend"
-                : "delete"
+              modalType === "accept" ? "activate" : modalType === "suspend" ? "suspend" : "delete"
             }}
             {{ selectedTrainer.firstName }}'s account?
           </p>
@@ -265,10 +254,7 @@
             >
               Confirm
             </button>
-            <button
-              @click="closeModal"
-              class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-            >
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
               Cancel
             </button>
           </div>
@@ -277,10 +263,6 @@
     </div>
   </div>
 </template>
-
-
-
-
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
@@ -333,11 +315,9 @@ const filteredTrainers = computed(() =>
     const matchName = `${trainer.firstName} ${trainer.lastName}`
       .toLowerCase()
       .includes(searchQuery.value.toLowerCase());
-    const matchStatus = filterStatus.value
-      ? trainer.status === filterStatus.value
-      : true;
+    const matchStatus = filterStatus.value ? trainer.status === filterStatus.value : true;
     return matchName && matchStatus;
-  })
+  }),
 );
 
 // 🔹 فتح القائمة المنسدلة بشكل مضبوط
@@ -383,7 +363,6 @@ const openModal = (type, trainer) => {
     modalMessageText.value = `Are you sure you want to suspend ${trainer.firstName}'s account?`;
   }
 };
-
 
 // 🔹 غلق المودال
 const closeModal = () => {
@@ -439,18 +418,15 @@ onMounted(async () => {
 
     allTrainers.forEach((trainer) => {
       const trainerBookings = bookings.filter(
-        (b) => b.trainerId === trainer.uid || b.trainerId === trainer.id
+        (b) => b.trainerId === trainer.uid || b.trainerId === trainer.id,
       );
       trainer.clients = trainerBookings.length;
 
       const trainerReviews = reviews.filter(
-        (r) => r.trainerId === trainer.uid || r.trainerId === trainer.id
+        (r) => r.trainerId === trainer.uid || r.trainerId === trainer.id,
       );
       if (trainerReviews.length > 0) {
-        const totalRating = trainerReviews.reduce(
-          (sum, r) => sum + (r.rating || 0),
-          0
-        );
+        const totalRating = trainerReviews.reduce((sum, r) => sum + (r.rating || 0), 0);
         trainer.rating = (totalRating / trainerReviews.length).toFixed(1);
       } else {
         trainer.rating = "-";

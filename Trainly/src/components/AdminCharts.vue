@@ -1,27 +1,27 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
     <!-- 📅 Bookings This Week -->
-    <div class="bg-white dark:bg-gray-800 shadow rounded-2xl p-4 chart-container">
+    <div class="bg-white dark:bg-[#3b3b3b] dark:text-white shadow rounded-2xl p-4 chart-container">
       <h2 class="text-lg font-medium mb-3 text-gray-800 dark:text-white">
         Bookings This Week
       </h2>
       <Line v-if="bookingsData" :data="bookingsData" :options="chartOptions" />
-      <p v-else class="text-gray-500 text-sm">Loading bookings...</p>
+      <p v-else class="dark:text-white text-gray-500 text-sm">Loading bookings...</p>
     </div>
 
     <!-- 💰 Revenue by Sport -->
-    <div class="bg-white dark:bg-gray-800 shadow rounded-2xl p-4 chart-container">
+    <div class="bg-white dark:bg-[#3b3b3b] dark:text-white shadow rounded-2xl p-4 chart-container">
       <h2 class="text-lg font-medium mb-3 text-gray-800 dark:text-white">
         Revenue by Sport
       </h2>
-      <Bar v-if="revenueData" :data="revenueData" :options="chartOptions" />
-      <p v-else class="text-gray-500 text-sm">Loading revenue...</p>
+      <Bar v-if="revenueData" :data="revenueData" :options="chartOptions" class="dark:text-white" />
+      <p v-else class="dark:text-white text-gray-500 text-sm">Loading revenue...</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import {
   Chart as ChartJS,
   Title,
@@ -34,8 +34,7 @@ import {
   PointElement,
 } from "chart.js";
 import { Line, Bar } from "vue-chartjs";
-
-import { db } from "@/Firebase/firebaseConfig.js"; // 🔥 عدل المسار حسب مشروعك
+import { db } from "@/Firebase/firebaseConfig.js";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
 // تسجيل العناصر المستخدمة في Chart.js
@@ -50,23 +49,47 @@ ChartJS.register(
   PointElement
 );
 
-// إعداد الـ Charts Options
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      grid: { color: "rgba(0,0,0,0.05)" },
+// ===============================
+// 🌙 إعداد الـ chartOptions حسب الـ dark mode
+// ===============================
+const chartOptions = computed(() => {
+  const isDark = isDarkMode.value;
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: isDark ? "#fff" : "#333",
+        },
+      },
     },
-    x: {
-      grid: { display: false },
+    scales: {
+      x: {
+        ticks: { color: isDark ? "#fff" : "#333" },
+        grid: {
+          color: isDark
+            ? "rgba(255,255,255,0.1)"
+            : "rgba(0,0,0,0.05)",
+        },
+      },
+      y: {
+        ticks: { color: isDark ? "#fff" : "#333" },
+        grid: {
+          color: isDark
+            ? "rgba(255,255,255,0.1)"
+            : "rgba(0,0,0,0.05)",
+        },
+      },
     },
-  },
+  };
+});
+const isDarkMode = ref(document.documentElement.classList.contains("dark"));
+
+const updateDarkMode = () => {
+  isDarkMode.value = document.documentElement.classList.contains("dark");
 };
+
 
 // ===============================
 // 📊 BOOKINGS CHART (الأسبوع الحالي)
@@ -117,8 +140,6 @@ const fetchBookings = async () => {
       },
     ],
   };
-
-  console.log("📅 Bookings this week:", dailyCount);
 };
 
 // ===============================
@@ -159,9 +180,13 @@ const fetchRevenueBySport = async () => {
       },
     ],
   };
-
-  console.log("💰 Revenue by sport:", revenueBySport);
 };
+// لما المستخدم يغير الوضع (مثلاً يضغط زرار dark)
+onMounted(() => {
+  const observer = new MutationObserver(updateDarkMode);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  onUnmounted(() => observer.disconnect());
+});
 
 // ===============================
 // 🚀 Load on Mounted
@@ -170,6 +195,7 @@ onMounted(async () => {
   await Promise.all([fetchBookings(), fetchRevenueBySport()]);
 });
 </script>
+
 
 <style scoped>
 .chart-container {
