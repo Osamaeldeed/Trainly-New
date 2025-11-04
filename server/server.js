@@ -502,7 +502,8 @@ app.post('/generate-welcome-message', async (req, res) => {
   });
 
   const prompt = `
-You are a professional fitness trainer assistant. Generate a warm, professional welcome message for a new trainee who just subscribed to a training plan.
+You are a professional trainer assistant. Generate a warm,
+professional welcome message for a new trainee who just subscribed to a training plan.
 
 Plan Details:
 - Plan Name: ${planTitle}
