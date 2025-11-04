@@ -63,11 +63,11 @@
         <div
           class="flex-1 px-[10px] pt-10 flex flex-col items-center relative z-10 mt-0 lg:mt-10 mx-auto"
         >
-          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mt-1 md:mt-10">
+          <h1 class="text-3xl md:text-4xl text-black dark:text-white lg:text-5xl font-bold mt-1 md:mt-10">
             {{ $t("whyChoose") }} <span class="text-gradient">{{ $t("trainly") }}</span
             >{{ $t("questionMark") }}
           </h1>
-          <p class="text-sm text-center lg:text-xl mt-4 mb-7">
+          <p class="text-sm text-center text-black dark:text-white lg:text-xl mt-4 mb-7">
             {{ $t("whyChooseDesc1") }} <br />
             {{ $t("whyChooseDesc2") }}
           </p>

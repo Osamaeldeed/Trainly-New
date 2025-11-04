@@ -992,6 +992,35 @@ export default {
           photoURL: profilePicUrl || null,
         });
 
+        // Send email notification if trainer
+        if (this.formData.role === "trainer") {
+          try {
+            const registrationDate = new Date().toLocaleString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            });
+
+            await fetch("http://localhost:3000/send-trainer-registration-email", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                trainerName: `${this.formData.firstName} ${this.formData.lastName}`,
+                sport: this.formData.sport,
+                registrationDate: registrationDate,
+              }),
+            });
+          } catch (emailError) {
+            console.warn("Failed to send registration email:", emailError);
+            // Don't block registration if email fails
+          }
+        }
+
         // Show success modal
         this.showSuccess = true;
       } catch (error) {

@@ -121,7 +121,7 @@ const routes = [
       },
       { path: "inbox", name: "traineeinbox", component: TraineeInbox },
       {
-        path: 'trainer', 
+        path: 'trainer',
         name: 'TrainerProfile',
         component: TrainerProfile,
       }
@@ -204,7 +204,6 @@ const adminPages = [
   "/admin/reviews",
   "/admin/bookings",
   "/admin/payments",
-  "/myprofile",
   "/admin/trainer"
 ];
 

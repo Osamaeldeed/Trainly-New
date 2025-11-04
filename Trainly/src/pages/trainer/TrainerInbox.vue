@@ -1,5 +1,5 @@
 <template>
-  <div class="page-root flex items-start justify-center min-h-screen rounded-2xl bg-blue-100 py-6">
+  <div class="page-root flex items-start justify-center min-h-screen rounded-2xl dark:bg-[#535353] bg-blue-100 py-6">
     <!-- البوكس الكبير -->
     <div
       class="inbox-wrapper w-full max-w-7xl bg-light-blue dark:bg-[#3B3B3B] rounded-2xl shadow-strong overflow-hidden flex"
@@ -154,7 +154,7 @@
           <!-- messages container: flex-1 so it fills available height, scrolls internally -->
           <div
             ref="messagesContainer"
-            class="messages-container flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50"
+            class="messages-container flex-1 overflow-y-auto p-6 space-y-4 dark:bg-[#3b3b3b] bg-gray-50"
           >
             <div v-if="!selectedClient" class="flex-1 flex items-center justify-center">
               <div class="text-center dark:text-white text-gray-400">
