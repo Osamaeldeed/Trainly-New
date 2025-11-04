@@ -1,9 +1,21 @@
 <template>
   <nav
-    class="flex justify-between items-center px-[50px] md:px-[70px] h-20 bg-white shadow-sm relative"
+    class="flex justify-between items-center px-[50px] md:px-[70px] h-20 bg-white dark:bg-[#3B3B3B] shadow-sm relative"
   >
     <!-- 🔹 اللوجو -->
-    <img src="@/assets/images/Project LOGO.png" alt="Logo" class="w-[140px] h-auto" />
+    <img :src="logoSrc" alt="Logo" class="w-[140px] h-auto" />
+
+    <!-- ✅ نخلّيهم ناحية اليمين جنب بعض -->
+    <div class="hidden md:flex items-center gap-4 ml-auto">
+      <!-- 🌙 زرار الـ Dark Mode -->
+      <button
+        @click="toggleDarkMode"
+        class="p-2 text-2xl transition hover:scale-110 cursor-pointer"
+        :title="isDark ? 'Light Mode' : 'Dark Mode'"
+      >
+        {{ isDark ? "☀️" : "🌙" }}
+      </button>
+    </div>
 
     <!-- 🔹 أيقونة المستخدم مع Dropdown -->
     <div class="hidden md:block relative">
@@ -25,11 +37,11 @@
       >
         <div
           v-if="showUserMenu"
-          class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 cursor-pointer"
+          class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 cursor-pointer dark:bg-[#2c2c2c]"
         >
           <button
             @click="$router.push('/trainer/home'); showUserMenu = false"
-            class="w-full text-left px-4 py-2 hover:bg-gray-100 transition cursor-pointer"
+            class="w-full text-left px-4 py-2 hover:bg-gray-100 text-black dark:text-white dark:hover:bg-gray-700 transition cursor-pointer"
           >
             My Dashboard
           </button>
@@ -132,11 +144,15 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
 import ConfirmLogoutModal from "../components/ConfirmLogoutModal.vue";
+import logoLight from "@/assets/images/Project LOGO.png";
+import logoDark from "@/assets/images/LOGO for (Dark mode).png";
+import { useI18n } from "vue-i18n";
+
 
 export default {
   name: "TraineeNavbar",
@@ -160,6 +176,33 @@ export default {
     const db = getFirestore();
     const auth = getAuth();
     const router = useRouter();
+    const isDark = ref(false);
+    const logoSrc = computed(() => (isDark.value ? logoDark : logoLight));
+        const { locale } = useI18n();
+
+
+    const saveDark = (val) => {
+      localStorage.setItem("darkMode", val);
+      document.documentElement.classList.toggle("dark", val);
+    };
+
+    // ✅ تفعيل أو إلغاء الـ dark mode
+    const toggleDarkMode = () => {
+      isDark.value = !isDark.value;
+      saveDark(isDark.value);
+    };
+
+    // ✅ تبديل اللغة بين عربي / إنجليزي
+    const switchLang = () => {
+      const newLocale = locale.value === "en" ? "ar" : "en";
+      locale.value = newLocale;
+      localStorage.setItem("lang", newLocale);
+
+      document.dir = newLocale === "ar" ? "rtl" : "ltr";
+      document.documentElement.lang = newLocale;
+      document.body.style.fontFamily =
+        newLocale === "ar" ? "'Tajawal', sans-serif" : "'Poppins', sans-serif";
+    };
 
     const fetchTraineeImage = async (uid) => {
       try {
@@ -199,7 +242,17 @@ export default {
         } else {
           console.log("No user signed in.");
         }
-      });
+      });const savedLang = localStorage.getItem("lang");
+      if (savedLang) {
+        locale.value = savedLang;
+        document.dir = savedLang === "ar" ? "rtl" : "ltr";
+        document.documentElement.lang = savedLang;
+        document.body.style.fontFamily =
+          savedLang === "ar" ? "'Tajawal', sans-serif" : "'Poppins', sans-serif";
+      }
+          const savedDark = localStorage.getItem("darkMode") === "true";
+      isDark.value = savedDark;
+      saveDark(savedDark);
     });
 
     return {
@@ -208,6 +261,10 @@ export default {
       showLogoutModal,
       confirmLogout,
       cancelLogout,
+      isDark,
+      logoSrc,
+      toggleDarkMode,
+      switchLang
     };
   },
 };

@@ -195,7 +195,7 @@ const trainerPages = [
   "/trainer/customerservice",
   "/trainer/settings",
   "/myprofile",
-  
+
 ];
 const adminPages = [
   "/admin/overview",

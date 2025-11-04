@@ -233,6 +233,8 @@
         ].includes($route.name)
       "
     />
+
+
     <!-- عرض الصفحات -->
     <router-view />
     <!-- Footer -->
@@ -293,4 +295,13 @@ export default {
   },
 };
 </script>
-<style></style>
+
+<style>
+body {
+  background-color: white;
+}
+
+.dark body {
+  background-color: black;
+}
+</style>
