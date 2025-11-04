@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">My Trainers & Plans</h1>
+    <h1 class="text-2xl font-bold dark:text-white text-gray-800 mb-6">My Trainers & Plans</h1>
 
     <!-- حالة التحميل -->
     <div v-if="loading" class="text-center text-gray-500">Loading your bookings...</div>
@@ -21,7 +21,7 @@
           class="w-full h-48 object-cover"
         />
 
-        <div class="p-4 flex flex-col justify-between h-[calc(100%-12rem)]">
+        <div class="p-4 flex flex-col dark:bg-[#3b3b3b] justify-between h-[calc(100%-12rem)]">
           <div class="flex items-center mb-3">
             <img
               :src="booking.trainer?.profilePicture || '/default-trainer.jpg'"
@@ -29,25 +29,25 @@
               class="w-10 h-10 rounded-full object-cover mr-3"
             />
             <div>
-              <h2 class="text-lg font-semibold text-gray-800">
+              <h2 class="text-lg font-semibold dark:text-white text-gray-800">
                 {{ booking.trainer?.firstName }} {{ booking.trainer?.lastName }}
               </h2>
-              <p class="text-sm text-gray-500">@{{ booking.trainer?.username }}</p>
+              <p class="text-sm dark:text-gray-300 text-gray-500">@{{ booking.trainer?.username }}</p>
             </div>
           </div>
 
           <div class="flex-1">
-            <h3 class="text-base font-semibold text-gray-700 mb-1">
+            <h3 class="text-base font-semibold dark:text-white text-gray-700 mb-1">
               {{ booking.plan?.title }}
             </h3>
-            <p class="text-sm text-gray-600 line-clamp-2">{{ booking.plan?.description }}</p>
+            <p class="text-sm dark:text-gray-300 text-gray-600 line-clamp-2">{{ booking.plan?.description }}</p>
 
             <div class="mt-3 space-y-1">
-              <p class="text-sm text-gray-700">
+              <p class="text-sm dark:text-gray-300 text-gray-700">
                 💰 <strong>{{ booking.amount }} {{ booking.currency.toUpperCase() }}</strong>
               </p>
-              <p class="text-sm text-gray-700">📆 Duration: {{ booking.plan?.duration }}</p>
-              <p class="text-sm text-gray-500">
+              <p class="text-sm dark:text-gray-300 text-gray-700">📆 Duration: {{ booking.plan?.duration }}</p>
+              <p class="text-sm dark:text-gray-300 text-gray-500">
                 🕒 Booked on: {{ formatDate(booking.createdAt) }}
               </p>
             </div>
@@ -56,14 +56,14 @@
           <div class="mt-4 flex justify-between items-center">
             <span
               class="px-3 py-1 rounded-full text-xs font-medium capitalize bg-green-100 text-green-700"
-       
+
             >
               {{ booking.status }}
             </span>
 
             <button
                 @click="goToTrainer(booking)"
-              class="text-sm text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+              class="text-sm dark:text-blue-300 text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
             >
               View Trainer
             </button>
@@ -93,16 +93,16 @@ const formatDate = (timestamp) => {
 
 const goToTrainer = (booking) => {
   const trainerId = booking.trainerId || booking.trainer?.id || booking.trainer?.uid;
-  
+
   console.log("Full booking object:", booking);
   console.log("Trainer ID:", trainerId);
-  
+
   if (!trainerId) {
     console.error("No trainerId found in booking:", booking);
     alert("Trainer ID not available");
     return;
   }
-  
+
   router.push({
     path: '/trainee/trainer',
     query: { uid: trainerId } // ⬅️ استخدم uid

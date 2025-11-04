@@ -39,102 +39,37 @@
     <!-- Main Content -->
     <div v-else class="max-w-7xl mx-auto px-4 py-10">
       <!-- HERO -->
-        <div class="relative mb-10 transition-colors duration-500">
+      <div class="relative mb-10 transition-colors duration-500">
         <div
-            class="border border-sky-200 dark:border-gray-700 rounded-2xl p-6 pl-36 pr-6 flex items-center shadow-sm bg-linear-to-r from-sky-50 to-blue-50 dark:bg-[#3B3B3B] dark:bg-none"
-          >
-            <!-- Profile Image -->
-            <img
-              :src="trainer.profilePicture || placeholder"
-              alt="trainer profile"
-              class="absolute -top-6 left-6 w-40 h-40 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl"
-              @error="handleImageError"
-            />
+          class="border border-sky-200 dark:border-gray-700 rounded-2xl p-6 pl-36 pr-6 flex items-center shadow-sm bg-linear-to-r from-sky-50 to-blue-50 dark:bg-[#3B3B3B] dark:bg-none"
+        >
+          <!-- Profile Image -->
+          <img
+            :src="trainer.profilePicture || placeholder"
+            alt="trainer profile"
+            class="absolute -top-6 left-6 w-40 h-40 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl"
+            @error="handleImageError"
+          />
 
-            <!-- Info -->
-            <div class="ml-28 w-full flex items-center justify-between flex-wrap gap-4">
-              <div class="flex-1 min-w-0">
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                  {{ trainer.firstName }} {{ trainer.lastName }}
-                </h1>
+          <!-- Info -->
+          <div class="ml-28 w-full flex items-center justify-between flex-wrap gap-4">
+            <div class="flex-1 min-w-0">
+              <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                {{ trainer.firstName }} {{ trainer.lastName }}
+              </h1>
 
-                <p class="text-sky-600 dark:text-gray-300 font-medium text-lg mb-4">
-                  {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
-                </p>
+              <p class="text-sky-600 dark:text-gray-300 font-medium text-lg mb-4">
+                {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
+              </p>
 
-                <!-- Details -->
-                <div
-                  class="flex flex-wrap items-center gap-6 text-sm text-gray-700 dark:text-gray-200"
-                >
-                  <div class="flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="w-4 h-4 text-gray-500 dark:text-gray-200"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    <span class="font-semibold">Username:</span>
-                    <span class="text-gray-600 dark:text-gray-200"
-                      >@{{ trainer.username || trainer.userName || "N/A" }}</span
-                    >
-                  </div>
-
-                  <div class="flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="w-4 h-4 text-gray-500 dark:text-gray-200"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                      />
-                    </svg>
-                    <span class="font-semibold">Experience:</span>
-                    <span class="text-gray-600 dark:text-gray-200"
-                      >{{ getExperience() }} years</span
-                    >
-                  </div>
-
-                  <div class="flex items-center gap-2 text-gray-600 dark:text-gray-200">
-                    <svg
-                      class="w-4 h-4 text-gray-500 dark:text-gray-200"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                      ></path>
-                      <circle cx="12" cy="9" r="2.5"></circle>
-                    </svg>
-                    <span class="capitalize dark:text-gray-200">{{ getLocation() }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Contact Button -->
-              <div class="flex items-center gap-3">
-                <button
-                  @click="contactTrainer"
-                  class="px-6 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:scale-105 cursor-pointer bg-linear-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white dark:bg-gray-600 dark:hover:bg-gray-500"
-                >
+              <!-- Details -->
+              <div
+                class="flex flex-wrap items-center gap-6 text-sm text-gray-700 dark:text-gray-200"
+              >
+                <div class="flex items-center gap-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 inline mr-2"
+                    class="w-4 h-4 text-gray-500 dark:text-gray-200"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -143,14 +78,77 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
-                  Contact Trainer
-                </button>
+                  <span class="font-semibold">Username:</span>
+                  <span class="text-gray-600 dark:text-gray-200"
+                    >@{{ trainer.username || trainer.userName || "N/A" }}</span
+                  >
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 text-gray-500 dark:text-gray-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                    />
+                  </svg>
+                  <span class="font-semibold">Experience:</span>
+                  <span class="text-gray-600 dark:text-gray-200">{{ getExperience() }} years</span>
+                </div>
+
+                <div class="flex items-center gap-2 text-gray-600 dark:text-gray-200">
+                  <svg
+                    class="w-4 h-4 text-gray-500 dark:text-gray-200"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                    ></path>
+                    <circle cx="12" cy="9" r="2.5"></circle>
+                  </svg>
+                  <span class="capitalize dark:text-gray-200">{{ getLocation() }}</span>
+                </div>
               </div>
             </div>
+
+            <!-- Contact Button -->
+            <div class="flex items-center gap-3">
+              <button
+                @click="contactTrainer"
+                class="px-6 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:scale-105 cursor-pointer bg-linear-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white dark:bg-gray-600 dark:hover:bg-gray-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 inline mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                Contact Trainer
+              </button>
+            </div>
           </div>
+        </div>
       </div>
 
       <!-- Plans -->
@@ -416,12 +414,6 @@
 
                 <div v-if="rev.status || rev.sessionType" class="flex flex-wrap gap-3 text-xs">
                   <span
-                    v-if="rev.status"
-                    class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-medium"
-                  >
-                    {{ capitalize(rev.status) }}
-                  </span>
-                  <span
                     v-if="rev.sessionType"
                     class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
                   >
@@ -535,7 +527,7 @@
                 >
                 <select
                   v-model="newReview.sessionType"
-                    class="w-full p-3 border cursor-pointer border-gray-300 text-black dark:text-white bg-white dark:bg-[#3B3B3B] rounded-lg focus:ring-2 outline-none transition"
+                  class="w-full p-3 border cursor-pointer border-gray-300 text-black dark:text-white bg-white dark:bg-[#3B3B3B] rounded-lg focus:ring-2 outline-none transition"
                 >
                   <option value="">Select type</option>
                   <option value="online">Online</option>

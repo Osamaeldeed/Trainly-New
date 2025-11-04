@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-white min-h-screen w-full p-6 relative">
+  <div class="bg-white min-h-screen dark:bg-black w-full p-6 relative">
     <!-- Header -->
     <header class="mb-6">
-      <h1 class="text-2xl font-medium text-gray-900">Manage Trainees</h1>
-      <p class="text-gray-500 mt-1">View and manage all registered trainees</p>
+      <h1 class="text-2xl dark:text-white font-medium text-gray-900">Manage Trainees</h1>
+      <p class="text-gray-500 dark:text-gray-300 mt-1">View and manage all registered trainees</p>
     </header>
 
     <!-- Controls -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
-      <h2 class="text-lg font-medium text-gray-900">Trainees List</h2>
+      <h2 class="text-lg font-medium dark:text-white text-gray-900">Trainees List</h2>
 
       <div class="flex items-center gap-3 w-full md:w-auto">
         <!-- Search -->
@@ -17,23 +17,23 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search trainees..."
-            class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            class="w-full px-4 py-2 bg-white border dark:bg-[#3b3b3b] dark:text-white border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
-    
+
       </div>
     </div>
 
     <!-- 🖥️ Desktop Table -->
-    <div class="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden ">
+    <div class="hidden md:block bg-white dark:bg-[#292929]  shadow-lg rounded-xl overflow-hidden ">
      <table class="min-w-full divide-y divide-gray-200">
-  <thead class="bg-blue-50">
+  <thead class="bg-blue-50 dark:bg-[#292929] ">
     <tr>
-      <th class="px-6 py-3 text-gray-600 font-medium text-left">Trainee</th>
-      <th class="px-6 py-3 text-gray-600 font-medium text-center">Email</th>
-      <th class="px-6 py-3 text-gray-600 font-medium text-center">Joined</th>
-      <th class="px-6 py-3 text-gray-600 font-medium text-center">Actions</th>
+      <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-left">Trainee</th>
+      <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Email</th>
+      <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Joined</th>
+      <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Actions</th>
     </tr>
   </thead>
 
@@ -41,7 +41,7 @@
     <tr
       v-for="trainee in filteredTrainees"
       :key="trainee.id"
-      class="hover:bg-gray-50 transition"
+      class="hover:bg-gray-50 dark:hover:bg-gray-600 transition"
     >
       <!-- Trainee -->
       <td class="px-5 py-4 flex items-center gap-3">
@@ -56,16 +56,16 @@
           />
           <span v-else>{{ getInitials(trainee.name) }}</span>
         </div>
-        <span class="font-medium text-gray-900">{{ trainee.name }}</span>
+        <span class="font-medium dark:text-white text-gray-900">{{ trainee.name }}</span>
       </td>
 
       <!-- Email -->
-      <td class="px-6 py-4 text-gray-700 text-center align-middle gap-0">
+      <td class="px-6 py-4 text-gray-700 dark:text-white text-center align-middle gap-0">
         {{ trainee.email || "-" }}
       </td>
 
       <!-- Joined -->
-      <td class="px-6 py-4 text-gray-700 text-center align-middle">
+      <td class="px-6 py-4 text-gray-700 dark:text-white text-center align-middle">
         {{ trainee.joined || "-" }}
       </td>
 
@@ -73,7 +73,7 @@
       <td class="px-6 py-4 text-center align-middle">
         <button
           @click="openDeleteModal(trainee)"
-          class="text-red-500 hover:text-red-700 text-m"
+          class="text-red-500 cursor-pointer hover:text-red-700 text-m"
         >
           Delete
         </button>
@@ -136,23 +136,23 @@
       v-if="showDeleteModal"
       class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
     >
-      <div class="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-sm text-center">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">
+      <div class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow-xl p-6 w-[90%] max-w-sm text-center">
+        <h3 class="text-lg font-semibold dark:text-white text-gray-900 mb-3">
           Confirm Deletion
         </h3>
-        <p class="text-gray-600 mb-5">
+        <p class="text-gray-600 dark:text-gray-200 mb-5">
           Are you sure you want to delete <strong>{{ traineeToDelete?.name }}</strong>?
         </p>
         <div class="flex justify-center gap-4">
           <button
             @click="showDeleteModal = false"
-            class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+            class="px-4 py-2 rounded-lg cursor-pointer border dark:hover:bg-gray-600 dark:text-white border-gray-300 text-gray-700 hover:bg-gray-100"
           >
             Cancel
           </button>
           <button
             @click="confirmDelete"
-            class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+            class="px-4 py-2 rounded-lg cursor-pointer bg-red-600 text-white hover:bg-red-700"
           >
             Delete
           </button>
