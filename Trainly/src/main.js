@@ -120,11 +120,11 @@ const routes = [
         component: TraineeCustomerservice,
       },
       { path: "inbox", name: "traineeinbox", component: TraineeInbox },
-    {
-      path: 'trainer', // ⬅️ بدل trainer-profile
-      name: 'TrainerProfile',
-      component: TrainerProfile,
-    }
+      {
+        path: 'trainer', 
+        name: 'TrainerProfile',
+        component: TrainerProfile,
+      }
     ],
   },
   {
@@ -138,6 +138,11 @@ const routes = [
       { path: "reviews", name: "adminreviews", component: AdminReviews },
       { path: "bookings", name: "adminbookings", component: AdminBookings },
       { path: "payments", name: "adminpayments", component: AdminPayments },
+      {
+        path: "trainer",
+        name: "admintrainerprofile",
+        component: TrainerProfile,
+      },
     ],
   },
   { path: "/:pathMatch(.*)*", name: "error", component: ErrorPage },
@@ -180,6 +185,7 @@ const traineePages = [
   "/trainee/dashboard",
   "/trainee/settings",
   "/trainee/customerservice",
+  "/trainee/trainer"
 ];
 const trainerPages = [
   "/trainer/home",
@@ -199,6 +205,7 @@ const adminPages = [
   "/admin/bookings",
   "/admin/payments",
   "/myprofile",
+  "/admin/trainer"
 ];
 
 // ✅ Helper function: انتظار تحميل حالة المستخدم من Firebase
