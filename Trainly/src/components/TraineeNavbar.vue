@@ -54,7 +54,7 @@
           >
             <button
               @click="
-                $router.push('/trainee/dashboard');
+                $router.push('/trainee/mytrainers');
                 showUserMenu = false;
               "
               class="w-full text-left px-4 py-2 text-[#333] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-300 transition cursor-pointer"

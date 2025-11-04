@@ -328,8 +328,10 @@
           </div>
 
           <button
+            v-if="hasBookedWithTrainer"
             @click="openAddReview"
-            class="bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 cursor-pointer"
+            :disabled="checkingBooking"
+            class="bg-sky-500 hover:bg-sky-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -345,8 +347,31 @@
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            Add Review
+            <span v-if="checkingBooking">Checking...</span>
+            <span v-else>Add Review</span>
           </button>
+
+          <!-- Optional: Message for users who haven't booked -->
+          <div
+            v-else-if="!checkingBooking"
+            class="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-3 rounded-xl text-sm flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>You need to book a plan with this trainer to leave a review</span>
+          </div>
         </div>
 
         <div
@@ -604,6 +629,8 @@ const reviewsCount = ref(0);
 
 // add-review modal state
 const showAddReview = ref(false);
+const hasBookedWithTrainer = ref(false); // check if trainee booked with this trainer
+const checkingBooking = ref(false); // loading state
 const addingReview = ref(false);
 const newReview = ref({
   reviewerName: "",
@@ -769,6 +796,42 @@ const fetchReviews = async () => {
   }
 };
 
+// ------------------ Check if current user has booked with this trainer ------------------
+const checkUserBooking = async () => {
+  const user = auth.currentUser;
+
+  // If no user logged in OR no trainer uid, return false
+  if (!user || !uid) {
+    hasBookedWithTrainer.value = false;
+    return;
+  }
+
+  checkingBooking.value = true;
+
+  try {
+    // Query bookings collection
+    const bookingsQuery = query(
+      collection(db, "bookings"),
+      where("traineeId", "==", user.uid),
+      where("trainerId", "==", uid),
+    );
+
+    const snapshot = await getDocs(bookingsQuery);
+
+    // If we found at least one booking, user has booked with this trainer
+    hasBookedWithTrainer.value = !snapshot.empty;
+
+    console.log(
+      `✅ Booking check: ${hasBookedWithTrainer.value ? "User has booked" : "No bookings found"}`,
+    );
+  } catch (err) {
+    console.error("checkUserBooking error:", err);
+    hasBookedWithTrainer.value = false;
+  } finally {
+    checkingBooking.value = false;
+  }
+};
+
 // ------------------ Overall load ------------------
 const loadData = async () => {
   loading.value = true;
@@ -782,7 +845,11 @@ const loadData = async () => {
 
   await fetchTrainer();
   if (!error.value) {
-    await Promise.all([fetchPlans(), fetchReviews()]);
+    await Promise.all([
+      fetchPlans(),
+      fetchReviews(),
+      checkUserBooking(), // 👈 أضف السطر ده
+    ]);
   }
 
   loading.value = false;

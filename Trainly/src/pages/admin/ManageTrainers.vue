@@ -137,13 +137,13 @@
                   :style="dropdownStyle"
                   class="fixed w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]"
                 >
-                  <router-link to="/myprofile">
-                    <button
-                      class="block w-full text-left px-4 py-2 cursor-pointer text-gray-700 hover:bg-gray-100"
-                    >
-                      View Account
-                    </button>
-                  </router-link>
+
+                  <button @click="goToTrainer(trainer)"
+                    class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  >
+                    View Account
+                  </button>
+
                   <button
                     v-if="trainer.status === 'pending'"
                     @click="openModal('accept', trainer)"
@@ -154,13 +154,13 @@
                   <button
                     v-if="trainer.status === 'active'"
                     @click="openModal('suspend', trainer)"
-                    class="block w-full text-left px-4 py-2 text-yellow-600 hover:bg-gray-100"
+                    class="block w-full text-left px-4 py-2 text-yellow-600 hover:bg-gray-100 cursor-pointer"
                   >
                     Suspend
                   </button>
                   <button
                     @click="openModal('delete', trainer)"
-                    class="block w-full text-left px-4 py-2 cursor-pointer text-red-600 hover:bg-gray-100"
+                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer"
                   >
                     Delete
                   </button>
@@ -267,7 +267,14 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { db } from "@/Firebase/firebaseConfig.js";
-import { collection, getDocs, doc, deleteDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { useRouter } from "vue-router";
 
 const trainers = ref([]);
 const searchQuery = ref("");
@@ -281,6 +288,26 @@ const selectedTrainer = ref(null);
 const modalState = ref("confirm");
 const modalMessageTitle = ref("");
 const modalMessageText = ref("");
+
+const router = useRouter();
+const goToTrainer = (trainer) => {
+  const trainerId = trainer.id || trainer.uid;
+
+  console.log("Full trainer object:", trainer);
+  console.log("Trainer ID:", trainerId);
+
+  if (!trainerId) {
+    console.error("No trainerId found in trainer object:", trainer);
+    alert("Trainer ID not available");
+    return;
+  }
+
+  router.push({
+    path: '/admin/trainer',
+    query: { uid: trainerId }
+  });
+};
+
 
 // 🔹 تصفية المدربين
 const filteredTrainers = computed(() =>
