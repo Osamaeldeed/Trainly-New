@@ -73,7 +73,7 @@
       <td class="px-6 py-4 text-center align-middle">
         <button
           @click="openDeleteModal(trainee)"
-          class="text-red-500 hover:text-red-700 text-m"
+          class="text-red-500 hover:text-red-700 text-m cursor-pointer"
         >
           Delete
         </button>
