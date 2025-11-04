@@ -3,8 +3,8 @@
     <!-- Header + Search Bar -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-3">
       <div>
-        <h1 class="text-2xl font-semibold mb-1">Payments & Subscriptions</h1>
-        <p class="text-gray-500">Manage all transactions for trainees and trainers</p>
+        <h1 class="text-2xl dark:text-white font-semibold mb-1">Payments & Subscriptions</h1>
+        <p class=" dark:text-gray-300 text-gray-500">Manage all transactions for trainees and trainers</p>
       </div>
 
       <!-- Search -->
@@ -18,25 +18,25 @@
           v-model="searchQuery"
           type="text"
           placeholder="Search by user, type, or plan..."
-          class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          class="w-full pl-10 pr-3 py-2 border dark:text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
     </div>
 
     <!-- ✅ Styled Table like “Sessions & Bookings” -->
-    <div class="hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
+    <div class="hidden md:block bg-white dark:bg-[#292929] shadow-lg rounded-xl overflow-hidden border border-gray-200">
       <div class="overflow-y-auto max-h-[600px]">
         <table class="min-w-full divide-y divide-gray-200 text-sm">
-          <thead class="bg-blue-50 text-gray-600 font-medium">
+          <thead class="bg-blue-50 dark:bg-[#292929] text-gray-600 font-medium">
             <tr>
-              <th class="px-6 py-3 font-medium">Transaction ID</th>
-              <th class="px-6 py-3 font-medium">User</th>
-              <th class="px-6 py-3 font-medium">Type</th>
-              <th class="px-6 py-3 font-medium">Plan</th>
-              <th class="px-6 py-3 font-medium">Amount</th>
-              <th class="px-6 py-3 font-medium">Payment Method</th>
-              <th class="px-6 py-3 font-medium">Status</th>
-              <th class="px-6 py-3 font-medium">Date</th>
+              <th class="px-6 py-3 dark:text-white font-medium">Transaction ID</th>
+              <th class="px-6 py-3 dark:text-white font-medium">User</th>
+              <th class="px-6 py-3 dark:text-white font-medium">Type</th>
+              <th class="px-6 py-3 dark:text-white font-medium">Plan</th>
+              <th class="px-6 py-3 dark:text-white font-medium">Amount</th>
+              <th class="px-6 py-3 dark:text-white font-medium">Payment Method</th>
+              <th class="px-6 py-3 dark:text-white font-medium">Status</th>
+              <th class="px-6 py-3 dark:text-white font-medium">Date</th>
             </tr>
           </thead>
 
@@ -50,10 +50,10 @@
             <tr
               v-for="tx in filteredTransactions"
               :key="tx.id"
-              class="hover:bg-blue-50 transition duration-150 ease-in-out group"
+              class="hover:bg-blue-50 dark:hover:bg-gray-600 transition duration-150 ease-in-out group"
             >
               <!-- Hover to show full ID -->
-              <td class="px-6 py-4 relative cursor-pointer text-gray-700">
+              <td class="px-6 py-4  dark:text-white relative cursor-pointer text-gray-700">
                 {{ tx.transactionId?.slice(0, 8) || "N/A" }}
                 <div
                   class="absolute left-0 -top-8 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10"
@@ -62,11 +62,11 @@
                 </div>
               </td>
 
-              <td class="px-6 py-4 text-gray-800">{{ tx.userName }}</td>
-              <td class="px-6 py-4 text-gray-800">{{ tx.type }}</td>
-              <td class="px-6 py-4 text-gray-800">{{ tx.planTitle || "N/A" }}</td>
-              <td class="px-6 py-4 text-gray-800">{{ tx.amount }} {{ tx.currency }}</td>
-              <td class="px-6 py-4 text-gray-800">{{ tx.paymentMethod }}</td>
+              <td class="px-6 py-4 dark:text-gray-300 text-gray-800">{{ tx.userName }}</td>
+              <td class="px-6 py-4 dark:text-gray-300 text-gray-800">{{ tx.type }}</td>
+              <td class="px-6 py-4 dark:text-gray-300 text-gray-800">{{ tx.planTitle || "N/A" }}</td>
+              <td class="px-6 py-4 dark:text-gray-300 text-gray-800">{{ tx.amount }} {{ tx.currency }}</td>
+              <td class="px-6 py-4 dark:text-gray-300 text-gray-800">{{ tx.paymentMethod }}</td>
 
               <td class="px-6 py-4">
                 <span
@@ -81,7 +81,7 @@
                 </span>
               </td>
 
-              <td class="px-6 py-4 text-gray-800">{{ formatDate(tx.date) }}</td>
+              <td class="px-6 py-4 dark:text-gray-300 text-gray-800">{{ formatDate(tx.date) }}</td>
             </tr>
           </tbody>
         </table>
@@ -123,12 +123,12 @@
         </p>
       </div>
 
-      <div v-if="filteredTransactions.length === 0" class="text-center py-4 text-gray-500">
+      <div v-if="filteredTransactions.length === 0" class="text-center dark:text-white py-4 text-gray-500">
         No results found for "{{ searchQuery }}"
       </div>
     </div>
 
-    <div v-if="loading" class="text-center mt-6">Loading transactions...</div>
+    <div v-if="loading" class="text-center dark:text-white  mt-6">Loading transactions...</div>
   </div>
 </template>
 

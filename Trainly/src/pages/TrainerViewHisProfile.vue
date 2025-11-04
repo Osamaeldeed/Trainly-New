@@ -362,12 +362,6 @@
 
                 <div v-if="rev.status || rev.sessionType" class="flex flex-wrap gap-3 text-xs">
                   <span
-                    v-if="rev.status"
-                    class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-medium"
-                  >
-                    {{ capitalize(rev.status) }}
-                  </span>
-                  <span
                     v-if="rev.sessionType"
                     class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
                   >

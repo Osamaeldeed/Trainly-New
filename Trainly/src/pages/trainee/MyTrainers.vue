@@ -63,7 +63,7 @@
 
             <button
                 @click="goToTrainer(booking)"
-              class="text-sm text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+              class="text-sm dark:text-blue-300 text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
             >
               View Trainer
             </button>

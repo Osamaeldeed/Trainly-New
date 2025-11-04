@@ -113,7 +113,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-900">Country</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-900">Country</label>
             <input
               v-model="formData.country"
               type="text"

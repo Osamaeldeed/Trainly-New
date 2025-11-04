@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- ✅ Navbar -->
-    <nav class="top-0 z-50 w-full bg-white shadow-sm">
+    <nav class="top-0 z-50 w-full bg-white dark:bg-[#3b3b3b] shadow-sm">
       <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
           <!-- 🔹 Sidebar Toggle Button -->
@@ -38,8 +38,14 @@
           <!-- Right Side: Notifications + Profile -->
           <div class="flex items-center">
             <div class="flex items-center ms-3 gap-[24px]">
-             
-            
+              <!-- 🌙 زرار الـ Dark Mode -->
+              <button
+                @click="toggleDarkMode"
+                class="p-2 text-2xl transition hover:scale-110 cursor-pointer"
+                :title="isDark ? 'Light Mode' : 'Dark Mode'"
+              >
+                {{ isDark ? "☀️" : "🌙" }}
+              </button>
 
               <!-- 👤 Admin Profile -->
               <div>
@@ -74,17 +80,17 @@
       ]"
       aria-label="Sidebar"
     >
-      <div class="h-full px-3 py-4">
+      <div class="h-full px-3 dark:bg-[#3b3b3b] py-4">
         <ul class="space-y-4 font-light text-[14px] mx-5">
           <li class="mb-11 mt-3 mx-2">
-            <img src="@/assets/images/Project LOGO.png" class="h-8 w-25 me-3" alt="Logo" />
+            <img :src="logoSrc"  class="h-8 w-25 me-3" alt="Logo" />
           </li>
 
           <!-- Menu Items -->
           <li>
             <router-link
               to="/admin/overview"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/overview.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Overview</span>
@@ -94,7 +100,7 @@
           <li>
             <router-link
               to="/admin/managetrainers"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/manage-trainers.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Manage Trainers</span>
@@ -104,7 +110,7 @@
           <li>
             <router-link
               to="/admin/managetrainees"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/manage-trainees.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Manage Trainees</span>
@@ -114,11 +120,11 @@
           <li>
             <router-link
               to="/admin/bookings"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/bookings.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Bookings</span>
-              
+
               <!-- Unread indicator for bookings (if needed) -->
               <span
                 v-if="unreadBookings > 0"
@@ -131,7 +137,7 @@
           <li>
             <router-link
               to="/admin/payments"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/payments.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Payments</span>
@@ -141,7 +147,7 @@
           <li>
             <router-link
               to="/admin/reviews"
-              class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
+              class="flex items-center p-2 dark:text-white text-gray-900 rounded-lg hover:bg-blue-200 transition duration-300"
             >
               <img src="@/assets/images/carbon_star-review.png" alt="" class="w-5 h-5" />
               <span class="ms-3">Reviews & Feedback</span>
@@ -189,6 +195,8 @@ import {
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
 import ConfirmLogoutModal from "../components/ConfirmLogoutModal.vue";
+import logoLight from "@/assets/images/Project LOGO.png";
+import logoDark from "@/assets/images/LOGO for (Dark mode).png";
 
 export default {
   name: "AdminSidebar",
@@ -197,7 +205,23 @@ export default {
     const adminImage = ref("");
     const showLogoutModal = ref(false);
     const isSidebarOpen = ref(false);
+    const isDark = ref(false);
+    const saveDark = (val) => {
+      localStorage.setItem("darkMode", val);
+      document.documentElement.classList.toggle("dark", val);
+    };
+        const logoSrc = computed(() => (isDark.value ? logoDark : logoLight));
 
+    // ✅ تفعيل أو إلغاء الـ dark mode
+    const toggleDarkMode = () => {
+      isDark.value = !isDark.value;
+      saveDark(isDark.value);
+    };
+    const isDarkMode = ref(document.documentElement.classList.contains("dark"));
+
+const updateDarkMode = () => {
+  isDarkMode.value = document.documentElement.classList.contains("dark");
+};
     // notifications
     const notifications = ref([]);
     const showNotifications = ref(false);
@@ -221,6 +245,7 @@ export default {
     };
 
     const unreadCount = computed(() => notifications.value.filter((n) => !n.read).length);
+
 
     // fetch admin image
     const fetchAdminImage = async (uid) => {
@@ -438,6 +463,12 @@ export default {
           console.warn("No admin user logged in");
         }
       });
+      const savedDark = localStorage.getItem("darkMode") === "true";
+      isDark.value = savedDark;
+      saveDark(savedDark);
+       const observer = new MutationObserver(updateDarkMode);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  onUnmounted(() => observer.disconnect());
     });
 
     return {
@@ -457,6 +488,10 @@ export default {
       handleNotificationClick,
       formatTime,
       unreadBookings,
+      isDark,
+      toggleDarkMode,
+            logoSrc,
+
     };
   },
 };

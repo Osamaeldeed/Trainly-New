@@ -1,16 +1,16 @@
 <template>
   <div
-    class="min-h-screen bg-gray-50 border-1 border-gray-200 p-4 md:p-6 lg:p-8 rounded-2xl"
+    class="min-h-screen bg-gray-50 border-1 dark:bg-[#3b3b3b] border-gray-200 p-4 md:p-6 lg:p-8 rounded-2xl"
   >
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
-      <h1 class="text-2xl font-semibold mb-1">Manage All Reviews</h1>
-      <p class="text-gray-500 mb-6">
+      <h1 class="text-2xl dark:text-white  font-semibold mb-1">Manage All Reviews</h1>
+      <p class="text-gray-500 dark:text-gray-300  mb-6">
         View, filter, and remove trainee reviews for trainers
       </p>
 
       <!-- Search + Rating Filter -->
-      <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div class="bg-white dark:text-white dark:bg-[#3b3b3b]  rounded-lg shadow-sm p-4 mb-6">
         <div class="flex flex-col md:flex-row gap-4 items-center">
           <!-- Search -->
           <div class="flex-1 relative">
@@ -31,7 +31,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search by trainee or trainer..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              class="w-full pl-10 pr-4 py-2 dark:text-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500  outline-none"
             />
           </div>
 
@@ -39,7 +39,7 @@
           <div class="relative w-48">
             <select
               v-model="ratingFilter"
-              class="block w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="block w-full px-4 py-2 pr-10 border dark:bg-[#292929] border-gray-300 rounded-lg bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Ratings</option>
               <option v-for="n in 5" :key="n" :value="n">{{ n }} Stars</option>
@@ -71,7 +71,7 @@
         <div
           v-for="review in filteredReviews"
           :key="review.id"
-          class="bg-white rounded-lg shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow duration-200"
+          class="bg-white dark:bg-[#292929] rounded-lg shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow duration-200"
         >
           <div
             class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4"
@@ -100,13 +100,13 @@
               <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-2">
                   <span
-                    class="font-semibold text-gray-900 text-base md:text-lg"
+                    class="font-semibold dark:text-white text-gray-900 text-base md:text-lg"
                   >
                     {{ review.traineeName }}
                   </span>
-                  <span class="text-gray-500 text-sm">reviewed</span>
+                  <span class="text-gray-500 dark:text-gray-300 text-sm">reviewed</span>
                   <span
-                    class="font-semibold text-gray-900 text-base md:text-lg"
+                    class="font-semibold text-gray-900 dark:text-white text-base md:text-lg"
                   >
                     {{ review.trainerName }}
                   </span>
@@ -130,13 +130,13 @@
                 </div>
 
                 <!-- Review Text -->
-                <p class="text-gray-700 text-sm md:text-base mb-3">
+                <p class="text-gray-700 dark:text-gray-200 text-sm md:text-base mb-3">
                   {{ review.comment }}
                 </p>
 
                 <!-- Session Info -->
                 <div
-                  class="flex flex-wrap gap-2 text-xs md:text-sm text-gray-500"
+                  class="flex flex-wrap gap-2 text-xs md:text-sm dark:text-gray-200 text-gray-500"
                 >
                   <span>Session: {{ review.sessionType }}</span>
                   <span>•</span>
@@ -149,7 +149,7 @@
             <div class="flex lg:flex-col gap-2 justify-end lg:justify-start">
               <button
                 @click="confirmDelete(review)"
-                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium text-sm whitespace-nowrap"
+                class="px-4 py-2 bg-red-500 text-white cursor-pointer rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium text-sm whitespace-nowrap"
               >
                 Remove
               </button>
@@ -160,9 +160,9 @@
         <!-- Empty State -->
         <div
           v-if="filteredReviews.length === 0"
-          class="bg-white rounded-lg shadow-sm p-8 text-center"
+          class="bg-white dark:bg-[#292929] rounded-lg shadow-sm p-8 text-center"
         >
-          <p class="text-gray-500 text-lg">No reviews found</p>
+          <p class="text-gray-500 dark:text-white text-lg">No reviews found</p>
         </div>
       </div>
     </div>
@@ -174,24 +174,24 @@
           v-if="showDeleteModal"
           class="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
         >
-          <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">
+          <div class="bg-white dark:bg-[#292929] rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 class="text-xl dark:text-white font-semibold text-gray-900 mb-4">
               Delete Review
             </h3>
-            <p class="text-gray-600 mb-6">
+            <p class="text-gray-600 dark:text-gray-200 mb-6">
               Are you sure you want to delete this review? This action cannot be
               undone.
             </p>
             <div class="flex gap-3 justify-end">
               <button
                 @click="cancelDelete"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
+                class="px-4 py-2 border dark:text-white cursor-pointer dark:hover:bg-gray-600 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 @click="deleteReview"
-                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium"
+                class="px-4 py-2 bg-red-500 text-white cursor-pointer rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium"
               >
                 Delete
               </button>
