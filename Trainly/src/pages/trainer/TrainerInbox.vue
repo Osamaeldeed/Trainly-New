@@ -1,13 +1,13 @@
 <template>
-  <div class="page-root flex items-start justify-center min-h-screen rounded-2xl bg-blue-100 py-6">
+  <div class="page-root flex items-start justify-center min-h-screen rounded-2xl dark:bg-[#535353] bg-blue-100 py-6">
     <!-- البوكس الكبير -->
     <div
-      class="inbox-wrapper w-full max-w-7xl bg-light-blue rounded-2xl shadow-strong overflow-hidden flex"
+      class="inbox-wrapper w-full max-w-7xl bg-light-blue dark:bg-[#3B3B3B] rounded-2xl shadow-strong overflow-hidden flex"
       :class="{ 'flex-col': isStacked }"
     >
       <!-- Clients Sidebar -->
       <aside
-        class="clients-column bg-white border-r border-gray-200 flex flex-col"
+        class="clients-column bg-white dark:bg-[#3B3B3B] border-r border-gray-200 flex flex-col"
         :class="{
           'w-80': !isStacked,
           'w-full': isStacked && mobilePane === 'clients',
@@ -15,9 +15,9 @@
         }"
       >
         <div class="p-6 border-b border-gray-200">
-          <h1 class="text-2xl font-bold text-gray-900 mb-4">Chats</h1>
+          <h1 class="text-2xl font-bold dark:text-white text-gray-900 mb-4">Chats</h1>
           <div class="relative">
-            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-white text-gray-400">🔍</span>
             <input
               type="text"
               v-model="searchQuery"
@@ -33,7 +33,7 @@
               <div
                 class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"
               ></div>
-              <p class="text-gray-500 text-sm">Loading clients...</p>
+              <p class="text-gray-500 dark:text-white text-sm">Loading clients...</p>
             </div>
           </div>
 
@@ -54,7 +54,7 @@
               @click="onClientClick(client)"
               :class="[
                 'w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 cursor-pointer',
-                selectedClient?.id === client.id ? 'bg-blue-50' : '',
+                selectedClient?.id === client.id ? 'bg-blue-50 dark:bg-[#191919]' : '',
               ]"
             >
               <img
@@ -67,7 +67,7 @@
               />
               <div class="flex-1 min-w-0 text-left">
                 <div class="flex items-center justify-between mb-1">
-                  <h3 class="font-semibold text-gray-900 truncate">{{ client.name }}</h3>
+                  <h3 class="font-semibold text-gray-900 dark:text-white truncate">{{ client.name }}</h3>
                   <span
                     v-if="client.lastMessageTime"
                     class="text-xs text-gray-500 flex-shrink-0 ml-2"
@@ -76,7 +76,7 @@
                   </span>
                 </div>
                 <div class="flex items-center justify-between">
-                  <p class="text-sm text-gray-600 truncate">
+                  <p class="text-sm dark:text-white text-gray-600 truncate">
                     {{ client.lastMessage || "Start a conversation" }}
                   </p>
                   <span
@@ -103,7 +103,7 @@
         <!-- top bar for mobile -->
         <div
           v-if="isStacked"
-          class="mobile-top bg-white border-b border-gray-200 p-3 flex items-center gap-3"
+          class="mobile-top bg-white dark:bg-[#3B3B3B] border-b border-gray-200 p-3 flex items-center gap-3"
         >
           <button
             v-if="selectedClient"
@@ -122,14 +122,14 @@
               class="w-10 h-10 rounded-full object-cover"
             />
             <div>
-              <div class="font-semibold text-gray-900 text-sm">{{ selectedClient.name }}</div>
-              <div class="text-xs text-gray-500">{{ selectedClient.email || "Client" }}</div>
+              <div class="font-semibold dark:text-white text-gray-900 text-sm">{{ selectedClient.name }}</div>
+              <div class="text-xs dark:text-white text-gray-500">{{ selectedClient.email || "Client" }}</div>
             </div>
           </div>
         </div>
 
         <!-- desktop header -->
-        <div v-else class="bg-white border-b border-gray-200 p-4 flex items-center gap-3">
+        <div v-else class="bg-white dark:bg-[#3B3B3B] border-b border-gray-200 p-4 flex items-center gap-3">
           <img
             v-if="selectedClient"
             :src="
@@ -140,10 +140,10 @@
             class="w-12 h-12 rounded-full object-cover"
           />
           <div>
-            <h2 class="font-semibold text-gray-900">
+            <h2 class="font-semibold dark:text-white text-gray-900">
               {{ selectedClient ? selectedClient.name : "Select a client" }}
             </h2>
-            <p class="text-sm text-gray-500">
+            <p class="text-sm dark:text-gray-300 text-gray-500">
               {{ selectedClient ? selectedClient.email || "Client" : "" }}
             </p>
           </div>
@@ -154,12 +154,12 @@
           <!-- messages container: flex-1 so it fills available height, scrolls internally -->
           <div
             ref="messagesContainer"
-            class="messages-container flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50"
+            class="messages-container flex-1 overflow-y-auto p-6 space-y-4 dark:bg-[#3b3b3b] bg-gray-50"
           >
             <div v-if="!selectedClient" class="flex-1 flex items-center justify-center">
-              <div class="text-center text-gray-400">
+              <div class="text-center dark:text-white text-gray-400">
                 <div
-                  class="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center"
+                  class="w-24 h-24 bg-gray-200 dark:bg-[#3B3B3B] rounded-full mx-auto mb-4 flex items-center justify-center"
                 >
                   <span class="text-5xl">💬</span>
                 </div>
@@ -177,7 +177,7 @@
                 v-else-if="messages.length === 0"
                 class="flex-1 flex items-center justify-center"
               >
-                <div class="text-center text-gray-400">
+                <div class="text-center dark:text-white text-gray-400">
                   <p class="text-lg mb-2">👋</p>
                   <p>No messages yet. Start the conversation!</p>
                 </div>
@@ -208,10 +208,10 @@
                     >
                       <div
                         :class="[
-                          'message-box rounded-2xl px-5 py-3 break-words',
+                          'message-box dark:bg-black rounded-2xl px-5 py-3 break-words',
                           msg.senderId === trainerId
-                            ? 'bg-blue-600 text-white rounded-br-sm'
-                            : 'bg-white text-gray-900 rounded-bl-sm',
+                            ? 'bg-blue-600 dark:bg-[#3B3B3B] dark:text-white text-dark rounded-br-sm'
+                            : 'bg-white dark:bg-[#3B3B3B] dark:text-white text-gray-900 rounded-bl-sm',
                         ]"
                       >
                         <p class="text-sm whitespace-pre-wrap">{{ msg.text }}</p>
@@ -236,7 +236,7 @@
         </div>
 
         <!-- input -->
-        <div v-if="selectedClient" class="bg-white border-t border-gray-200 p-4">
+        <div v-if="selectedClient" class="bg-white dark:bg-[#3B3B3B] border-t border-gray-200 p-4">
           <div class="flex items-center gap-3">
             <input
               type="text"
@@ -244,12 +244,12 @@
               @keyup.enter="sendMessage"
               placeholder="Type your message here..."
               :disabled="sending"
-              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              class="flex-1 px-4 py-3 border dark:text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
             />
             <button
               @click="sendMessage"
               :disabled="!messageInput.trim() || sending"
-              class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+              class="bg-blue-600 dark:bg-black text-black dark:text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
             >
               <span class="text-xl">✈️</span>
               <span class="hidden sm:inline">{{ sending ? "Sending..." : "Send" }}</span>

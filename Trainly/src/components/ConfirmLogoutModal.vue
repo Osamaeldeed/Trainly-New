@@ -8,7 +8,7 @@
       <Transition name="modal-content">
         <div
           v-if="isOpen"
-          class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform"
+          class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow-2xl max-w-md w-full p-6 transform"
         >
           <!-- Icon -->
           <div class="flex justify-center mb-4">
@@ -30,12 +30,12 @@
           </div>
 
           <!-- Title -->
-          <h3 class="text-2xl font-bold text-gray-800 text-center mb-2">
+          <h3 class="text-2xl font-bold dark:text-white text-gray-800 text-center mb-2">
             Log Out
           </h3>
 
           <!-- Message -->
-          <p class="text-gray-600 text-center mb-6">
+          <p class="text-gray-600 dark:text-white text-center mb-6">
             Are you sure you want to log out?
           </p>
 

@@ -2,7 +2,7 @@
   <div>
     <!-- Welcome Header -->
     <div
-      class="bg-white p-6 rounded-2xl shadow-sm mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      class="bg-white dark:bg-[#3b3b3b] p-6 rounded-2xl shadow-sm mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
     >
       <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <img
@@ -10,11 +10,11 @@
           alt="profile"
           class="w-[100px] h-[100px] sm:w-[122px] sm:h-[122px] rounded-full object-cover"
         />
-        <div class="text-center sm:text-left">
-          <h2 class="text-lg sm:text-xl font-semibold text-gray-800">
+        <div class="text-center dark:text-white sm:text-left">
+          <h2 class="text-lg sm:text-xl font-semibold dark:text-white text-gray-800">
             Welcome back, {{ trainer.firstName }} {{ trainer.lastName }}!
           </h2>
-          <p class="text-sm text-gray-500">Let’s track your performance today.</p>
+          <p class="text-sm dark:text-white text-gray-500">Let’s track your performance today.</p>
         </div>
       </div>
     </div>
@@ -22,44 +22,48 @@
     <!-- Dashboard Stats -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
       <div
-        class="bg-white p-6 rounded-bl-2xl rounded-br-2xl shadow-sm text-center border-t-6 border-[#0D8BF2]"
+        class="bg-white dark:bg-[#3b3b3b] dark:text-white p-6 rounded-bl-2xl rounded-br-2xl shadow-sm text-center border-t-6 border-[#0D8BF2]"
       >
         <div class="flex items-center gap-2">
           <h3 class="text-[#0D8BF2] text-md font-medium mr-18">Total Clients</h3>
           <img src="@/assets/images/Group 142.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
-        <p class="text-2xl font-medium text-gray-800 text-left">
+        <p class="text-2xl dark:text-white font-medium text-gray-800 text-left">
           {{ totalClients }}
         </p>
         <router-link
           to="/trainer/clients"
-          class="block text-gray-500 text-sm mt-1 underline text-right cursor-pointer hover:text-[#0D8BF2]"
+          class="block text-[#2d8fff] text-sm mt-1 underline text-right cursor-pointer dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] hover:text-[#0D8BF2]"
         >
           Show all
         </router-link>
       </div>
 
-      <div class="bg-white p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]">
+      <div
+        class="bg-white dark:bg-[#3b3b3b] p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]"
+      >
         <div class="flex items-center gap-2">
           <h3 class="text-[#0D8BF2] text-md font-medium mr-18">Total Income</h3>
           <img src="@/assets/images/Group 147.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
-        <p class="text-2xl font-medium text-gray-800">{{ totalIncome }} $</p>
+        <p class="text-2xl font-medium dark:text-white text-gray-800">{{ totalIncome }} EGP</p>
         <router-link
           to="/trainer/settings"
-          class="block text-gray-500 text-sm mt-1 underline text-right cursor-pointer hover:text-[#0D8BF2]"
+          class="block text-[#2d8fff] text-sm mt-1 underline text-right cursor-pointer dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] hover:text-[#0D8BF2]"
         >
           Show all
         </router-link>
       </div>
 
-      <div class="bg-white p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]">
+      <div
+        class="bg-white dark:bg-[#3b3b3b] p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]"
+      >
         <div class="flex items-center gap-2">
           <h3 class="text-[#0D8BF2] text-md font-medium mr-13">Average Rating</h3>
           <img src="@/assets/images/Group 144.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
 
-        <p class="text-2xl font-medium text-gray-800 flex items-center gap-1">
+        <p class="text-2xl font-medium dark:text-white text-gray-800 flex items-center gap-1">
           {{ averageRating }}
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -79,21 +83,23 @@
 
         <router-link
           to="/trainer/reviews"
-          class="block text-gray-500 text-sm mt-1 underline text-right cursor-pointer hover:text-[#0D8BF2]"
+          class="block text-[#2d8fff] text-sm mt-1 underline text-right cursor-pointer dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] hover:text-[#0D8BF2]"
         >
           Show all
         </router-link>
       </div>
 
-      <div class="bg-white p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]">
+      <div
+        class="bg-white dark:bg-[#3b3b3b] p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]"
+      >
         <div class="flex items-center gap-2">
           <h3 class="text-[#0D8BF2] text-md font-medium mr-13">Total Plans</h3>
           <img src="@/assets/images/Group 143.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
-        <p class="text-2xl font-medium text-gray-800">{{ plans.length }}</p>
+        <p class="text-2xl font-medium dark:text-white text-gray-800">{{ plans.length }}</p>
         <router-link
           to="/trainer/plans"
-          class="block text-gray-500 text-sm mt-1 underline text-right cursor-pointer hover:text-[#0D8BF2]"
+          class="block text-[#2d8fff] text-sm mt-1 underline text-right cursor-pointer dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] hover:text-[#0D8BF2]"
         >
           Show all
         </router-link>
@@ -103,8 +109,10 @@
     <!-- Main Grid (Plans + Reviews) -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- 🗂️ Your Plans Box -->
-      <div class="bg-white p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]">
-        <h3 class="text-xl font-medium text-gray-800 mb-4">Your Plans</h3>
+      <div
+        class="bg-white dark:bg-[#3b3b3b] p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]"
+      >
+        <h3 class="text-xl font-medium dark:text-white text-gray-800 mb-4">Your Plans</h3>
 
         <div v-if="plans.length" class="space-y-3">
           <div
@@ -113,8 +121,8 @@
             class="border border-gray-200 rounded-xl p-4 flex justify-between items-center hover:bg-gray-50 transition"
           >
             <div>
-              <h4 class="font-medium text-gray-800">{{ plan.title }}</h4>
-              <p class="text-sm text-gray-500">
+              <h4 class="font-medium dark:text-white text-gray-800">{{ plan.title }}</h4>
+              <p class="text-sm dark:text-gray-300 text-gray-500">
                 {{ plan.duration }} • {{ plan.sessions }} sessions
               </p>
             </div>
@@ -126,14 +134,16 @@
       </div>
 
       <!-- ⭐ Recent Reviews Box -->
-      <div class="bg-white p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]">
-        <h3 class="text-xl font-medium text-gray-800 mb-4">Recent Reviews</h3>
+      <div
+        class="bg-white dark:bg-[#3b3b3b] p-6 rounded-bl-2xl rounded-br-2xl shadow-sm border-t-6 border-[#0D8BF2]"
+      >
+        <h3 class="text-xl font-medium dark:text-white text-gray-800 mb-4">Recent Reviews</h3>
 
         <div v-if="reviews.length" class="space-y-3">
           <div
             v-for="review in reviews"
             :key="review.id"
-            class="border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition"
+            class="border border-gray-200 rounded-xl p-4 hover:dark:bg-[#4b4b4b] hover:bg-gray-50 transition"
           >
             <div class="flex items-center gap-3 mb-2">
               <img
@@ -142,17 +152,19 @@
                 class="w-[40px] h-[40px] rounded-full object-cover"
               />
               <div>
-                <p class="font-medium text-gray-800">
+                <p class="font-medium dark:text-white text-gray-800">
                   {{ review.traineeName }}
                 </p>
-                <p class="text-xs text-gray-500">Rating: ⭐ {{ review.rating }}</p>
+                <p class="text-xs dark:text-gray-200 text-gray-500">
+                  Rating: ⭐ {{ review.rating }}
+                </p>
               </div>
             </div>
-            <p class="text-sm text-gray-600">“{{ review.comment }}”</p>
+            <p class="text-sm dark:text-gray-300 text-gray-600">“{{ review.comment }}”</p>
           </div>
         </div>
 
-        <p v-else class="text-gray-400 text-sm text-center mt-4">No reviews yet.</p>
+        <p v-else class="text-gray-400 dark:text-white text-sm text-center mt-4">No reviews yet.</p>
       </div>
     </div>
   </div>
