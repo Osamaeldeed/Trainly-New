@@ -411,8 +411,8 @@
               <div class="flex items-center gap-3">
                 <span class="text-2xl">🤖</span>
                 <div>
-                  <h3 class="text-lg font-semibold text-gray-800">AI Welcome Message Generator</h3>
-                  <p class="text-xs text-gray-500">Generate a personalized welcome message for new trainees</p>
+                  <h3 class="text-lg font-semibold text-gray-800 dark:text-white">AI Welcome Message Generator</h3>
+                  <p class="text-xs text-gray-500 dark:text-gray-300">Generate a personalized welcome message for new trainees</p>
                 </div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
@@ -422,7 +422,7 @@
             </div>
 
             <div v-if="useAIWelcome" class="space-y-4 animate-fadeIn">
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div class="bg-blue-50 dark:bg-[#797979] border border-blue-200 rounded-lg p-4">
                 <p class="text-sm text-blue-800">
                   <strong>📝 Instructions:</strong> Fill in the training schedule below. The AI will generate a professional welcome message that will be automatically sent to trainees when they subscribe to this plan.
                 </p>
@@ -430,41 +430,41 @@
 
               <!-- Training Schedule Table -->
               <div v-if="trainingWeeks.length > 0" class="space-y-3">
-                <h4 class="font-semibold text-gray-700">Training Schedule ({{ trainingWeeks.length }} weeks)</h4>
+                <h4 class="font-semibold text-gray-700 dark:text-white">Training Schedule ({{ trainingWeeks.length }} weeks)</h4>
 
                 <div class="space-y-3 max-h-96 overflow-y-auto">
                   <div
                     v-for="(week, index) in trainingWeeks"
                     :key="index"
-                    class="bg-gray-50 border border-gray-200 rounded-lg p-4"
+                    class="bg-gray-50 dark:bg-[#3B3B3B] border border-gray-200 rounded-lg p-4"
                   >
-                    <h5 class="font-medium text-gray-800 mb-3">Week {{ week.weekNumber }}</h5>
+                    <h5 class="font-medium text-gray-800 dark:text-white mb-3">Week {{ week.weekNumber }}</h5>
                     <div class="grid grid-cols-1 gap-3">
                       <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Sessions per week</label>
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Sessions per week</label>
                         <input
                           v-model="week.sessions"
                           type="text"
                           placeholder="e.g., 3 sessions"
-                          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Exercises/Focus</label>
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Exercises/Focus</label>
                         <input
                           v-model="week.exercises"
                           type="text"
                           placeholder="e.g., Upper body strength, Cardio"
-                          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Notes (optional)</label>
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Notes (optional)</label>
                         <input
                           v-model="week.notes"
                           type="text"
                           placeholder="e.g., Focus on form, Rest day on Sunday"
-                          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
@@ -491,18 +491,18 @@
               <!-- AI Message Preview -->
               <div v-if="showAIPreview && aiGeneratedMessage" class="space-y-3 animate-fadeIn">
                 <div class="flex items-center justify-between">
-                  <h4 class="font-semibold text-gray-700">Generated Message Preview</h4>
+                  <h4 class="font-semibold text-gray-700 dark:text-white">Generated Message Preview</h4>
                   <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">✓ Generated</span>
                 </div>
-                <div class="bg-white border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto">
+                <div class="bg-white dark:bg-[#3B3B3B] border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto">
                   <textarea
                     v-model="aiGeneratedMessage"
                     rows="10"
-                    class="w-full text-sm text-gray-700 focus:outline-none resize-none"
+                    class="w-full text-sm text-gray-700 dark:text-white focus:outline-none resize-none"
                     placeholder="AI generated message will appear here..."
                   ></textarea>
                 </div>
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-gray-500 dark:text-gray-300">
                   💡 You can edit the message above before creating the plan.
                 </p>
               </div>
