@@ -548,7 +548,7 @@
       <!-- Success Popup (kept same) -->
       <div
         v-if="showSuccess"
-        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 animate-fade-in"
+        class="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-50 animate-fade-in"
       >
         <div
           class="bg-white dark:bg-[#3B3B3B] rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl animate-scale-in border-4 border-blue-400"
