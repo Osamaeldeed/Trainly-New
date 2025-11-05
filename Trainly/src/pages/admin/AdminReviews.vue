@@ -207,7 +207,7 @@
 import { ref, computed, onMounted } from "vue";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig.js";
-
+import axios from "axios";
 const reviews = ref([]);
 const searchQuery = ref("");
 const ratingFilter = ref("all");
@@ -224,6 +224,8 @@ const fetchReviews = async () => {
       rating: doc.data().rating,
       sessionType: doc.data().sessionType,
       traineeName: doc.data().traineeName,
+      traineeEmail: doc.data().traineeEmail, // ⚠️ Make sure this field exists in Firestore
+
       traineeProfilePic: doc.data().traineeProfilePic,
       trainerName: doc.data().trainerName,
       trainerProfilePic: doc.data().trainerProfilePic,
@@ -232,6 +234,8 @@ const fetchReviews = async () => {
     console.error("Error fetching reviews:", error);
   }
 };
+
+
 
 onMounted(fetchReviews);
 
@@ -264,10 +268,36 @@ const confirmDelete = (review) => {
 const deleteReview = async () => {
   if (reviewToDelete.value) {
     try {
+      // 1️⃣ Delete from Firestore
       await deleteDoc(doc(db, "reviews", reviewToDelete.value.id));
       reviews.value = reviews.value.filter(
         (r) => r.id !== reviewToDelete.value.id
       );
+
+      // 2️⃣ Send email to trainee
+      if (reviewToDelete.value.traineeEmail) {
+        try {
+          await axios.post("http://localhost:3000/api/send-email", {
+            to: reviewToDelete.value.traineeEmail,
+            subject: "Your Review Has Been Removed",
+            text: `Hello ${reviewToDelete.value.traineeName},
+
+Your review for trainer ${reviewToDelete.value.trainerName} has been removed because it violates the platform's terms or contains inappropriate language.
+
+If you believe this was a mistake, please contact our support team.
+
+Best regards,
+The Admin Team`,
+          });
+          console.log("Email sent successfully");
+        } catch (emailErr) {
+          console.error("Error sending email:", emailErr);
+        }
+      } else {
+        console.warn("No trainee email found for this review");
+      }
+
+      // 3️⃣ Close modal
       showDeleteModal.value = false;
       reviewToDelete.value = null;
     } catch (error) {
@@ -288,4 +318,6 @@ const formatDate = (timestamp) => {
     : new Date(timestamp);
   return date.toLocaleDateString() + " " + date.toLocaleTimeString();
 };
+
+
 </script>

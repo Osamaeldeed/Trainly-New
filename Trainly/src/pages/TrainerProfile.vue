@@ -126,7 +126,7 @@
 
             <!-- Contact Button -->
             <div class="flex items-center gap-3">
-              <button
+              <button v-if="!isAdminView"
                 @click="contactTrainer"
                 class="px-6 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:scale-105 cursor-pointer bg-linear-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white dark:bg-gray-600 dark:hover:bg-gray-500"
               >
@@ -222,7 +222,7 @@
                 </div>
               </div>
 
-              <button
+              <button v-if="!isAdminView"
                 @click="bookPlan(plan, $event)"
                 :disabled="bookingPlanId === plan.id"
                 class="w-full py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold transition-all transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -353,7 +353,7 @@
 
           <!-- Optional: Message for users who haven't booked -->
           <div
-            v-else-if="!checkingBooking"
+            v-else-if="!checkingBooking&&!isAdminView"
             class="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-3 rounded-xl text-sm flex items-center gap-2"
           >
             <svg
@@ -451,7 +451,81 @@
         </div>
       </section>
     </div>
+<!--activateanddelete-->
+  <!-- Show buttons only if admin view -->
+  <div v-if="isAdminView" class="flex gap-3">
+    <!-- 🔹 Activate Button -->
+    <button
+      @click="openModal('activate')"
+      :disabled="trainer.status === 'active'"
+      class="px-5 py-2 rounded-lg text-white font-medium"
+      :class="trainer.status === 'active' 
+        ? 'bg-gray-400 cursor-not-allowed' 
+        : 'bg-green-600 hover:bg-green-700 hover:cursor-pointer'"
+    >
+      Activate Account
+    </button>
 
+    <!-- 🔹 Delete Button -->
+    <button
+      @click="openModal('delete')"
+      class="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium hover:cursor-pointer"
+    >
+      Delete Account
+    </button>
+
+    <!-- 🔹 Modal -->
+    <div
+      v-if="showModal"
+      class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[9999]"
+    >
+      <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md shadow-2xl text-center">
+        <!-- ✅ Activate Modal -->
+        <div v-if="modalType === 'activate'">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">Activate Trainer Account</h2>
+          <p class="text-gray-600 mb-6">
+            Are you sure you want to activate {{ trainer.firstName }}’s account?
+          </p>
+          <div class="flex justify-center gap-3">
+            <button
+              @click="confirmAction"
+              class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white hover:cursor-pointer"
+            >
+              Confirm
+            </button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- ✅ Delete Modal -->
+        <div v-else-if="modalType === 'delete'">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">Delete Trainer Account</h2>
+          <p class="text-gray-600 mb-4">
+            Please provide a reason for deleting {{ trainer.firstName }}’s account.
+          </p>
+          <textarea
+            v-model="deleteReason"
+            placeholder="Type reason..."
+            class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-red-400 text-black"
+            rows="3"
+          ></textarea>
+          <div class="flex justify-center gap-3">
+            <button
+              @click="confirmAction"
+              class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white hover:cursor-pointer"
+            >
+              Send & Delete
+            </button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     <!-- Add Review Modal -->
     <Teleport to="body">
       <div
@@ -594,6 +668,8 @@ import {
   doc,
   getDoc,
   collection,
+  updateDoc,
+  deleteDoc,
   getDocs,
   query,
   where,
@@ -609,12 +685,16 @@ const API_URL = " https://elenora-unexampled-carmon.ngrok-free.dev";
 const route = useRoute();
 const router = useRouter();
 const auth = getAuth();
-
+const props = defineProps({
+  trainer: Object,
+  isAdminView: Boolean,
+});
 // trainer uid source (query or params)
 const uid = route.query.uid || route.params.uid || null;
 
 // placeholders
 const placeholder = "https://via.placeholder.com/400x300?text=No+Image";
+const isAdminView = computed(() => route.path.includes('/admin') || route.query.admin === 'true');
 
 // state
 const trainer = ref({});
@@ -1108,8 +1188,88 @@ const submitReview = async () => {
     addingReview.value = false;
   }
 };
-</script>
 
+
+// 🔹 Reactive state
+const showModal = ref(false);
+const modalType = ref(""); // 'activate' or 'delete'
+const deleteReason = ref("");
+
+// 🔹 Modal controls
+const openModal = (type) => {
+  modalType.value = type;
+  showModal.value = true;
+};
+const closeModal = () => {
+  showModal.value = false;
+  deleteReason.value = "";
+};
+
+// 🔹 Email helper
+const sendEmail = async (to, subject, message) => {
+  try {
+    const res = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, subject, message }),
+    });
+    if (!res.ok) throw new Error("Email failed to send");
+    console.log("✅ Email sent:", subject);
+  } catch (err) {
+    console.error("❌ Error sending email:", err);
+  }
+};
+
+// 🔹 Confirm Action
+const confirmAction = async () => {
+  if (!trainer.value || !trainer.value.id) {
+    alert("Trainer not loaded yet.");
+    return;
+  }
+
+  try {
+    const trainerRef = doc(db, "users", trainer.value.id);
+
+    if (modalType.value === "activate") {
+      // 1️⃣ Update Firestore
+      await updateDoc(trainerRef, { status: "active" });
+
+      // 2️⃣ Send email
+      await sendEmail(
+        trainer.value.email,
+        "Your Trainer Account Has Been Activated",
+        `Hello ${trainer.value.firstName},\n\nYour trainer account has been successfully activated.\n\nBest regards,\nAdmin Team`
+      );
+
+      alert("✅ Trainer activated and email sent!");
+    }
+
+    if (modalType.value === "delete") {
+      if (!deleteReason.value.trim()) return alert("Please provide a reason before deleting.");
+
+      // 1️⃣ Send email first
+      await sendEmail(
+        trainer.value.email,
+        "Your Trainer Account Has Been Deleted",
+        `Hello ${trainer.value.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
+      );
+
+      // 2️⃣ Delete from Firestore
+      await deleteDoc(trainerRef);
+
+      alert("✅ Trainer deleted and email sent!");
+      router.push("/admin/trainers");
+    }
+
+    closeModal();
+  } catch (err) {
+    console.error("❌ confirmAction error:", err);
+    alert("An error occurred. Check console for details.");
+  }
+};
+
+
+</script>
 <style scoped>
 .line-clamp-2 {
   overflow: hidden;
