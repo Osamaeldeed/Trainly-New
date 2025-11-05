@@ -144,7 +144,6 @@
         </div>
 
         <!-- Upload Certificate -->
-        <!-- Upload Certificate -->
         <div>
           <h2 class="text-sm font-medium dark:text-white text-gray-900 mt-8">Upload Certificate</h2>
           <div
@@ -163,7 +162,7 @@
               >
                 Upload
               </label>
-              <p class="text-xs dark:text-gray-300 text-gray-500 mt-2">PDF, JPG up to 10MB</p>
+              <p class="text-xs dark:text-gray-300 text-gray-500 mt-2">PDF, PNG, JPG, JPEG up to 10MB</p>
 
               <!-- Certificate List with Remove Buttons -->
               <div
@@ -462,7 +461,11 @@
     </div>
 
     <!-- ========= subsecribtion Section ========= -->
-    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8">
+    <div
+      v-for="(sub, index) in subscriptions"
+      :key="index"
+      class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8"
+    >
       <!-- Header -->
       <div class="flex items-start mb-8">
         <div
@@ -486,78 +489,145 @@
       <div class="flex flex-col md:flex-row justify-between gap-10">
         <!-- Left side: Plan details -->
         <div class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100">
-          <h3 class="text-lg font-medium mb-3 dark:text-white text-gray-800">Current Plan</h3>
+          <h3 class="text-lg font-medium mb-3 dark:text-white text-gray-800">
+            Current Plan: {{ sub.planType }}
+          </h3>
+
           <ul class="space-y-3 text-gray-600 dark:text-gray-300 text-sm">
-            <li><span class="font-medium dark:text-gray-300 text-gray-800">$29.99/month</span></li>
             <li>
-              Next renewal: <span class="font-medium dark:text-gray-300">November 15, 2025</span>
+              <span class="font-medium dark:text-gray-300 text-gray-800">
+                ${{ sub.price }}/{{ sub.currency }}
+              </span>
             </li>
+            <li>
+              Next renewal:
+              <span class="font-medium dark:text-gray-300">
+                {{ formatDate(sub.nextBillingDate) }}
+              </span>
+            </li>
+
             <ul class="space-y-2 text-gray-600 dark:text-gray-100 text-sm mt-4">
               <li class="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-green-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                6 plans/month
+                {{ sub.planLimit }} plans/month
               </li>
 
               <li class="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-green-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                Unlimited clients
+                Status: {{ sub.status }}
               </li>
 
               <li class="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-green-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                Priority support
+                Trainer: {{ sub.trainerName }}
               </li>
             </ul>
           </ul>
         </div>
 
-        <!-- Right side: Full-width Buttons -->
+        <!-- Right side: Single Button (replaced three buttons) -->
         <div class="flex flex-col justify-center items-stretch gap-3 md:w-1/3">
+          <!-- Single Button to open modal; pass sub so we know which subscription we're editing visually -->
           <button
+            @click="openPlanModal(sub)"
             class="text-white bg-[#00B0FF] hover:bg-[#36ace2] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
           >
             Upgrade Plan
           </button>
-
-          <button
-            class="border border-gray-300 text-gray-800 bg-[#f7f8f8] hover:bg-[#eaf3f7] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
-          >
-            Downgrade Plan
-          </button>
-
-          <button
-            class="text-red-500 hover:text-red-600 border border-red-200 bg-[#fff5f5] font-medium rounded-lg text-sm px-6 py-3 w-full transition"
-          >
-            Cancel Subscription
-          </button>
         </div>
+      </div>
+    </div>
+
+    <!-- MODAL: plan chooser (single modal reused for any subscription) -->
+    <div v-if="planModalOpen" class="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 relative">
+        <button
+          class="absolute top-3 right-4 text-gray-500 hover:text-gray-700"
+          @click="closePlanModal"
+        >
+          ✕
+        </button>
+
+        <h2 class="text-xl font-semibold mb-4">
+          Upgrade to add more plans
+        </h2>
+        <p class="text-gray-500 mb-8">
+          You have reached your current plan limit ({{ activeSubscriptionForModal.planLimit || '—' }} plans).
+          Choose a subscription to upgrade. The new plan will activate at your next billing date.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            v-for="plan in plans"
+            :key="plan.type"
+            class="border rounded-2xl p-6 transition shadow-sm"
+            :class="{
+              'bg-gray-100 opacity-80 cursor-not-allowed': plan.type === activeSubscriptionForModal.planType,
+              'hover:shadow-md': plan.type !== activeSubscriptionForModal.planType
+            }"
+          >
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="text-lg font-semibold text-gray-800">
+                {{ plan.type }}
+              </h3>
+              <span class="text-gray-700 font-medium">
+                ${{ plan.price }} / month
+              </span>
+            </div>
+
+            <p class="text-gray-500 mb-4 text-sm">
+              {{ plan.description }}
+            </p>
+
+            <ul class="text-gray-600 text-sm mb-4 space-y-1">
+              <li>Up to {{ plan.limit }} plans</li>
+              <li>Billed monthly</li>
+            </ul>
+
+            <button
+              :disabled="plan.type === activeSubscriptionForModal.planType"
+              @click="selectPlanForSubscription(plan)"
+              class="w-full py-2 rounded-lg font-medium text-white transition"
+              :class="plan.type === activeSubscriptionForModal.planType
+                ? 'bg-gray-400'
+                : 'bg-blue-600 hover:bg-blue-700'"
+            >
+              {{ plan.type === activeSubscriptionForModal.planType
+                ? 'Current Plan'
+                : `Select $${plan.price} / month` }}
+            </button>
+          </div>
+        </div>
+
+        <p class="text-xs text-gray-400 mt-6 text-center">
+          After payment, your new plan will be activated on your next billing cycle.
+        </p>
+      </div>
+    </div>
+
+    <!-- MODAL: success confirmation (after user selects plan) -->
+    <div v-if="planSelectedModalOpen" class="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+      <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm text-center border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Plan Change Scheduled</h3>
+        <p class="text-sm text-gray-500 mb-6">
+          Your plan will switch to
+          <span class="font-medium text-gray-800">{{ planSelectedName }}</span> on your next renewal date.
+        </p>
+        <button
+          @click="closePlanSelectedModal"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition"
+        >
+          OK
+        </button>
       </div>
     </div>
 
@@ -599,7 +669,6 @@
         <div class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100">
           <h3 class="text-lg font-semibold mb-4 dark:text-white text-gray-800">Payment Methods</h3>
 
-          <!-- Card Method -->
           <!-- Card Method -->
           <div
             class="flex items-center gap-4 bg-white dark:bg-[#242424] border border-gray-200 rounded-xl p-4 mb-4 shadow-sm"
@@ -683,7 +752,14 @@
 
 <script>
 import { db, storage } from "@/Firebase/firebaseConfig.js";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   getAuth,
@@ -724,6 +800,21 @@ export default {
       showCurrent: false,
       showNew: false,
       showRepeat: false,
+
+      // subscriptions fetched from Firestore (no data changes done here)
+      subscriptions: [],
+
+      // modal controls and plans (added)
+      planModalOpen: false,
+      planSelectedModalOpen: false,
+      activeSubscriptionForModal: {}, // subscription object currently being shown in modal
+      planSelectedName: null,
+
+      // available plans to show in modal
+      plans: [
+        { type: "Starter", price: 100, description: "Ideal for trainers starting out.", limit: 3 },
+        { type: "Pro", price: 150, description: "For growing trainers who need more plans.", limit: 6 },
+      ],
     };
   },
 
@@ -734,6 +825,9 @@ export default {
     if (user) {
       this.userId = user.uid;
       await this.fetchTrainerData();
+
+      // load subscriptions after trainer data is loaded
+      await this.fetchSubscriptions();
     } else {
       // fallback: if for any reason there's no currentUser, ask to login
       alert("No user found. Please log in again.");
@@ -757,9 +851,57 @@ export default {
       }
     },
 
+    // fetch subscriptions and keep only those belonging to this trainer
+    async fetchSubscriptions() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "subscriptions"));
+        const allSubs = querySnapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        this.subscriptions = allSubs.filter((s) => s.trainerUid === this.userId);
+      } catch (error) {
+        console.error("Error loading subscriptions:", error);
+      }
+    },
+
+    // format Firestore timestamp to readable date
+    formatDate(timestamp) {
+      try {
+        if (!timestamp) return "";
+        // if a Firestore Timestamp object with toDate()
+        if (timestamp && typeof timestamp.toDate === "function") {
+          const date = timestamp.toDate();
+          return date.toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+        }
+        // handle ISO string or Date
+        const d = new Date(timestamp);
+        if (!isNaN(d)) {
+          return d.toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+        }
+        return "";
+      // eslint-disable-next-line no-unused-vars
+      } catch (err) {
+        return "";
+      }
+    },
+
     // upload file to storage and return download URL
     async uploadFile(file, type) {
       if (!file) return null;
+
+      // check allowed file types
+      const allowedTypes = ["application/pdf", "image/png", "image/jpg", "image/jpeg"];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Only PDF, PNG, JPG, and JPEG files are allowed.");
+        return null;
+      }
+
       try {
         const fileRef = storageRef(
           storage,
@@ -986,6 +1128,33 @@ export default {
         toast.error(error.message);
       }
     },
+
+    // ===========================
+    // Plan modal helpers (no DB changes)
+    // ===========================
+    openPlanModal(sub) {
+      this.activeSubscriptionForModal = sub || {};
+      this.planModalOpen = true;
+    },
+    closePlanModal() {
+      this.planModalOpen = false;
+      this.activeSubscriptionForModal = {};
+    },
+    selectPlanForSubscription(plan) {
+      // only UI: schedule plan change message (no DB modification)
+      this.planSelectedName = plan.type;
+      this.planModalOpen = false;
+      this.planSelectedModalOpen = true;
+    },
+    closePlanSelectedModal() {
+      this.planSelectedModalOpen = false;
+      this.planSelectedName = null;
+    },
   },
 };
 </script>
+
+<style scoped>
+/* small fade effect could be added if needed */
+</style>
+
