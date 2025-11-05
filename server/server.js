@@ -1,3 +1,4 @@
+// server.js
 require("dotenv").config();
 
 const express = require("express");
@@ -5,7 +6,7 @@ const cors = require("cors");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -40,6 +41,74 @@ app.use(
   })
 );
 
+// small helper: build a Google Maps link from various stored location formats
+function buildMapLink(loc) {
+  if (!loc) return null;
+
+  // if already a full URL, return it
+  if (typeof loc === "string") {
+    const s = loc.trim();
+    if (/^https?:\/\//i.test(s)) return s;
+
+    // if "lat,lng"
+    const latLngMatch = s.match(/^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/);
+    if (latLngMatch) {
+      const lat = latLngMatch[1],
+        lng = latLngMatch[3];
+      return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    }
+
+    // otherwise assume it's an address string
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      s
+    )}`;
+  }
+
+  // if it's an object { lat, lng } or { latitude, longitude }
+  if (typeof loc === "object") {
+    const lat = loc.lat ?? loc.latitude ?? null;
+    const lng = loc.lng ?? loc.longitude ?? null;
+    if (lat != null && lng != null) {
+      return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    }
+    // fallback: stringify object
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      JSON.stringify(loc)
+    )}`;
+  }
+
+  return null;
+}
+
+// choose emojis based on plan title / sport keywords
+function getSportEmojisFromTitle(title = "") {
+  const t = (title || "").toLowerCase();
+
+  const mapping = [
+    { keys: ["tennis", "padel"], emojis: ["🎾", "🔥", "💪"] },
+    { keys: ["football", "soccer", "soccer"], emojis: ["⚽", "🔥", "🏆"] },
+    { keys: ["basketball"], emojis: ["🏀", "🔥", "💪"] },
+    {
+      keys: ["gym", "fitness", "strength", "weights", "bodybuilding"],
+      emojis: ["🏋️‍♂️", "💪", "🔥"],
+    },
+    { keys: ["running", "run", "jog"], emojis: ["🏃‍♂️", "🔥", "🏅"] },
+    { keys: ["yoga", "pilates"], emojis: ["🧘‍♀️", "✨", "🌿"] },
+    { keys: ["boxing", "mma", "kick"], emojis: ["🥊", "🔥", "💥"] },
+    { keys: ["swim", "swimming"], emojis: ["🏊‍♂️", "🌊", "🏅"] },
+    { keys: ["cycling", "bike"], emojis: ["🚴‍♀️", "🔥", "🏁"] },
+  ];
+
+  for (const m of mapping) {
+    for (const k of m.keys) {
+      if (t.includes(k)) return m.emojis;
+    }
+  }
+
+  // default set
+  return ["🎉", "🔥", "💪"];
+}
+
 // Helper function to send subscription email
 async function sendSubscriptionEmail(subscriptionData) {
   const mailOptions = {
@@ -53,23 +122,33 @@ async function sendSubscriptionEmail(subscriptionData) {
           
           <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h2 style="color: #1e40af; margin-top: 0;">Trainer Information</h2>
-            <p><strong>Name:</strong> ${subscriptionData.trainerName || "N/A"}</p>
-            <p><strong>Email:</strong> ${subscriptionData.trainerEmail || "N/A"}</p>
+            <p><strong>Name:</strong> ${
+              subscriptionData.trainerName || "N/A"
+            }</p>
+            <p><strong>Email:</strong> ${
+              subscriptionData.trainerEmail || "N/A"
+            }</p>
             <p><strong>Trainer ID:</strong> ${subscriptionData.trainerUid}</p>
           </div>
 
           <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h2 style="color: #15803d; margin-top: 0;">Subscription Details</h2>
             <p><strong>Plan Type:</strong> ${subscriptionData.planType}</p>
-            <p><strong>Plan Limit:</strong> ${subscriptionData.planLimit} plans</p>
+            <p><strong>Plan Limit:</strong> ${
+              subscriptionData.planLimit
+            } plans</p>
             <p><strong>Price:</strong> $${subscriptionData.price}/month</p>
             <p><strong>Status:</strong> <span style="color: #15803d; font-weight: bold;">ACTIVE</span></p>
           </div>
 
           <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px;">
             <h2 style="color: #92400e; margin-top: 0;">Payment Information</h2>
-            <p><strong>Stripe Session ID:</strong> ${subscriptionData.stripeSessionId || "N/A"}</p>
-            <p><strong>Stripe Subscription ID:</strong> ${subscriptionData.stripeSubscriptionId || "N/A"}</p>
+            <p><strong>Stripe Session ID:</strong> ${
+              subscriptionData.stripeSessionId || "N/A"
+            }</p>
+            <p><strong>Stripe Subscription ID:</strong> ${
+              subscriptionData.stripeSubscriptionId || "N/A"
+            }</p>
             <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
           </div>
 
@@ -396,24 +475,37 @@ app.post(
               const freshPlanData = planDocFresh.data();
               if (freshPlanData.aiWelcomeMessage) {
                 console.log("📨 Attempting to send AI welcome message...");
-                
-                // Call internal endpoint to send welcome message
-                const fetch = (await import('node-fetch')).default;
-                await fetch(`http://localhost:${process.env.PORT || 3000}/send-welcome-message`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    trainerId: trainerId,
-                    traineeId: traineeId,
-                    welcomeMessage: freshPlanData.aiWelcomeMessage
-                  })
-                }).catch(err => console.warn('Failed to send welcome message:', err));
-                
-                console.log('✅ AI Welcome message queued for trainee');
+
+                // build location link if present
+                const planLocationRaw = freshPlanData.location || null;
+                const planLocationLink = buildMapLink(planLocationRaw);
+
+                // Call internal endpoint to send welcome message (includes planLocation)
+                const fetch = (await import("node-fetch")).default;
+                await fetch(
+                  `http://localhost:${
+                    process.env.PORT || 3000
+                  }/send-welcome-message`,
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      trainerId: trainerId,
+                      traineeId: traineeId,
+                      welcomeMessage: freshPlanData.aiWelcomeMessage,
+                      planId,
+                      planLocation: planLocationLink,
+                    }),
+                  }
+                ).catch((err) =>
+                  console.warn("Failed to send welcome message:", err)
+                );
+
+                console.log("✅ AI Welcome message queued for trainee");
               }
             }
           } catch (e) {
-            console.warn('Could not send welcome message:', e);
+            console.warn("Could not send welcome message:", e);
           }
         }
       }
@@ -479,141 +571,183 @@ app.post(
 app.use(express.json());
 
 /**
- * 🆕 Generate AI Welcome Message for Training Plan
+ * Helper: generate welcome message using Gemini (reused by endpoints)
+ * payload: { planTitle, weeks, trainerName, trainerPhone, location }
+ *
+ * NOTE: This prompt now instructs the model to "spice up" the message with emojis
+ * relevant to the sport (detected from planTitle) and include encouraging emojis like 🔥🎉💪.
  */
-app.post('/generate-welcome-message', async (req, res) => {
-  console.log('🔔 /generate-welcome-message called');
-  console.log('📥 body preview:', JSON.stringify(req.body).slice(0,1000));
-
-  const { planTitle, weeks, trainerName, trainerPhone, location } = req.body || {};
+async function generateWelcomeMessageUsingGemini(payload = {}) {
+  const { planTitle, weeks, trainerName, trainerPhone, location } = payload;
 
   if (!planTitle || !weeks || !Array.isArray(weeks) || weeks.length === 0) {
-    console.warn('❗ Missing required fields in request');
-    return res.status(400).json({ error: 'Missing required fields: planTitle and weeks required' });
+    throw new Error("Missing required fields: planTitle and weeks required");
   }
 
   // build schedule text
-  let scheduleText = '';
+  let scheduleText = "";
   weeks.forEach((week, index) => {
     scheduleText += `\n\nWeek ${index + 1}:\n`;
-    scheduleText += `Sessions: ${week.sessions || 'N/A'}\n`;
-    scheduleText += `Exercises: ${week.exercises || 'N/A'}\n`;
+    scheduleText += `Sessions: ${week.sessions || "N/A"}\n`;
+    scheduleText += `Exercises: ${week.exercises || "N/A"}\n`;
     if (week.notes) scheduleText += `Notes: ${week.notes}\n`;
   });
 
+  // pick emojis based on plan title / sport
+  const sportEmojis = getSportEmojisFromTitle(planTitle);
+  const sportEmojiExample = sportEmojis.join(" ");
+
   const prompt = `
-You are a professional trainer assistant. Generate a warm,
-professional welcome message for a new trainee who just subscribed to a training plan.
+You are a professional trainer assistant. Generate a warm, friendly, and slightly playful welcome message for a new trainee who just subscribed to a training plan.
+Make the message motivating and clear, but also "delightful" — add emojis and small celebratory bits so it feels personal and energizing.
+
+Important instructions:
+- Start with a warm greeting and congratulate the trainee on starting the plan.
+- Present the training schedule in a clean, organized way (week by week). Use short, readable paragraphs and line breaks.
+- Include the trainer's contact information at the end.
+- If a training location link is provided, include it clearly (label it "Location" or "📍 Location") so trainees can click/open it.
+- Use emojis relevant to the sport detected from the plan title. Use the following emoji set as a guideline for this plan: ${sportEmojiExample}
+- Also sprinkle general encouraging emojis like 🎉, 🔥, 💪, 🏆 as appropriate.
+- Keep the message professional and readable: emojis should enhance, not overwhelm. Avoid using emoji-only lines.
+- Length: aim for about 150-300 words.
+- Tone: motivating, friendly, slightly playful (e.g., "Let's crush it! 🔥"), adapt to the sport implied by the plan title.
 
 Plan Details:
 - Plan Name: ${planTitle}
 - Duration: ${weeks.length} weeks
-- Trainer: ${trainerName || 'Your Trainer'}
+- Trainer: ${trainerName || "Your Trainer"}
 
 Training Schedule:
 ${scheduleText}
 
 Additional Information:
-${trainerPhone ? `- Trainer Phone: ${trainerPhone}` : ''}
-${location ? `- Location: ${location}` : ''}
+${trainerPhone ? `- Trainer Phone: ${trainerPhone}` : ""}
+${location ? `- Training Location: Click here to view on map: ${location}` : ""}
 
-Requirements:
-1. Start with a warm welcome greeting
-2. Congratulate them on starting their fitness journey
-3. Present the training schedule in a clear, organized format (week by week)
-4. Include the trainer's contact information at the end
-5. Keep the tone motivating and professional
-6. Write in clear, simple English
-7. Use proper formatting with line breaks for readability
-8. Make it around 200-300 words
-
-Generate the welcome message now:
+Now generate the welcome message, using the sport-relevant emojis and encouraging emojis naturally within the text.
 `;
 
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY not configured on server");
+  }
+
+  let messageText = null;
+
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error('GEMINI_API_KEY not configured on server');
-    }
+    // try multiple call patterns to be resilient against SDK differences
+    const model = genAI.getGenerativeModel
+      ? genAI.getGenerativeModel({ model: "gemini-pro" })
+      : genAI;
 
-    let messageText = null;
-
-    try {
-      // try multiple call patterns to be resilient against SDK differences
-      const model = genAI.getGenerativeModel ? genAI.getGenerativeModel({ model: 'gemini-pro' }) : genAI;
-      
-      if (model.generateContent) {
-        // original approach
-        const result = await model.generateContent(prompt);
-        const response = result?.response || result;
-        // response.text might be function or property
-        if (response) {
-          if (typeof response.text === 'function') messageText = response.text();
-          else if (response.text) messageText = response.text;
-        }
-        if (!messageText && result?.outputText) messageText = result.outputText;
-      } else if (model.generate) {
-        // alternate pattern
-        const result = await model.generate({ prompt });
-        messageText = result?.outputText || result?.candidates?.[0]?.content || null;
-      } else if (typeof genAI.generate === 'function') {
-        const result = await genAI.generate(prompt);
-        messageText = result?.text || result?.outputText || null;
-      } else {
-        console.warn('⚠️ Unknown Gemini SDK shape, will fallback');
+    if (model.generateContent) {
+      // original approach
+      const result = await model.generateContent(prompt);
+      const response = result?.response || result;
+      if (response) {
+        if (typeof response.text === "function") messageText = response.text();
+        else if (response.text) messageText = response.text;
       }
-    } catch (genErr) {
-      console.error('❌ Gemini call failed:', genErr && genErr.stack ? genErr.stack : genErr);
+      if (!messageText && result?.outputText) messageText = result.outputText;
+    } else if (model.generate) {
+      // alternate pattern
+      const result = await model.generate({ prompt });
+      messageText =
+        result?.outputText || result?.candidates?.[0]?.content || null;
+    } else if (typeof genAI.generate === "function") {
+      const result = await genAI.generate(prompt);
+      messageText = result?.text || result?.outputText || null;
+    } else {
+      console.warn("⚠️ Unknown Gemini SDK shape, will fallback");
     }
+  } catch (genErr) {
+    console.error(
+      "❌ Gemini call failed:",
+      genErr && genErr.stack ? genErr.stack : genErr
+    );
+  }
 
-    // Fallback if no AI response
-    if (!messageText) {
-      console.warn('⚠️ No AI message received — using fallback generated message');
-      // small friendly fallback that includes schedule summary
-      messageText = `Welcome to ${planTitle}!\n\nCongratulations on starting your ${weeks.length}-week program. Here's a quick overview:\n${scheduleText}\n\nIf you need any help, reply here or contact your trainer${trainerPhone ? ` at ${trainerPhone}` : ''}. Good luck — let's get started!`;
-    }
+  // Fallback if no AI response
+  if (!messageText) {
+    console.warn(
+      "⚠️ No AI message received — using fallback generated message"
+    );
+    messageText = `Welcome to ${planTitle}!\n\nCongratulations on starting your ${
+      weeks.length
+    }-week program. Here's a quick overview:\n${scheduleText}\n\nIf you need any help, reply here or contact your trainer${
+      trainerPhone ? ` at ${trainerPhone}` : ""
+    }. Good luck — let's get started! 🔥🎉`;
+  }
 
-    console.log('✅ Returning generated message (preview):', messageText.slice(0,200));
+  return messageText;
+}
+
+/**
+ * 🆕 Generate AI Welcome Message for Training Plan (public endpoint)
+ * Accepts same payload as generateWelcomeMessageUsingGemini
+ */
+app.post("/generate-welcome-message", async (req, res) => {
+  console.log("🔔 /generate-welcome-message called");
+  console.log("📥 body preview:", JSON.stringify(req.body).slice(0, 1000));
+
+  const { planTitle, weeks, trainerName, trainerPhone, location } =
+    req.body || {};
+
+  try {
+    const messageText = await generateWelcomeMessageUsingGemini({
+      planTitle,
+      weeks,
+      trainerName,
+      trainerPhone,
+      location,
+    });
+
+    console.log(
+      "✅ Returning generated message (preview):",
+      messageText.slice(0, 200)
+    );
     return res.json({ success: true, message: messageText });
   } catch (error) {
-    console.error('❌ Error generating AI message:', error && error.stack ? error.stack : error);
-    // return helpful debug info in development
+    console.error(
+      "❌ Error generating AI message:",
+      error && error.stack ? error.stack : error
+    );
     return res.status(500).json({
-      error: error.message || 'Server error generating message',
-      hint: 'Check server logs for full stack',
+      error: error.message || "Server error generating message",
+      hint: "Check server logs for full stack",
     });
   }
 });
 
-
 /**
  * 🆕 Send Welcome Message to Trainee after booking
  */
-app.post('/send-welcome-message', async (req, res) => {
+app.post("/send-welcome-message", async (req, res) => {
   try {
-    const { trainerId, traineeId, welcomeMessage } = req.body;
+    const { trainerId, traineeId, welcomeMessage, planLocation, planId } =
+      req.body;
 
     if (!trainerId || !traineeId || !welcomeMessage) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     // Get trainer and trainee info
-    const trainerDoc = await db.collection('users').doc(trainerId).get();
-    const traineeDoc = await db.collection('users').doc(traineeId).get();
+    const trainerDoc = await db.collection("users").doc(trainerId).get();
+    const traineeDoc = await db.collection("users").doc(traineeId).get();
 
     if (!trainerDoc.exists || !traineeDoc.exists) {
-      return res.status(404).json({ error: 'Trainer or trainee not found' });
+      return res.status(404).json({ error: "Trainer or trainee not found" });
     }
 
     const trainerData = trainerDoc.data();
     const traineeData = traineeDoc.data();
 
     // Find or create conversation
-    const conversationsRef = db.collection('conversations');
+    const conversationsRef = db.collection("conversations");
     const participants = [trainerId, traineeId].sort();
-    
+
     let conversationId = null;
     const existingConvQuery = await conversationsRef
-      .where('participants', '==', participants)
+      .where("participants", "==", participants)
       .limit(1)
       .get();
 
@@ -625,47 +759,66 @@ app.post('/send-welcome-message', async (req, res) => {
         participants: participants,
         traineeInfo: {
           id: traineeId,
-          name: `${traineeData.firstName || ''} ${traineeData.lastName || ''}`.trim() || 'Trainee',
-          avatar: traineeData.profilePicture || traineeData.avatar || null
+          name:
+            `${traineeData.firstName || ""} ${
+              traineeData.lastName || ""
+            }`.trim() || "Trainee",
+          avatar: traineeData.profilePicture || traineeData.avatar || null,
         },
         trainerInfo: {
           id: trainerId,
-          name: `${trainerData.firstName || ''} ${trainerData.lastName || ''}`.trim() || 'Trainer',
-          avatar: trainerData.profilePicture || trainerData.avatar || null
+          name:
+            `${trainerData.firstName || ""} ${
+              trainerData.lastName || ""
+            }`.trim() || "Trainer",
+          avatar: trainerData.profilePicture || trainerData.avatar || null,
         },
-        lastMessage: '',
+        lastMessage: "",
         lastMessageTime: admin.firestore.FieldValue.serverTimestamp(),
         unreadCount: {
           [trainerId]: 0,
-          [traineeId]: 0
+          [traineeId]: 0,
         },
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
       conversationId = newConvRef.id;
     }
 
     // Send welcome message in conversation
-    const messagesRef = db.collection('conversations').doc(conversationId).collection('messages');
+    let finalMessage =
+      typeof welcomeMessage === "string"
+        ? welcomeMessage
+        : JSON.stringify(welcomeMessage);
+    if (planLocation) {
+      finalMessage += `\n\n📍 Location: ${planLocation}`;
+    }
+
+    const messagesRef = db
+      .collection("conversations")
+      .doc(conversationId)
+      .collection("messages");
     await messagesRef.add({
       senderId: trainerId,
-      text: welcomeMessage,
+      text: finalMessage,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
       read: false,
-      isWelcomeMessage: true
+      isWelcomeMessage: true,
+      // keep structured field for UI to render map buttons/links if needed
+      locationLink: planLocation || null,
+      planId: planId || null,
     });
 
     // Update conversation's lastMessage
     await conversationsRef.doc(conversationId).update({
-      lastMessage: welcomeMessage.substring(0, 100) + '...',
+      lastMessage: finalMessage.substring(0, 100) + "...",
       lastMessageTime: admin.firestore.FieldValue.serverTimestamp(),
-      [`unreadCount.${traineeId}`]: admin.firestore.FieldValue.increment(1)
+      [`unreadCount.${traineeId}`]: admin.firestore.FieldValue.increment(1),
     });
 
-    console.log('✅ Welcome message sent successfully');
+    console.log("✅ Welcome message sent successfully");
     res.json({ success: true, conversationId });
-
   } catch (error) {
-    console.error('❌ Error sending welcome message:', error);
+    console.error("❌ Error sending welcome message:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -902,6 +1055,106 @@ app.get("/trainer/:trainerId/subscription", async (req, res) => {
 });
 
 /**
+ * 🆕 Endpoint: Generate AI message for a plan (and save it to the plan doc)
+ * POST /plans/:planId/generate-ai
+ * body: optional { trainerName, trainerPhone }
+ */
+app.post("/plans/:planId/generate-ai", async (req, res) => {
+  try {
+    const { planId } = req.params;
+    const { weeks } = req.body || {};
+
+    if (!planId) return res.status(400).json({ error: "planId required" });
+
+    const planDoc = await db.collection("plans").doc(planId).get();
+    if (!planDoc.exists)
+      return res.status(404).json({ error: "Plan not found" });
+
+    const planData = planDoc.data();
+
+    // === NEW: get trainer user data ===
+    let trainerData = {};
+    if (planData.trainer_uid) {
+      const trainerDoc = await db
+        .collection("users")
+        .doc(planData.trainer_uid)
+        .get();
+      if (trainerDoc.exists) trainerData = trainerDoc.data();
+    }
+
+    const payload = {
+      // these are always reliable now
+      planTitle: planData.title || planData.name || "Training Plan",
+
+      // NEW: prefer weeks from UI → fallback to stored schedule
+      weeks:
+        weeks && weeks.length > 0
+          ? weeks
+          : planData.weeks || planData.schedule || [],
+
+      trainerName: trainerData.firstName
+        ? `${trainerData.firstName} ${trainerData.lastName || ""}`.trim()
+        : "",
+
+      trainerPhone: trainerData.phone || "",
+
+      location: planData.location || "",
+    };
+
+    // Ensure required
+    if (!payload.planTitle || !payload.weeks || payload.weeks.length === 0) {
+      return res
+        .status(400)
+        .json({
+          error: "Missing required fields: planTitle and weeks required",
+        });
+    }
+
+    // generate message using Gemini helper
+    const aiMessage = await generateWelcomeMessageUsingGemini(payload);
+
+    await db.collection("plans").doc(planId).set(
+      {
+        aiWelcomeMessage: aiMessage,
+        aiGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    res.json({ success: true, aiMessage });
+  } catch (error) {
+    console.error("❌ Error generating/saving AI for plan:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * 🆕 Endpoint: Manually set AI message on plan (trainer pasted a message)
+ * POST /plans/:planId/set-ai
+ * body: { aiWelcomeMessage }
+ */
+app.post("/plans/:planId/set-ai", async (req, res) => {
+  try {
+    const { planId } = req.params;
+    const { aiWelcomeMessage } = req.body;
+    if (!planId || !aiWelcomeMessage)
+      return res.status(400).json({ error: "Missing required fields" });
+
+    await db.collection("plans").doc(planId).set(
+      {
+        aiWelcomeMessage,
+        aiGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+    res.json({ success: true });
+  } catch (error) {
+    console.error("❌ Error setting AI message on plan:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * Root endpoint
  */
 app.get("/", (req, res) => {
@@ -917,6 +1170,8 @@ app.get("/", (req, res) => {
       "POST /webhook",
       "GET /subscriptions",
       "GET /trainer/:trainerId/subscription",
+      "POST /plans/:planId/generate-ai",
+      "POST /plans/:planId/set-ai",
     ],
   });
 });
@@ -924,6 +1179,8 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📧 Email notifications configured for: osamaeldeeb728@gmail.com`);
+  console.log(
+    `📧 Email notifications configured for: osamaeldeeb728@gmail.com`
+  );
   console.log(`🤖 AI features enabled with Gemini API`);
 });
