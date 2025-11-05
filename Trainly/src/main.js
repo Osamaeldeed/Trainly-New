@@ -51,6 +51,7 @@ import TrainerViewHisProfile from "./pages/TrainerViewHisProfile.vue";
 import TrainerInbox from "./pages/trainer/TrainerInbox.vue";
 import TraineeInbox from "./pages/trainee/TraineeInbox.vue";
 import MyTrainers from "./pages/trainee/MyTrainers.vue";
+import termsPage from "./pages/termsPage.vue";
 
 // ----------------------------
 // ✅ صفحات الأدمن
@@ -86,6 +87,7 @@ const routes = [
   { path: "/contactustrainee", name: "contactustrainee", component: ContactUstrainee },
   { path: "/sportstrainee", name: "sportstrainee", component: SportStrainee },
   { path: "/myprofile", name: "trainerviewprofile", component: TrainerViewHisProfile },
+  {path:"/terms", name:"terms", component:termsPage},
 
   {
     path: "/trainer",

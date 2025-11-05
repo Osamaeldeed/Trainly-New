@@ -145,6 +145,7 @@
                   placeholder="Enter name"
                   class="w-full p-2 border rounded-md shadow-sm text-sm box-border text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   :class="errors.firstName ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.firstName = ''"
                 />
                 <p v-if="errors.firstName" class="text-red-500 text-xs mt-1">
                   {{ errors.firstName }}
@@ -162,6 +163,7 @@
                   placeholder="Enter name"
                   class="w-full p-2 border rounded-md shadow-sm text-black dark:text-white text-sm box-border placeholder-gray-500 dark:placeholder-gray-400"
                   :class="errors.lastName ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.lastName = ''"
                 />
                 <p v-if="errors.lastName" class="text-red-500 text-xs mt-1">
                   {{ errors.lastName }}
@@ -182,6 +184,7 @@
                   class="w-full p-2 border text-black dark:text-white bg-white dark:bg-[#1e1e1e] rounded-md shadow-sm text-sm box-border focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent scheme-light dark:scheme-dark"
                   :class="errors.birthdate ? 'border-red-500' : 'border-gray-300'"
                   :max="maxBirthdate"
+                  @focus="errors.birthdate = ''"
                 />
                 <p v-if="errors.birthdate" class="text-red-500 text-xs mt-1">
                   {{ errors.birthdate }}
@@ -197,6 +200,7 @@
                   v-model="formData.gender"
                   class="cursor-pointer w-full text-black dark:text-white p-2 border bg-white dark:bg-[#1e1e1e] border-gray-300 rounded-md shadow-sm text-sm"
                   :class="errors.gender ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.gender = ''"
                 >
                   <option value="" disabled>Select</option>
                   <option value="male">Male</option>
@@ -219,6 +223,7 @@
                 placeholder="Enter email"
                 class="w-full p-2 border border-gray-300 rounded-md text-black dark:text-white shadow-sm placeholder-gray-500 dark:placeholder-gray-400 text-sm box-border"
                 :class="errors.email ? 'border-red-500' : 'border-gray-300'"
+                @focus="errors.email = ''"
               />
               <p v-if="errors.email" class="text-red-500 text-xs mt-1">
                 {{ errors.email }}
@@ -227,35 +232,72 @@
 
             <!-- Passwords (responsive) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
-              <div>
-                <label for="password" class="block text-sm text-black dark:text-white mb-1"
-                  >Password</label
-                >
+              <div class="relative">
+                <label for="password" class="block text-sm text-black dark:text-white mb-1">
+                  Password
+                </label>
+
                 <input
-                  type="password"
+                  :type="passwordFieldType"
                   id="password"
                   v-model="formData.password"
                   placeholder="Enter password"
-                  class="w-full placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                  class="w-full placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border pr-10"
                   :class="errors.password ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.password = ''"
                 />
+                <button
+                  type="button"
+                  class="absolute right-3 top-9 w-5 h-5 cursor-pointer bg-transparent border-0"
+                  @click="togglePasswordVisibility"
+                >
+                  <img
+                    :src="
+                      passwordVisible
+                        ? '/src/assets/images/eye off.png'
+                        : '/src/assets/images/Eye.png'
+                    "
+                    alt="Show/Hide"
+                    class="w-full h-auto"
+                  />
+                </button>
+
                 <p v-if="errors.password" class="text-red-500 text-xs mt-1">
                   {{ errors.password }}
                 </p>
               </div>
 
-              <div>
-                <label for="confirm-password" class="block text-sm text-black dark:text-white mb-1"
-                  >Confirm Password</label
-                >
+              <div class="relative">
+                <label for="confirm-password" class="block text-sm text-black dark:text-white mb-1">
+                  Confirm Password
+                </label>
+
                 <input
-                  type="password"
+                  :type="confirmPasswordFieldType"
                   id="confirm-password"
                   v-model="formData.confirmPassword"
                   placeholder="Enter password"
-                  class="w-full p-2 placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white border border-gray-300 rounded-md shadow-sm text-sm box-border"
+                  class="w-full p-2 pr-10 placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white border border-gray-300 rounded-md shadow-sm text-sm box-border"
                   :class="errors.confirmPassword ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.confirmPassword = ''"
                 />
+
+                <button
+                  type="button"
+                  class="absolute right-3 top-9 w-5 h-5 cursor-pointer bg-transparent border-0"
+                  @click="toggleConfirmPasswordVisibility"
+                >
+                  <img
+                    :src="
+                      confirmPasswordVisible
+                        ? '/src/assets/images/eye off.png'
+                        : '/src/assets/images/Eye.png'
+                    "
+                    alt="Show/Hide"
+                    class="w-full h-auto"
+                  />
+                </button>
+
                 <p v-if="errors.confirmPassword" class="text-red-500 text-xs mt-1">
                   {{ errors.confirmPassword }}
                 </p>
@@ -301,6 +343,7 @@
                 placeholder="Enter phone number"
                 class="w-full placeholder-gray-500 dark:placeholder-gray-400 text-black dark:text-white p-2 border border-gray-300 rounded-md shadow-sm text-sm box-border"
                 :class="errors.phone ? 'border-red-500' : 'border-gray-300'"
+                @focus="errors.phone = ''"
               />
               <p v-if="errors.phone" class="text-red-500 text-xs mt-1">
                 {{ errors.phone }}
@@ -310,7 +353,7 @@
             <!-- City and Country -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               <div>
-                <label for="city" class="block text-sm text-black dark:text-whitemb-1">City</label>
+                <label for="city" class="block text-sm text-black dark:text-white mb-1">City</label>
                 <input
                   type="text"
                   id="city"
@@ -318,6 +361,7 @@
                   placeholder="Enter a city"
                   class="w-full p-2 border border-gray-300 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md shadow-sm text-sm box-border"
                   :class="errors.city ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.city = ''"
                 />
                 <p v-if="errors.city" class="text-red-500 text-xs mt-1">
                   {{ errors.city }}
@@ -335,6 +379,7 @@
                   placeholder="Enter a country"
                   class="w-full p-2 border border-gray-300 placeholder-gray-500 text-black dark:text-white dark:placeholder-gray-400 rounded-md shadow-sm text-sm box-border"
                   :class="errors.country ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.country = ''"
                 />
                 <p v-if="errors.country" class="text-red-500 text-xs mt-1">
                   {{ errors.country }}
@@ -356,6 +401,7 @@
                   v-model="formData.sport"
                   class="w-full p-2 border text-black dark:text-white border-gray-300 rounded-md shadow-sm text-sm cursor-pointer box-border bg-white dark:bg-[#1e1e1e]"
                   :class="errors.sport ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.sport = ''"
                 >
                   <option value="" disabled>Select your sport</option>
                   <option value="bodybuilding">Bodybuilding</option>
@@ -380,6 +426,7 @@
                   placeholder="Enter years"
                   class="w-full p-2 border border-gray-300 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md shadow-sm text-sm box-border"
                   :class="errors.experience ? 'border-red-500' : 'border-gray-300'"
+                  @focus="errors.experience = ''"
                 />
                 <p v-if="errors.experience" class="text-red-500 text-xs mt-1">
                   {{ errors.experience }}
@@ -401,7 +448,7 @@
                   id="certifications"
                   @change="handleCertificationsUpload"
                   multiple
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  accept=".pdf,.jpg,.jpeg,.png"
                   class="hidden"
                 />
                 <div v-if="certificationsError" class="text-red-500 text-xs mt-1">
@@ -418,10 +465,12 @@
                       type="button"
                       @click="removeCertification(index)"
                       class="text-red-500 text-lg ml-2 hover:text-red-700"
-                    >
-                      ×
-                    </button>
+                      @focus="errors.certificationsError = ''"
+                    ></button>
                   </div>
+                  <p class="text-xs text-gray-600 dark:text-gray-300 mt-2">
+                    *You can upload files only with (PDF, JPG, PNG, JPEG).
+                  </p>
                 </div>
               </div>
             </div>
@@ -501,6 +550,7 @@
                 placeholder="Choose a username"
                 class="w-full p-2 border text-black dark:text-white border-gray-300 placeholder-gray-500 dark:placeholder-gray-400 rounded-md shadow-sm text-sm box-border"
                 :class="errors.username ? 'border-red-500' : 'border-gray-300'"
+                @focus="errors.username = ''"
               />
               <p v-if="errors.username" class="text-red-500 text-xs mt-1">
                 {{ errors.username }}
@@ -523,7 +573,31 @@
                 soon as it's approved!
               </p>
             </div>
-
+            <div class="mb-6">
+              <div class="flex items-start">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  v-model="formData.agreeToTerms"
+                  class="mt-1 w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-400 cursor-pointer"
+                  :class="errors.terms ? 'border-red-500' : ''"
+                  @change="errors.terms = ''"
+                />
+                <label for="terms" class="ml-2 text-sm text-black dark:text-white cursor-pointer">
+                  I agree to the
+                  <router-link
+                    to="/terms"
+                    class="text-green-500 hover:text-green-600 underline font-medium"
+                    target="_blank"
+                  >
+                    Terms and Conditions
+                  </router-link>
+                </label>
+              </div>
+              <p v-if="errors.terms" class="text-red-500 text-xs mt-1 ml-6">
+                {{ errors.terms }}
+              </p>
+            </div>
             <div class="flex flex-col sm:flex-row gap-2 mt-4">
               <button
                 type="button"
@@ -624,6 +698,9 @@ export default {
       totalSteps: 3,
       showSuccess: false,
       isLoading: false,
+      passwordVisible: false,
+      confirmPasswordVisible: false,
+
       formData: {
         role: "trainee",
         firstName: "",
@@ -639,6 +716,7 @@ export default {
         username: "",
         sport: "",
         experience: "",
+         agreeToTerms: false,
       },
       errors: {},
       profilePicture: null,
@@ -649,6 +727,7 @@ export default {
       usernameMessage: "",
       usernameTimeout: null,
       bgSignup,
+       terms: '',
     };
   },
   computed: {
@@ -657,6 +736,12 @@ export default {
       const date = new Date();
       date.setFullYear(date.getFullYear() - 13);
       return date.toISOString().split("T")[0];
+    },
+    passwordFieldType() {
+      return this.passwordVisible ? "text" : "password";
+    },
+    confirmPasswordFieldType() {
+      return this.confirmPasswordVisible ? "text" : "password";
     },
   },
   methods: {
@@ -782,7 +867,9 @@ export default {
       return valid;
     },
     validateStep3() {
-      this.errors = {};
+       this.errors = {
+    terms: ''
+  };
       if (!this.formData.username || this.formData.username.trim().length < 3) {
         this.errors.username = "Username must be at least 3 characters";
         return false;
@@ -791,6 +878,10 @@ export default {
         this.errors.username = "Please choose an available username";
         return false;
       }
+      if (!this.formData.agreeToTerms) {
+    this.errors.terms = "You must agree to the Terms and Conditions";
+    return false;
+  }
       return true;
     },
     handleProfilePictureUpload(event) {
@@ -1066,6 +1157,12 @@ export default {
       } else {
         this.$router.push("/login");
       }
+    },
+    togglePasswordVisibility() {
+      this.passwordVisible = !this.passwordVisible;
+    },
+    toggleConfirmPasswordVisibility() {
+      this.confirmPasswordVisible = !this.confirmPasswordVisible;
     },
   },
   beforeUnmount() {

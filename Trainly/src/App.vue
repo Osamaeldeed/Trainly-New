@@ -42,6 +42,7 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
         ].includes($route.name)
       "
     />
@@ -84,6 +85,8 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
+
         ].includes($route.name)
       "
     />
@@ -126,6 +129,8 @@
           'adminpayments',
           'adminreviews',
           'admintrainerprofile',
+          'terms'
+
         ].includes($route.name)
       "
     />
@@ -168,6 +173,8 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
+
         ].includes($route.name)
       "
     />
@@ -216,6 +223,8 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
+
         ].includes($route.name)
       "
     />
@@ -269,6 +278,7 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
         ].includes($route.name)
       "
     />
