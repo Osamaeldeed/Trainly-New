@@ -212,7 +212,7 @@
       </div>
     </div>
 
-<!-- ================= Create Plan Modal with AI ================= -->
+    <!-- ================= Create Plan Modal with AI ================= -->
     <div
       v-if="showCreateModal"
       class="fixed inset-0 bg-white dark:bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
@@ -233,7 +233,12 @@
               Create a New Plan
             </h2>
           </div>
-          <button @click="showCreateModal = false" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+          <button
+            @click="showCreateModal = false"
+            class="text-gray-500 hover:text-gray-700 text-2xl cursor-pointer"
+          >
+            ✕
+          </button>
         </div>
 
         <!-- Modal Body -->
@@ -411,26 +416,41 @@
               <div class="flex items-center gap-3">
                 <span class="text-2xl">🤖</span>
                 <div>
-                  <h3 class="text-lg font-semibold text-gray-800 dark:text-white">AI Welcome Message Generator</h3>
-                  <p class="text-xs text-gray-500 dark:text-gray-300">Generate a personalized welcome message for new trainees</p>
+                  <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+                    AI Welcome Message Generator
+                  </h3>
+                  <p class="text-xs text-gray-500 dark:text-gray-300">
+                    Generate a personalized welcome message for new trainees
+                  </p>
                 </div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" v-model="useAIWelcome" @change="toggleAIWelcome" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <input
+                  type="checkbox"
+                  v-model="useAIWelcome"
+                  @change="toggleAIWelcome"
+                  class="sr-only peer"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                ></div>
               </label>
             </div>
 
             <div v-if="useAIWelcome" class="space-y-4 animate-fadeIn">
               <div class="bg-blue-50 dark:bg-[#797979] border border-blue-200 rounded-lg p-4">
                 <p class="text-sm text-blue-800">
-                  <strong>📝 Instructions:</strong> Fill in the training schedule below. The AI will generate a professional welcome message that will be automatically sent to trainees when they subscribe to this plan.
+                  <strong>📝 Instructions:</strong> Fill in the training schedule below. The AI will
+                  generate a professional welcome message that will be automatically sent to
+                  trainees when they subscribe to this plan.
                 </p>
               </div>
 
               <!-- Training Schedule Table -->
               <div v-if="trainingWeeks.length > 0" class="space-y-3">
-                <h4 class="font-semibold text-gray-700 dark:text-white">Training Schedule ({{ trainingWeeks.length }} weeks)</h4>
+                <h4 class="font-semibold text-gray-700 dark:text-white">
+                  Training Schedule ({{ trainingWeeks.length }} weeks)
+                </h4>
 
                 <div class="space-y-3 max-h-96 overflow-y-auto">
                   <div
@@ -438,10 +458,15 @@
                     :key="index"
                     class="bg-gray-50 dark:bg-[#3B3B3B] border border-gray-200 rounded-lg p-4"
                   >
-                    <h5 class="font-medium text-gray-800 dark:text-white mb-3">Week {{ week.weekNumber }}</h5>
+                    <h5 class="font-medium text-gray-800 dark:text-white mb-3">
+                      Week {{ week.weekNumber }}
+                    </h5>
                     <div class="grid grid-cols-1 gap-3">
                       <div>
-                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Sessions per week</label>
+                        <label
+                          class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
+                          >Sessions per week</label
+                        >
                         <input
                           v-model="week.sessions"
                           type="text"
@@ -450,7 +475,10 @@
                         />
                       </div>
                       <div>
-                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Exercises/Focus</label>
+                        <label
+                          class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
+                          >Exercises/Focus</label
+                        >
                         <input
                           v-model="week.exercises"
                           type="text"
@@ -459,7 +487,10 @@
                         />
                       </div>
                       <div>
-                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Notes (optional)</label>
+                        <label
+                          class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
+                          >Notes (optional)</label
+                        >
                         <input
                           v-model="week.notes"
                           type="text"
@@ -478,7 +509,7 @@
                 >
                   <span v-if="generatingAI" class="animate-spin">⚙️</span>
                   <span v-else>✨</span>
-                  <span>{{ generatingAI ? 'Generating...' : 'Generate AI Welcome Message' }}</span>
+                  <span>{{ generatingAI ? "Generating..." : "Generate AI Welcome Message" }}</span>
                 </button>
               </div>
 
@@ -491,10 +522,16 @@
               <!-- AI Message Preview -->
               <div v-if="showAIPreview && aiGeneratedMessage" class="space-y-3 animate-fadeIn">
                 <div class="flex items-center justify-between">
-                  <h4 class="font-semibold text-gray-700 dark:text-white">Generated Message Preview</h4>
-                  <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">✓ Generated</span>
+                  <h4 class="font-semibold text-gray-700 dark:text-white">
+                    Generated Message Preview
+                  </h4>
+                  <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded"
+                    >✓ Generated</span
+                  >
                 </div>
-                <div class="bg-white dark:bg-[#3B3B3B] border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto">
+                <div
+                  class="bg-white dark:bg-[#3B3B3B] border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto"
+                >
                   <textarea
                     v-model="aiGeneratedMessage"
                     rows="10"
@@ -518,7 +555,11 @@
             @click="
               showCreateModal = false;
               selectedImageFile = null;
-              imagePreviewUrl = null; useAIWelcome = false; trainingWeeks = []; aiGeneratedMessage = ''; showAIPreview = false;
+              imagePreviewUrl = null;
+              useAIWelcome = false;
+              trainingWeeks = [];
+              aiGeneratedMessage = '';
+              showAIPreview = false;
             "
             class="w-full sm:w-auto bg-white px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-400 transition-colors text-gray-700 cursor-pointer"
           >
@@ -529,13 +570,13 @@
             :disabled="uploadingImage || generatingAI"
             class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ uploadingImage ? 'Uploading...' : generatingAI ? 'Generating...' : 'Create Plan' }}
+            {{ uploadingImage ? "Uploading..." : generatingAI ? "Generating..." : "Create Plan" }}
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Manage Plan Modal (unchanged) -->
+    <!-- Manage Plan Modal (UPDATED WITH AI SECTION) -->
     <div
       v-if="showManageModal"
       class="fixed inset-0 bg-white dark:bg-[#010101] bg-opacity-50 flex items-center justify-center z-50 p-4"
@@ -546,7 +587,7 @@
       >
         <!-- Modal Header -->
         <div
-          class="flex justify-between items-center dark:bg-[#3B3B3B]  p-4 sm:p-6 border-b sticky top-0 bg-white z-10"
+          class="flex justify-between items-center dark:bg-[#3B3B3B] p-4 sm:p-6 border-b sticky top-0 bg-white z-10"
         >
           <div class="flex items-center gap-3">
             <div class="bg-blue-100 dark:bg-[#3B3B3B] p-2 rounded-lg">
@@ -557,10 +598,12 @@
         </div>
 
         <!-- Modal Body -->
-        <div class="p-4 sm:p-6 dark:bg-[#3B3B3B]  space-y-4">
+        <div class="p-4 sm:p-6 dark:bg-[#3B3B3B] space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="sm:col-span-1">
-              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Title of The Plan</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+                >Title of The Plan</label
+              >
               <input
                 v-model="selectedPlan.title"
                 type="text"
@@ -568,7 +611,9 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Active Clients</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+                >Active Clients</label
+              >
               <input
                 :value="selectedPlan.clientsCount || 0"
                 type="text"
@@ -577,7 +622,9 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Status</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+                >Status</label
+              >
               <select
                 v-model="selectedPlan.status"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:bg-[#3b3b3b] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
@@ -590,7 +637,9 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Number of Sessions</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+                >Number of Sessions</label
+              >
               <input
                 v-model.number="selectedPlan.sessions"
                 type="number"
@@ -598,9 +647,12 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Duration</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+                >Duration</label
+              >
               <select
                 v-model="selectedPlan.duration"
+                @change="onManageDurationChange"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg dark:bg-[#3b3b3b] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 <option value="3 weeks">3 weeks</option>
@@ -612,7 +664,9 @@
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Price</label>
+              <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+                >Price</label
+              >
               <input
                 v-model.number="selectedPlan.price"
                 type="number"
@@ -622,7 +676,9 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Location</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+              >Location</label
+            >
             <input
               v-model="selectedPlan.location"
               type="text"
@@ -633,7 +689,9 @@
 
           <!-- Description Field -->
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Plan Description</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+              >Plan Description</label
+            >
             <textarea
               v-model="selectedPlan.description"
               rows="3"
@@ -644,7 +702,9 @@
 
           <!-- Image Upload -->
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2">Plan Image</label>
+            <label class="block text-sm font-medium dark:text-white text-gray-600 mb-2"
+              >Plan Image</label
+            >
             <div class="space-y-3">
               <!-- Current Image Preview -->
               <div v-if="selectedPlan.image && !imagePreviewUrl" class="relative">
@@ -719,6 +779,126 @@
               </div>
             </div>
           </div>
+
+          <!-- ================= Manage AI Section ================= -->
+          <div class="border-t pt-4 mt-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">🤖</span>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+                    AI Welcome Message
+                  </h3>
+                  <p class="text-xs text-gray-500 dark:text-gray-300">
+                    Enable, generate, edit or remove the AI welcome message for this plan.
+                  </p>
+                </div>
+              </div>
+
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" v-model="manageUseAI" class="sr-only peer" />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                ></div>
+              </label>
+            </div>
+
+            <div v-if="manageUseAI" class="space-y-4">
+              <div class="bg-blue-50 dark:bg-[#797979] border border-blue-200 rounded-lg p-4">
+                <p class="text-sm text-blue-800">
+                  AI is enabled for this plan. You can regenerate a message (server will store it),
+                  edit it locally, or save your changes immediately.
+                </p>
+              </div>
+
+              <!-- Manage schedule (shows derived weeks or stored weeks) -->
+              <div v-if="manageTrainingWeeks.length > 0" class="space-y-2">
+                <h4 class="font-semibold text-gray-700 dark:text-white">
+                  Training Schedule ({{ manageTrainingWeeks.length }} weeks)
+                </h4>
+                <div class="space-y-2 max-h-56 overflow-y-auto">
+                  <div
+                    v-for="(w, idx) in manageTrainingWeeks"
+                    :key="idx"
+                    class="bg-gray-50 dark:bg-[#3B3B3B] p-3 rounded"
+                  >
+                    <div class="text-sm font-medium dark:text-white">Week {{ w.weekNumber }}</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                      Sessions:
+                      <input
+                        v-model="w.sessions"
+                        class="inline ml-2 px-2 py-1 text-xs rounded border"
+                      />
+                    </div>
+                    <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                      Exercises:
+                      <input
+                        v-model="w.exercises"
+                        class="inline ml-2 px-2 py-1 text-xs rounded border"
+                      />
+                    </div>
+                    <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                      Note:
+                      <input
+                        v-model="w.notes"
+                        class="inline ml-2 px-2 py-1 text-xs rounded border"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Generate & Preview -->
+              <div class="flex flex-col sm:flex-row gap-3">
+                <button
+                  @click="generateManageAIMessage"
+                  :disabled="manageGeneratingAI"
+                  class="flex-1 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:scale-105 transition transform disabled:opacity-50"
+                >
+                  <span v-if="manageGeneratingAI" class="animate-spin">⚙️</span>
+                  <span v-else>Generate AI message</span>
+                </button>
+
+                <button
+                  @click="saveAiToPlan"
+                  :disabled="!manageAiGeneratedMessage || manageSavingAI"
+                  class="flex-1 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                >
+                  <span v-if="manageSavingAI">Saving...</span>
+                  <span v-else>Save AI</span>
+                </button>
+              </div>
+
+              <div v-if="manageAIPreview && manageAiGeneratedMessage" class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <h5 class="font-semibold dark:text-white">AI Message Preview</h5>
+                  <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded"
+                    >Stored:
+                    {{
+                      selectedPlan.aiGeneratedAt
+                        ? formatRelativeDate(selectedPlan.aiGeneratedAt)
+                        : "—"
+                    }}</span
+                  >
+                </div>
+                <textarea
+                  v-model="manageAiGeneratedMessage"
+                  rows="8"
+                  class="w-full p-3 rounded border dark:bg-[#3B3B3B] dark:text-white resize-none"
+                ></textarea>
+                <p class="text-xs text-gray-500 dark:text-gray-300">
+                  Edit the message above and click "Save AI" to persist changes immediately.
+                </p>
+              </div>
+            </div>
+
+            <div v-else class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p class="text-sm text-yellow-800">
+                ⚠️ AI is disabled for this plan. Toggle the switch to enable AI features.
+              </p>
+            </div>
+          </div>
+          <!-- ================= end manage ai ================= -->
         </div>
 
         <!-- Modal Footer -->
@@ -768,9 +948,6 @@
             <span class="text-red-600 text-3xl sm:text-4xl">🗑️</span>
           </div>
         </div>
-        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">
-          Are you sure you want to delete this plan?
-        </h2>
         <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">
           Are you sure you want to delete this plan?
         </h2>
@@ -826,6 +1003,7 @@ import {
   doc,
   onSnapshot,
   serverTimestamp,
+  deleteField,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -851,7 +1029,7 @@ export default {
     const successMessage = ref("");
     const searchQuery = ref("");
     const filterStatus = ref("All");
-    const selectedPlan = ref(null);
+    const selectedPlan = ref({});
     const uploadingImage = ref(false);
     const selectedImageFile = ref(null);
     const imagePreviewUrl = ref(null);
@@ -867,12 +1045,20 @@ export default {
       image: null,
     });
 
-    // AI Welcome Message Feature
+    // AI Welcome Message Feature (Create)
     const useAIWelcome = ref(false);
     const trainingWeeks = ref([]);
     const generatingAI = ref(false);
     const aiGeneratedMessage = ref("");
     const showAIPreview = ref(false);
+
+    // Manage-specific AI state
+    const manageUseAI = ref(false);
+    const manageTrainingWeeks = ref([]);
+    const manageGeneratingAI = ref(false);
+    const manageAiGeneratedMessage = ref("");
+    const manageAIPreview = ref(false);
+    const manageSavingAI = ref(false);
 
     // Upgrade modal state
     const showUpgradeModal = ref(false);
@@ -900,21 +1086,24 @@ export default {
 
     let bookingsUnsubscribe = null;
 
-    // Watch duration changes to auto-generate weeks structure
-    watch(() => newPlan.value.duration, (newDuration) => {
-      if (!newDuration || !useAIWelcome.value) return;
+    // Watch duration changes to auto-generate weeks structure (Create)
+    watch(
+      () => newPlan.value.duration,
+      (newDuration) => {
+        if (!newDuration || !useAIWelcome.value) return;
 
-      const weeksMatch = newDuration.match(/(\d+)\s*week/i);
-      if (weeksMatch) {
-        const numWeeks = parseInt(weeksMatch[1]);
-        trainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
-          weekNumber: i + 1,
-          sessions: '',
-          exercises: '',
-          notes: ''
-        }));
-      }
-    });
+        const weeksMatch = newDuration.match(/(\d+)\s*week/i);
+        if (weeksMatch) {
+          const numWeeks = parseInt(weeksMatch[1]);
+          trainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
+            weekNumber: i + 1,
+            sessions: "",
+            exercises: "",
+            notes: "",
+          }));
+        }
+      },
+    );
 
     const fetchPlans = async () => {
       if (!trainerUid.value) return;
@@ -1013,30 +1202,27 @@ export default {
       await createPlanCoreWithAI();
     };
 
-    // Toggle AI Welcome feature
-    // استبدل الدالة الحالية بهذه
-const toggleAIWelcome = () => {
-  // لا تقلب القيمة هنا — v-model هو اللي يضبطها
-  if (useAIWelcome.value && newPlan.value.duration) {
-    const weeksMatch = newPlan.value.duration.match(/(\d+)\s*week/i);
-    if (weeksMatch) {
-      const numWeeks = parseInt(weeksMatch[1]);
-      trainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
-        weekNumber: i + 1,
-        sessions: '',
-        exercises: '',
-        notes: ''
-      }));
-    }
-  } else {
-    trainingWeeks.value = [];
-    aiGeneratedMessage.value = "";
-    showAIPreview.value = false;
-  }
-};
+    // Toggle AI Welcome feature (Create)
+    const toggleAIWelcome = () => {
+      if (useAIWelcome.value && newPlan.value.duration) {
+        const weeksMatch = newPlan.value.duration.match(/(\d+)\s*week/i);
+        if (weeksMatch) {
+          const numWeeks = parseInt(weeksMatch[1]);
+          trainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
+            weekNumber: i + 1,
+            sessions: "",
+            exercises: "",
+            notes: "",
+          }));
+        }
+      } else {
+        trainingWeeks.value = [];
+        aiGeneratedMessage.value = "";
+        showAIPreview.value = false;
+      }
+    };
 
-
-    // Generate AI Welcome Message
+    // Generate AI Welcome Message (Create)
     const generateAIMessage = async () => {
       if (!newPlan.value.title.trim()) {
         toast.error("Please enter a plan title first", { position: "top-center", autoClose: 2000 });
@@ -1048,9 +1234,12 @@ const toggleAIWelcome = () => {
         return;
       }
 
-      const hasContent = trainingWeeks.value.some(w => w.sessions || w.exercises);
+      const hasContent = trainingWeeks.value.some((w) => w.sessions || w.exercises);
       if (!hasContent) {
-        toast.error("Please fill in at least some training details", { position: "top-center", autoClose: 2000 });
+        toast.error("Please fill in at least some training details", {
+          position: "top-center",
+          autoClose: 2000,
+        });
         return;
       }
 
@@ -1073,28 +1262,33 @@ const toggleAIWelcome = () => {
           weeks: trainingWeeks.value,
           trainerName: trainerName,
           trainerPhone: trainerPhone,
-          location: newPlan.value.location || ""
+          location: newPlan.value.location || "",
         };
 
         const response = await fetch(`${API_URL}/generate-welcome-message`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to generate AI message');
+          throw new Error("Failed to generate AI message");
         }
 
         const data = await response.json();
         aiGeneratedMessage.value = data.message;
         showAIPreview.value = true;
 
-        toast.success("AI message generated successfully!", { position: "top-center", autoClose: 2000 });
-
+        toast.success("AI message generated successfully!", {
+          position: "top-center",
+          autoClose: 2000,
+        });
       } catch (error) {
         console.error("Error generating AI message:", error);
-        toast.error("Failed to generate AI message. Please try again.", { position: "top-center", autoClose: 3000 });
+        toast.error("Failed to generate AI message. Please try again.", {
+          position: "top-center",
+          autoClose: 3000,
+        });
       } finally {
         generatingAI.value = false;
       }
@@ -1119,7 +1313,10 @@ const toggleAIWelcome = () => {
       }
 
       if (useAIWelcome.value && !aiGeneratedMessage.value) {
-        toast.error("Please generate the AI welcome message first", { position: "top-center", autoClose: 2000 });
+        toast.error("Please generate the AI welcome message first", {
+          position: "top-center",
+          autoClose: 2000,
+        });
         return;
       }
 
@@ -1146,6 +1343,9 @@ const toggleAIWelcome = () => {
         if (useAIWelcome.value && aiGeneratedMessage.value) {
           planData.aiWelcomeMessage = aiGeneratedMessage.value;
           planData.hasAIWelcome = true;
+          // store weeks structure to help manage later
+          planData.weeks = trainingWeeks.value;
+          planData.aiGeneratedAt = serverTimestamp();
         }
 
         await addDoc(collection(db, "plans"), planData);
@@ -1289,9 +1489,149 @@ const toggleAIWelcome = () => {
       showUpgradeModal.value = false;
     };
 
+    const onManageDurationChange = () => {
+      // regenerate manageTrainingWeeks if duration changed and AI enabled
+      if (!selectedPlan.value.duration) {
+        manageTrainingWeeks.value = [];
+        return;
+      }
+      const weeksMatch = selectedPlan.value.duration.match(/(\d+)\s*week/i);
+      if (weeksMatch) {
+        const numWeeks = parseInt(weeksMatch[1]);
+        manageTrainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
+          weekNumber: i + 1,
+          sessions: "",
+          exercises: "",
+          notes: "",
+        }));
+      } else {
+        manageTrainingWeeks.value = [];
+      }
+    };
+
     const openManageModal = (plan) => {
-      selectedPlan.value = { ...plan };
+      selectedPlan.value = { ...plan }; // shallow clone
       showManageModal.value = true;
+
+      // populate manage AI state from plan
+      manageUseAI.value = !!(plan.aiWelcomeMessage || plan.hasAIWelcome);
+      manageAiGeneratedMessage.value = plan.aiWelcomeMessage || "";
+      manageAIPreview.value = !!manageAiGeneratedMessage.value;
+
+      // populate weeks: prefer stored plan.weeks, otherwise derive from duration
+      if (plan.weeks && Array.isArray(plan.weeks) && plan.weeks.length > 0) {
+        manageTrainingWeeks.value = plan.weeks.map((w, idx) => ({
+          weekNumber: w.weekNumber || idx + 1,
+          sessions: w.sessions || "",
+          exercises: w.exercises || "",
+          notes: w.notes || "",
+        }));
+      } else {
+        // derive from duration
+        const weeksMatch = (plan.duration || "").match(/(\d+)\s*week/i);
+        if (weeksMatch) {
+          const numWeeks = parseInt(weeksMatch[1]);
+          manageTrainingWeeks.value = Array.from({ length: numWeeks }, (_, i) => ({
+            weekNumber: i + 1,
+            sessions: "",
+            exercises: "",
+            notes: "",
+          }));
+        } else {
+          manageTrainingWeeks.value = [];
+        }
+      }
+    };
+
+    // Generate AI message for Manage (calls server endpoint that also stores it)
+    // Generate AI message for Manage (calls server endpoint that also stores it)
+    const generateManageAIMessage = async () => {
+      if (!selectedPlan.value || !selectedPlan.value.id) return;
+      manageGeneratingAI.value = true;
+      try {
+        // We only send weeks because server now handles trainer info + location
+        const payload = {
+          weeks: manageTrainingWeeks.value.map((w, index) => ({
+            weekNumber: index + 1,
+            sessions: w.sessions || "",
+            exercises: w.exercises || "",
+            notes: w.notes || "",
+          })),
+        };
+
+        const res = await fetch(`${API_URL}/plans/${selectedPlan.value.id}/generate-ai`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const t = await res.text().catch(() => "");
+          console.error("generate-ai failed:", res.status, t);
+          throw new Error("Failed to generate AI for plan");
+        }
+
+        const json = await res.json();
+        if (json.success && json.aiMessage) {
+          manageAiGeneratedMessage.value = json.aiMessage;
+          manageAIPreview.value = true;
+          manageUseAI.value = true;
+          selectedPlan.value.aiWelcomeMessage = json.aiMessage;
+          selectedPlan.value.hasAIWelcome = true;
+          toast.success("AI message generated and saved to plan", {
+            position: "top-center",
+            autoClose: 2000,
+          });
+        } else {
+          throw new Error("AI generation returned no message");
+        }
+      } catch (err) {
+        console.error("generateManageAIMessage error:", err);
+        toast.error("Failed to generate AI message. Try again.", {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      } finally {
+        manageGeneratingAI.value = false;
+      }
+    };
+
+    // Save AI text manually to plan (without other changes)
+    const saveAiToPlan = async () => {
+      if (!selectedPlan.value || !selectedPlan.value.id) return;
+      if (!manageAiGeneratedMessage.value) {
+        toast.error("Message is empty", { position: "top-center", autoClose: 2000 });
+        return;
+      }
+      manageSavingAI.value = true;
+      try {
+        const res = await fetch(`${API_URL}/plans/${selectedPlan.value.id}/set-ai`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ aiWelcomeMessage: manageAiGeneratedMessage.value }),
+        });
+        if (!res.ok) {
+          const t = await res.text().catch(() => "");
+          console.error("set-ai failed:", res.status, t);
+          throw new Error("Failed to save AI to plan");
+        }
+        const json = await res.json();
+        if (json.success) {
+          selectedPlan.value.aiWelcomeMessage = manageAiGeneratedMessage.value;
+          selectedPlan.value.hasAIWelcome = true;
+          selectedPlan.value.aiGeneratedAt = new Date().toISOString();
+          toast.success("AI message saved to plan", { position: "top-center", autoClose: 2000 });
+          // refresh plans
+          fetchPlans();
+        } else {
+          throw new Error("Save AI returned failure");
+        }
+      } catch (err) {
+        console.error("saveAiToPlan error:", err);
+        toast.error("Failed to save AI. Try again.", { position: "top-center", autoClose: 3000 });
+      } finally {
+        manageSavingAI.value = false;
+      }
     };
 
     const updatePlan = async () => {
@@ -1316,7 +1656,8 @@ const toggleAIWelcome = () => {
           }
         }
 
-        await updateDoc(planRef, {
+        // prepare update payload
+        const updatePayload = {
           title: selectedPlan.value.title,
           status: selectedPlan.value.status,
           location: selectedPlan.value.location,
@@ -1325,7 +1666,36 @@ const toggleAIWelcome = () => {
           price: selectedPlan.value.price,
           description: selectedPlan.value.description,
           image: imageUrl,
-        });
+        };
+
+        // store weeks if AI is used (helps regenerate later)
+        if (
+          manageUseAI.value &&
+          manageTrainingWeeks.value &&
+          manageTrainingWeeks.value.length > 0
+        ) {
+          updatePayload.weeks = manageTrainingWeeks.value.map((w) => ({
+            weekNumber: w.weekNumber,
+            sessions: w.sessions,
+            exercises: w.exercises,
+            notes: w.notes,
+          }));
+        }
+
+        // AI fields handling
+        if (manageUseAI.value) {
+          // prefer current edited message, else keep existing
+          updatePayload.aiWelcomeMessage =
+            manageAiGeneratedMessage.value || selectedPlan.value.aiWelcomeMessage || "";
+          updatePayload.hasAIWelcome = true;
+          updatePayload.aiGeneratedAt = serverTimestamp();
+        } else {
+          // remove the field from firestore
+          updatePayload.aiWelcomeMessage = deleteField();
+          updatePayload.hasAIWelcome = false;
+        }
+
+        await updateDoc(planRef, updatePayload);
 
         selectedImageFile.value = null;
         imagePreviewUrl.value = null;
@@ -1434,6 +1804,17 @@ const toggleAIWelcome = () => {
       }
     };
 
+    // small helper to render readable timestamp
+    const formatRelativeDate = (ts) => {
+      try {
+        if (!ts) return "—";
+        const d = typeof ts === "object" && ts.toDate ? ts.toDate() : new Date(ts);
+        return d.toLocaleString();
+      } catch {
+        return "—";
+      }
+    };
+
     onUnmounted(() => {
       if (bookingsUnsubscribe) {
         bookingsUnsubscribe();
@@ -1486,7 +1867,7 @@ const toggleAIWelcome = () => {
       selectedSubscription,
       startSubscriptionCheckout,
       closeUpgradeModal,
-      // AI Welcome Message
+      // AI Create
       useAIWelcome,
       trainingWeeks,
       generatingAI,
@@ -1494,6 +1875,18 @@ const toggleAIWelcome = () => {
       showAIPreview,
       toggleAIWelcome,
       generateAIMessage,
+      // Manage AI
+      manageUseAI,
+      manageTrainingWeeks,
+      manageGeneratingAI,
+      manageAiGeneratedMessage,
+      manageAIPreview,
+      manageSavingAI,
+      generateManageAIMessage,
+      saveAiToPlan,
+      onManageDurationChange,
+      // helpers
+      formatRelativeDate,
     };
   },
 };
