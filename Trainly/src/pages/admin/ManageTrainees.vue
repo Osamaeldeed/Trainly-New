@@ -9,9 +9,7 @@
     <!-- Controls -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
       <h2 class="text-lg font-medium dark:text-white text-gray-900">Trainees List</h2>
-
       <div class="flex items-center gap-3 w-full md:w-auto">
-        <!-- Search -->
         <div class="relative w-full md:w-64">
           <input
             v-model="searchQuery"
@@ -20,129 +18,69 @@
             class="w-full px-4 py-2 bg-white border dark:bg-[#3b3b3b] dark:text-white border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
-
-
       </div>
     </div>
 
-    <!-- 🖥️ Desktop Table -->
-    <div class="hidden md:block bg-white dark:bg-[#292929]  shadow-lg rounded-xl overflow-hidden ">
-     <table class="min-w-full divide-y divide-gray-200">
-  <thead class="bg-blue-50 dark:bg-[#292929] ">
-    <tr>
-      <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-left">Trainee</th>
-      <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Email</th>
-      <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Joined</th>
-      <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Actions</th>
-    </tr>
-  </thead>
-
-  <tbody class="divide-y divide-gray-200">
-    <tr
-      v-for="trainee in filteredTrainees"
-      :key="trainee.id"
-      class="hover:bg-gray-50 dark:hover:bg-gray-600 transition"
-    >
-      <!-- Trainee -->
-      <td class="px-5 py-4 flex items-center gap-3">
-        <div
-          class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold text-sm uppercase overflow-hidden"
-        >
-          <img
-            v-if="trainee.profilePicture"
-            :src="trainee.profilePicture"
-            alt="Profile"
-            class="w-full h-full object-cover"
-          />
-          <span v-else>{{ getInitials(trainee.name) }}</span>
-        </div>
-        <span class="font-medium dark:text-white text-gray-900">{{ trainee.name }}</span>
-      </td>
-
-      <!-- Email -->
-      <td class="px-6 py-4 text-gray-700 dark:text-white text-center align-middle gap-0">
-        {{ trainee.email || "-" }}
-      </td>
-
-      <!-- Joined -->
-      <td class="px-6 py-4 text-gray-700 dark:text-white text-center align-middle">
-        {{ trainee.joined || "-" }}
-      </td>
-
-      <!-- Actions -->
-      <td class="px-6 py-4 text-center align-middle">
-        <button
-          @click="openDeleteModal(trainee)"
-          class="text-red-500 hover:text-red-700 text-m cursor-pointer"
-        >
-          Delete
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+    <!-- Desktop Table -->
+    <div class="hidden md:block bg-white dark:bg-[#292929] shadow-lg rounded-xl overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-blue-50 dark:bg-[#292929] ">
+          <tr>
+            <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-left">Trainee</th>
+            <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Email</th>
+            <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Joined</th>
+            <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr
+            v-for="trainee in filteredTrainees"
+            :key="trainee.id"
+            class="hover:bg-gray-50 dark:hover:bg-gray-600 transition"
+          >
+            <td class="px-5 py-4 flex items-center gap-3">
+              <div class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold text-sm uppercase overflow-hidden">
+                <img v-if="trainee.profilePicture" :src="trainee.profilePicture" alt="Profile" class="w-full h-full object-cover" />
+                <span v-else>{{ getInitials(trainee.name) }}</span>
+              </div>
+              <span class="font-medium dark:text-white text-gray-900">{{ trainee.name }}</span>
+            </td>
+            <td class="px-6 py-4 text-gray-700 dark:text-white text-center align-middle gap-0">
+              {{ trainee.email || "-" }}
+            </td>
+            <td class="px-6 py-4 text-gray-700 dark:text-white text-center align-middle">
+              {{ trainee.joined || "-" }}
+            </td>
+            <td class="px-6 py-4 text-center align-middle">
+              <button
+                @click="openDeleteModal(trainee)"
+                class="text-red-500 hover:text-red-700 text-m cursor-pointer"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- 📱 Mobile Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
-      <div
-        v-for="trainee in filteredTrainees"
-        :key="trainee.id"
-        class="border border-gray-200 rounded-xl p-4 shadow-sm bg-white"
-      >
-        <div class="flex items-center gap-3 mb-3">
-          <div
-            class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold overflow-hidden"
-          >
-            <img
-              v-if="trainee.profilePicture"
-              :src="trainee.profilePicture"
-              alt="Profile"
-              class="w-full h-full object-cover"
-            />
-            <span v-else>{{ getInitials(trainee.name) }}</span>
-          </div>
-          <div>
-            <p class="font-medium text-gray-900">{{ trainee.name }}</p>
-            <p class="text-sm text-gray-500">{{ trainee.email }}</p>
-          </div>
-        </div>
-        <p class="text-sm text-gray-600 mb-2">
-          <strong>Status:</strong>
-          <span
-            class="ml-1 px-2 py-0.5 rounded-full text-xs"
-            :class="{
-              'bg-blue-500 text-white': trainee.status === 'active',
-              'bg-gray-300 text-gray-700': trainee.status !== 'active',
-            }"
-          >
-            {{ trainee.status }}
-          </span>
-        </p>
-        <div class="flex justify-end mt-3 gap-2">
-          <button
-            @click="openDeleteModal(trainee)"
-            class="text-red-600 text-sm hover:underline"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 🧊 Delete Confirmation Modal -->
-    <div
-      v-if="showDeleteModal"
-      class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
-    >
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       <div class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow-xl p-6 w-[90%] max-w-sm text-center">
         <h3 class="text-lg font-semibold dark:text-white text-gray-900 mb-3">
           Confirm Deletion
         </h3>
-        <p class="text-gray-600 dark:text-gray-200 mb-5">
+        <p class="text-gray-600 dark:text-gray-200 mb-3">
           Are you sure you want to delete <strong>{{ traineeToDelete?.name }}</strong>?
         </p>
+
+        <!-- Reason Input -->
+        <textarea
+          v-model="deleteReason"
+          placeholder="Reason for deletion"
+          class="w-full p-2 border rounded-lg dark:bg-[#292929] dark:text-white mb-5 focus:outline-none focus:ring-2 focus:ring-red-400"
+        ></textarea>
+
         <div class="flex justify-center gap-4">
           <button
             @click="showDeleteModal = false"
@@ -162,6 +100,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { db } from "@/Firebase/firebaseConfig.js";
@@ -169,10 +108,9 @@ import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 
 const trainees = ref([]);
 const searchQuery = ref("");
-const selectedStatus = ref(null);
 const showDeleteModal = ref(false);
 const traineeToDelete = ref(null);
-
+const deleteReason = ref("");
 
 const getInitials = (name) => {
   if (!name) return "--";
@@ -185,43 +123,64 @@ const getInitials = (name) => {
 const filteredTrainees = computed(() =>
   trainees.value.filter((t) => {
     const q = searchQuery.value.toLowerCase();
-    const matchesSearch =
+    return (
       (t.name || "").toLowerCase().includes(q) ||
-      (t.email || "").toLowerCase().includes(q);
-    const matchesStatus =
-      !selectedStatus.value || t.status === selectedStatus.value;
-    return matchesSearch && matchesStatus;
+      (t.email || "").toLowerCase().includes(q)
+    );
   })
 );
 
 const openDeleteModal = (trainee) => {
   traineeToDelete.value = trainee;
+  deleteReason.value = ""; // reset reason
   showDeleteModal.value = true;
 };
 
 const confirmDelete = async () => {
   if (!traineeToDelete.value) return;
+
+  // ✅ Validate reason
+  if (!deleteReason.value.trim()) {
+    alert("Please provide a reason for deletion.");
+    return;
+  }
+
   try {
+    // Delete trainee from Firestore
     await deleteDoc(doc(db, "users", traineeToDelete.value.id));
     trainees.value = trainees.value.filter(
       (t) => t.id !== traineeToDelete.value.id
     );
+
+    // Send email to trainee about deletion
+    await fetch("https://YOUR_BACKEND_URL/send-review-deletion-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        traineeEmail: traineeToDelete.value.email,
+        traineeName: traineeToDelete.value.name,
+        reason: deleteReason.value,
+      }),
+    });
+
+    console.log("✅ Trainee deletion email sent successfully");
   } catch (error) {
-    console.error("Error deleting trainee:", error);
+    console.error("❌ Error deleting trainee or sending email:", error);
   }
+
   showDeleteModal.value = false;
   traineeToDelete.value = null;
+  deleteReason.value = ""; // reset reason
 };
 
-// ✅ Fetch trainees
+  
+
+
 onMounted(async () => {
   try {
     const snapshot = await getDocs(collection(db, "users"));
     trainees.value = snapshot.docs
-      .map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }))
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
       .filter((u) => u.role === "trainee")
       .map((u) => ({
         id: u.id,

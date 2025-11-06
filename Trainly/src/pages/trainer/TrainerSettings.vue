@@ -1,13 +1,17 @@
 <template>
   <section class="max-w-5xl mx-auto flex flex-col gap-12">
     <div class="">
-      <h2 class="text-[24px] font-medium dark:text-white text-gray-900">Settings</h2>
+      <h2 class="text-[24px] font-medium dark:text-white text-gray-900">
+        Settings
+      </h2>
       <p class="mt-2 text-[16px] dark:text-gray-300 text-gray-500">
         Manage your account settings and preferences here.
       </p>
     </div>
     <!-- ========= Personal Info Section ========= -->
-    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-7">
+    <div
+      class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-7"
+    >
       <div class="flex items-center gap-3 mb-6">
         <div
           class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
@@ -15,8 +19,12 @@
           <img src="../../assets/images/page-1.png" alt="" class="w-5 h-5" />
         </div>
         <div>
-          <h2 class="text-lg font-medium dark:text-white text-gray-900">Personal Information</h2>
-          <p class="text-sm dark:text-gray-300 text-gray-500">Update your personal details</p>
+          <h2 class="text-lg font-medium dark:text-white text-gray-900">
+            Personal Information
+          </h2>
+          <p class="text-sm dark:text-gray-300 text-gray-500">
+            Update your personal details
+          </p>
         </div>
       </div>
 
@@ -54,13 +62,16 @@
               class="absolute top-0 left-0 w-full h-full rounded-full object-cover"
             />
           </label>
-          <span class="text-sm dark:text-white text-gray-500">Upload your photo</span>
+          <span class="text-sm dark:text-white text-gray-500"
+            >Upload your photo</span
+          >
         </div>
 
         <!-- Inputs -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-900"
+            <label
+              class="block text-sm font-medium dark:text-white text-gray-900"
               >First Name</label
             >
             <input
@@ -71,7 +82,10 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-900">Last Name</label>
+            <label
+              class="block text-sm font-medium dark:text-white text-gray-900"
+              >Last Name</label
+            >
             <input
               v-model="formData.lastName"
               type="text"
@@ -80,7 +94,10 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-900">Email</label>
+            <label
+              class="block text-sm font-medium dark:text-white text-gray-900"
+              >Email</label
+            >
             <input
               v-model="formData.email"
               type="email"
@@ -89,7 +106,10 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-900">Gender</label>
+            <label
+              class="block text-sm font-medium dark:text-white text-gray-900"
+              >Gender</label
+            >
             <select
               v-model="formData.gender"
               class="mt-2 w-full rounded-xl border text-black dark:text-white dark:bg-[#3b3b3b] border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -104,7 +124,10 @@
         <!-- City / Country / Birthday -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-900">City</label>
+            <label
+              class="block text-sm font-medium dark:text-white text-gray-900"
+              >City</label
+            >
             <input
               v-model="formData.city"
               type="text"
@@ -113,7 +136,10 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-900">Country</label>
+            <label
+              class="block text-sm font-medium dark:text-white text-gray-900"
+              >Country</label
+            >
             <input
               v-model="formData.country"
               type="text"
@@ -122,7 +148,10 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium dark:text-white text-gray-900">Birthday</label>
+            <label
+              class="block text-sm font-medium dark:text-white text-gray-900"
+              >Birthday</label
+            >
             <input
               v-model="formData.birthdate"
               type="date"
@@ -144,9 +173,10 @@
         </div>
 
         <!-- Upload Certificate -->
-        <!-- Upload Certificate -->
         <div>
-          <h2 class="text-sm font-medium dark:text-white text-gray-900 mt-8">Upload Certificate</h2>
+          <h2 class="text-sm font-medium dark:text-white text-gray-900 mt-8">
+            Upload Certificate
+          </h2>
           <div
             class="flex text-center border-2 border-dashed border-gray-300 p-5 rounded-xl hover:border-blue-400 transition mt-3"
           >
@@ -163,7 +193,9 @@
               >
                 Upload
               </label>
-              <p class="text-xs dark:text-gray-300 text-gray-500 mt-2">PDF, JPG up to 10MB</p>
+              <p class="text-xs dark:text-gray-300 text-gray-500 mt-2">
+                PDF, PNG, JPG, JPEG up to 10MB
+              </p>
 
               <!-- Certificate List with Remove Buttons -->
               <div
@@ -210,7 +242,9 @@
         </div>
 
         <!-- Buttons -->
-        <div class="flex flex-col md:flex-row mt-10 justify-between w-full gap-4 md:gap-0">
+        <div
+          class="flex flex-col md:flex-row mt-10 justify-between w-full gap-4 md:gap-0"
+        >
           <button
             type="submit"
             class="text-white bg-[#00B0FF] hover:bg-[#36ace2] cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm py-2 px-6 rounded-lg transition mx-auto md:mx-0"
@@ -229,7 +263,9 @@
     </div>
 
     <!-- ========= Security Section ========= -->
-    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-7">
+    <div
+      class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-7"
+    >
       <div class="flex">
         <div
           class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
@@ -239,7 +275,9 @@
 
         <div>
           <h2 class="text-xl dark:text-white font-[500] mb-1">Security</h2>
-          <p class="mb-6 font-[400] text-[13px] dark:text-gray-300 text-gray-500">
+          <p
+            class="mb-6 font-[400] text-[13px] dark:text-gray-300 text-gray-500"
+          >
             Manage your password and security settings
           </p>
         </div>
@@ -248,7 +286,8 @@
       <form class="max-w-[95%] ps-[50px]" @submit.prevent="onSubmit">
         <!-- Current password -->
         <div class="mb-5">
-          <label class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
+          <label
+            class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
             >Current Password</label
           >
           <div class="relative">
@@ -313,7 +352,8 @@
 
         <!-- New password -->
         <div class="mb-5">
-          <label class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
+          <label
+            class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
             >New Password</label
           >
           <div class="relative">
@@ -381,7 +421,8 @@
 
         <!-- Repeat password -->
         <div class="mb-5">
-          <label class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
+          <label
+            class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
             >Confirm Password</label
           >
           <div class="relative">
@@ -455,14 +496,22 @@
           Update Password
         </button>
 
-        <p v-if="message" class="text-sm mt-3 text-center" :class="messageColor">
+        <p
+          v-if="message"
+          class="text-sm mt-3 text-center"
+          :class="messageColor"
+        >
           {{ message }}
         </p>
       </form>
     </div>
 
-    <!-- ========= subsecribtion Section ========= -->
-    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8">
+    <!-- ========= Subscription Section ========= -->
+    <div
+      v-for="(sub, index) in subscriptions"
+      :key="index"
+      class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8"
+    >
       <!-- Header -->
       <div class="flex items-start mb-8">
         <div
@@ -475,7 +524,9 @@
           />
         </div>
         <div>
-          <h2 class="text-xl font-[500] mb-1 dark:text-white text-gray-800">Subscription</h2>
+          <h2 class="text-xl font-[500] mb-1 dark:text-white text-gray-800">
+            Subscription
+          </h2>
           <p class="text-sm dark:text-gray-300 text-gray-500">
             Manage your current subscription and plan details here.
           </p>
@@ -485,13 +536,26 @@
       <!-- Content -->
       <div class="flex flex-col md:flex-row justify-between gap-10">
         <!-- Left side: Plan details -->
-        <div class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100">
-          <h3 class="text-lg font-medium mb-3 dark:text-white text-gray-800">Current Plan</h3>
+        <div
+          class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100"
+        >
+          <h3 class="text-lg font-medium mb-3 dark:text-white text-gray-800">
+            Current Plan: {{ sub.planType }}
+          </h3>
+
           <ul class="space-y-3 text-gray-600 dark:text-gray-300 text-sm">
-            <li><span class="font-medium dark:text-gray-300 text-gray-800">$29.99/month</span></li>
             <li>
-              Next renewal: <span class="font-medium dark:text-gray-300">November 15, 2025</span>
+              <span class="font-medium dark:text-gray-300 text-gray-800">
+                ${{ sub.price }}/{{ sub.currency }}
+              </span>
             </li>
+            <li>
+              Next renewal:
+              <span class="font-medium dark:text-gray-300">
+                {{ formatDate(sub.nextBillingDate) }}
+              </span>
+            </li>
+
             <ul class="space-y-2 text-gray-600 dark:text-gray-100 text-sm mt-4">
               <li class="flex items-center gap-2">
                 <svg
@@ -502,9 +566,13 @@
                   stroke="currentColor"
                   stroke-width="2"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
-                6 plans/month
+                {{ sub.planLimit }} plans/month
               </li>
 
               <li class="flex items-center gap-2">
@@ -516,44 +584,106 @@
                   stroke="currentColor"
                   stroke-width="2"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
-                Unlimited clients
+                Status: {{ sub.status }}
               </li>
 
+              <!-- Replace the third green check with a conditional alert -->
               <li class="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-green-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                Priority support
+                <!-- ✅ حالة الـ upgrade -->
+                <template v-if="sub.planChangeScheduled && !sub.cancelNotice">
+                  <div
+                    class="flex items-start gap-2 bg-yellow-50 border-l-4 border-yellow-400 rounded-md p-3 w-full"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-5 h-5 text-yellow-500 mt-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01M5.22 19h13.56a2 2 0 001.73-3l-6.78-11.73a2 2 0 00-3.46 0L3.5 16a2 2 0 001.72 3z"
+                      />
+                    </svg>
+                    <span class="text-yellow-700 text-sm font-medium">
+                      Your plan will change to
+                      <strong>{{ sub.nextPlan }}</strong> next month.
+                    </span>
+                  </div>
+                </template>
+
+                <!-- ⚠️ حالة الـ cancel -->
+                <template v-else-if="sub.cancelNotice">
+                  <div
+                    class="flex items-start gap-2 bg-yellow-50 border-l-4 border-yellow-400 rounded-md p-3 w-full"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-5 h-5 text-yellow-500 mt-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01M5.22 19h13.56a2 2 0 001.73-3l-6.78-11.73a2 2 0 00-3.46 0L3.5 16a2 2 0 001.72 3z"
+                      />
+                    </svg>
+                    <span class="text-yellow-700 text-sm font-medium">
+                      Your upcoming plan change has been canceled. It will
+                      remain active until your current plan ends.
+                    </span>
+                  </div>
+                </template>
+
+                <!-- ✅ الحالة العادية -->
+                <template v-else>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 text-green-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Trainer: {{ sub.trainerName }}
+                </template>
               </li>
             </ul>
           </ul>
         </div>
 
-        <!-- Right side: Full-width Buttons -->
+        <!-- Right side: Buttons -->
         <div class="flex flex-col justify-center items-stretch gap-3 md:w-1/3">
+          <!-- Upgrade -->
           <button
+            @click="openPlanModal(sub)"
             class="text-white bg-[#00B0FF] hover:bg-[#36ace2] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
           >
             Upgrade Plan
           </button>
 
+          <!-- Cancel Subscription -->
           <button
-            class="border border-gray-300 text-gray-800 bg-[#f7f8f8] hover:bg-[#eaf3f7] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
-          >
-            Downgrade Plan
-          </button>
-
-          <button
-            class="text-red-500 hover:text-red-600 border border-red-200 bg-[#fff5f5] font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+            @click="cancelPlanChange(sub)"
+            class="border border-red-500 text-red-500 hover:bg-red-50 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
           >
             Cancel Subscription
           </button>
@@ -561,8 +691,142 @@
       </div>
     </div>
 
+    <!-- MODAL: Plan chooser -->
+    <div
+      v-if="planModalOpen"
+      class="fixed inset-0 flex items-center justify-center bg-black/40 z-50"
+    >
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 relative">
+        <button
+          class="absolute top-3 right-4 text-gray-500 hover:text-gray-700"
+          @click="closePlanModal"
+        >
+          ✕
+        </button>
+
+        <h2 class="text-xl font-semibold mb-4">Upgrade to add more plans</h2>
+        <p class="text-gray-500 mb-8">
+          You have reached your current plan limit ({{
+            activeSubscriptionForModal.planLimit || "—"
+          }}
+          plans). Choose a subscription to upgrade. The new plan will activate
+          at your next billing date.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            v-for="plan in plans"
+            :key="plan.type"
+            class="border rounded-2xl p-6 transition shadow-sm"
+            :class="{
+              'bg-gray-100 opacity-80 cursor-not-allowed':
+                plan.type === activeSubscriptionForModal.planType,
+              'hover:shadow-md':
+                plan.type !== activeSubscriptionForModal.planType,
+            }"
+          >
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="text-lg font-semibold text-gray-800">
+                {{ plan.type }}
+              </h3>
+              <span class="text-gray-700 font-medium"
+                >${{ plan.price }} / month</span
+              >
+            </div>
+
+            <p class="text-gray-500 mb-4 text-sm">{{ plan.description }}</p>
+
+            <ul class="text-gray-600 text-sm mb-4 space-y-1">
+              <li>Up to {{ plan.limit }} plans</li>
+              <li>Billed monthly</li>
+            </ul>
+
+            <button
+              :disabled="plan.type === activeSubscriptionForModal.planType"
+              @click="selectPlanForSubscription(plan)"
+              class="w-full py-2 rounded-lg font-medium text-white transition"
+              :class="
+                plan.type === activeSubscriptionForModal.planType
+                  ? 'bg-gray-400'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              "
+            >
+              {{
+                plan.type === activeSubscriptionForModal.planType
+                  ? "Current Plan"
+                  : `Select $${plan.price} / month`
+              }}
+            </button>
+          </div>
+        </div>
+
+        <p class="text-xs text-gray-400 mt-6 text-center">
+          After payment, your new plan will be activated on your next billing
+          cycle.
+        </p>
+      </div>
+    </div>
+
+    <!-- MODAL: success confirmation -->
+    <div
+      v-if="planSelectedModalOpen"
+      class="fixed inset-0 flex items-center justify-center bg-black/40 z-50"
+    >
+      <div
+        class="bg-white rounded-xl shadow-lg p-6 max-w-sm text-center border border-gray-200"
+      >
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">
+          Plan Change Scheduled
+        </h3>
+        <p class="text-sm text-gray-500 mb-6">
+          Your plan will switch to
+          <span class="font-medium text-gray-800">{{ planSelectedName }}</span>
+          on your next renewal date.
+        </p>
+        <button
+          @click="closePlanSelectedModal"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL: cancel confirmation -->
+    <div
+      v-if="cancelModalOpen"
+      class="fixed inset-0 flex items-center justify-center bg-black/40 z-50"
+    >
+      <div
+        class="bg-white rounded-xl shadow-lg p-8 max-w-sm w-full text-center"
+      >
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">
+          Confirm Cancellation
+        </h3>
+        <p class="text-sm text-gray-500 mb-6">
+          Are you sure you want to cancel your subscription?
+        </p>
+        <div class="flex justify-center gap-4">
+          <button
+            @click="confirmCancel"
+            class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition"
+          >
+            Yes, Cancel
+          </button>
+          <button
+            @click="closeCancelModal"
+            class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-6 py-2 rounded-lg transition"
+          >
+            No, Keep it
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ========= payment Section ========= -->
-    <div class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8">
+    <div
+      class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8"
+    >
       <!-- Header -->
       <div class="flex items-start mb-8">
         <div
@@ -575,7 +839,9 @@
           />
         </div>
         <div>
-          <h2 class="text-xl font-medium mb-1 dark:text-white text-gray-800">Payment Management</h2>
+          <h2 class="text-xl font-medium mb-1 dark:text-white text-gray-800">
+            Payment Management
+          </h2>
           <p class="text-sm dark:text-gray-300 text-gray-500">
             Manage your payment methods and track your total income.
           </p>
@@ -589,25 +855,33 @@
         <p class="text-sm opacity-90">Total Income</p>
         <h3 class="text-3xl font-semibold mt-1 mb-1">$12,450.00</h3>
         <p class="text-sm opacity-90 dark:text-gray-300">
-          This month: <span class="font-medium dark:text-gray-300">+$2,340.00</span>
+          This month:
+          <span class="font-medium dark:text-gray-300">+$2,340.00</span>
         </p>
       </div>
 
       <!-- Content Section -->
       <div class="flex flex-col md:flex-row justify-between gap-10">
         <!-- Left side: Payment Methods -->
-        <div class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100">
-          <h3 class="text-lg font-semibold mb-4 dark:text-white text-gray-800">Payment Methods</h3>
+        <div
+          class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100"
+        >
+          <h3 class="text-lg font-semibold mb-4 dark:text-white text-gray-800">
+            Payment Methods
+          </h3>
 
-          <!-- Card Method -->
           <!-- Card Method -->
           <div
             class="flex items-center gap-4 bg-white dark:bg-[#242424] border border-gray-200 rounded-xl p-4 mb-4 shadow-sm"
           >
             <img src="../../assets/images/i.png" alt="card" class="w-8 h-8" />
             <div>
-              <p class="font-medium dark:text-white text-gray-800">•••• •••• •••• 4242</p>
-              <p class="text-sm dark:text-gray-300 text-gray-500">Expires 12/25</p>
+              <p class="font-medium dark:text-white text-gray-800">
+                •••• •••• •••• 4242
+              </p>
+              <p class="text-sm dark:text-gray-300 text-gray-500">
+                Expires 12/25
+              </p>
             </div>
           </div>
 
@@ -615,10 +889,19 @@
           <div
             class="flex items-center gap-4 dark:bg-[#242424] bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm"
           >
-            <img src="../../assets/images/ip.png" alt="paypal" class="w-8 h-8 opacity-90" />
+            <img
+              src="../../assets/images/ip.png"
+              alt="paypal"
+              class="w-8 h-8 opacity-90"
+            />
             <div class="flex flex-col w-full">
-              <p class="font-medium dark:text-white text-gray-800 mb-1">PayPal Account</p>
-              <input v-model="formData.email" class="text-sm dark:text-gray-300 text-gray-500" />
+              <p class="font-medium dark:text-white text-gray-800 mb-1">
+                PayPal Account
+              </p>
+              <input
+                v-model="formData.email"
+                class="text-sm dark:text-gray-300 text-gray-500"
+              />
             </div>
           </div>
 
@@ -639,7 +922,9 @@
         </div>
 
         <!-- Right side: Recent Transactions -->
-        <div class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100">
+        <div
+          class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100"
+        >
           <h3 class="text-lg font-semibold mb-4 dark:text-white text-gray-800">
             Recent Transactions
           </h3>
@@ -649,8 +934,12 @@
               class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
             >
               <div>
-                <p class="font-medium dark:text-white text-gray-800">Training Session</p>
-                <p class="text-sm dark:text-gray-300 text-gray-500">Oct 15, 2025</p>
+                <p class="font-medium dark:text-white text-gray-800">
+                  Training Session
+                </p>
+                <p class="text-sm dark:text-gray-300 text-gray-500">
+                  Oct 15, 2025
+                </p>
               </div>
               <p class="text-green-600 font-semibold">+$80.00</p>
             </div>
@@ -659,8 +948,12 @@
               class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
             >
               <div>
-                <p class="font-medium dark:text-white text-gray-800">Monthly Membership</p>
-                <p class="text-sm dark:text-gray-300 text-gray-500">Oct 12, 2025</p>
+                <p class="font-medium dark:text-white text-gray-800">
+                  Monthly Membership
+                </p>
+                <p class="text-sm dark:text-gray-300 text-gray-500">
+                  Oct 12, 2025
+                </p>
               </div>
               <p class="text-green-600 font-semibold">+$150.00</p>
             </div>
@@ -669,8 +962,12 @@
               class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
             >
               <div>
-                <p class="font-medium dark:text-white text-gray-800">Platform Fee</p>
-                <p class="text-sm dark:text-gray-300 text-gray-500">Oct 11, 2025</p>
+                <p class="font-medium dark:text-white text-gray-800">
+                  Platform Fee
+                </p>
+                <p class="text-sm dark:text-gray-300 text-gray-500">
+                  Oct 11, 2025
+                </p>
               </div>
               <p class="text-red-500 font-semibold">- $15.00</p>
             </div>
@@ -683,8 +980,19 @@
 
 <script>
 import { db, storage } from "@/Firebase/firebaseConfig.js";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 import {
   getAuth,
   updatePassword,
@@ -724,6 +1032,31 @@ export default {
       showCurrent: false,
       showNew: false,
       showRepeat: false,
+
+      // subscriptions fetched from Firestore (no data changes done here)
+      subscriptions: [],
+
+      // modal controls and plans (added)
+      planModalOpen: false,
+      planSelectedModalOpen: false,
+      activeSubscriptionForModal: {}, // subscription object currently being shown in modal
+      planSelectedName: null,
+
+      // available plans to show in modal
+      plans: [
+        {
+          type: "Starter",
+          price: 100,
+          description: "Ideal for trainers starting out.",
+          limit: 3,
+        },
+        {
+          type: "Pro",
+          price: 150,
+          description: "For growing trainers who need more plans.",
+          limit: 6,
+        },
+      ],
     };
   },
 
@@ -734,6 +1067,39 @@ export default {
     if (user) {
       this.userId = user.uid;
       await this.fetchTrainerData();
+
+      // load subscriptions after trainer data is loaded
+      await this.fetchSubscriptions();
+
+      /// ✅ check if there's a saved plan change and show it in UI
+      const stored = this.checkStoredPlanChange();
+      if (stored) {
+        this.subscriptions.forEach((sub) => {
+          sub.planChangeScheduled = true;
+          sub.nextPlan = stored;
+        });
+      }
+
+      // ✅ check if there's a saved cancel notice
+      const cancelNotice = localStorage.getItem("canceledPlanNotice");
+      if (cancelNotice) {
+        const parsed = JSON.parse(cancelNotice);
+        const now = new Date();
+        if (new Date(parsed.expiresAt) > now) {
+          this.subscriptions.forEach((sub) => {
+            sub.cancelNotice = true;
+          });
+        } else {
+          localStorage.removeItem("canceledPlanNotice");
+        }
+      }
+
+      if (stored) {
+        this.subscriptions.forEach((sub) => {
+          sub.planChangeScheduled = true;
+          sub.nextPlan = stored;
+        });
+      }
     } else {
       // fallback: if for any reason there's no currentUser, ask to login
       alert("No user found. Please log in again.");
@@ -757,13 +1123,71 @@ export default {
       }
     },
 
+    // fetch subscriptions and keep only those belonging to this trainer
+    async fetchSubscriptions() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "subscriptions"));
+        const allSubs = querySnapshot.docs.map((d) => ({
+          id: d.id,
+          ...d.data(),
+        }));
+        this.subscriptions = allSubs.filter(
+          (s) => s.trainerUid === this.userId
+        );
+      } catch (error) {
+        console.error("Error loading subscriptions:", error);
+      }
+    },
+
+    // format Firestore timestamp to readable date
+    formatDate(timestamp) {
+      try {
+        if (!timestamp) return "";
+        // if a Firestore Timestamp object with toDate()
+        if (timestamp && typeof timestamp.toDate === "function") {
+          const date = timestamp.toDate();
+          return date.toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+        }
+        // handle ISO string or Date
+        const d = new Date(timestamp);
+        if (!isNaN(d)) {
+          return d.toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+        }
+        return "";
+        // eslint-disable-next-line no-unused-vars
+      } catch (err) {
+        return "";
+      }
+    },
+
     // upload file to storage and return download URL
     async uploadFile(file, type) {
       if (!file) return null;
+
+      // check allowed file types
+      const allowedTypes = [
+        "application/pdf",
+        "image/png",
+        "image/jpg",
+        "image/jpeg",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Only PDF, PNG, JPG, and JPEG files are allowed.");
+        return null;
+      }
+
       try {
         const fileRef = storageRef(
           storage,
-          `users/${this.userId}/${type}-${Date.now()}-${file.name}`,
+          `users/${this.userId}/${type}-${Date.now()}-${file.name}`
         );
         await uploadBytes(fileRef, file);
         return await getDownloadURL(fileRef);
@@ -805,7 +1229,10 @@ export default {
 
         // handle new profile photo
         if (this.newProfilePhoto) {
-          const photoUrl = await this.uploadFile(this.newProfilePhoto, "profilePhoto");
+          const photoUrl = await this.uploadFile(
+            this.newProfilePhoto,
+            "profilePhoto"
+          );
           if (photoUrl) {
             updateData.profilePicture = photoUrl;
             this.formData.profilePicture = photoUrl;
@@ -814,9 +1241,13 @@ export default {
 
         // handle new certificate
         if (this.newCertificate) {
-          const certUrl = await this.uploadFile(this.newCertificate, "certificate");
+          const certUrl = await this.uploadFile(
+            this.newCertificate,
+            "certificate"
+          );
           if (certUrl) {
-            if (!this.formData.certifications) this.formData.certifications = [];
+            if (!this.formData.certifications)
+              this.formData.certifications = [];
             this.formData.certifications.push(certUrl);
             updateData.certifications = this.formData.certifications;
           }
@@ -857,7 +1288,14 @@ export default {
     // success modal (same structure as confirmBox but single OK button)
     showSuccessModal() {
       const modal = document.createElement("div");
-      modal.classList.add("fixed", "inset-0", "flex", "items-center", "justify-center", "z-50");
+      modal.classList.add(
+        "fixed",
+        "inset-0",
+        "flex",
+        "items-center",
+        "justify-center",
+        "z-50"
+      );
       modal.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
       modal.style.backdropFilter = "blur(3px)";
 
@@ -892,7 +1330,7 @@ export default {
         "flex",
         "items-center",
         "justify-center",
-        "z-50",
+        "z-50"
       );
       confirmBox.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
       confirmBox.style.backdropFilter = "blur(3px)";
@@ -975,7 +1413,10 @@ export default {
       }
 
       try {
-        const credential = EmailAuthProvider.credential(user.email, this.form.current);
+        const credential = EmailAuthProvider.credential(
+          user.email,
+          this.form.current
+        );
         await reauthenticateWithCredential(user, credential);
         await updatePassword(user, this.form.new);
 
@@ -986,6 +1427,138 @@ export default {
         toast.error(error.message);
       }
     },
+
+    // ===========================
+    // Plan modal helpers (UI only + localStorage persistence)
+    // ===========================
+    openPlanModal(sub) {
+      this.activeSubscriptionForModal = sub || {};
+      this.planModalOpen = true;
+    },
+    closePlanModal() {
+      this.planModalOpen = false;
+      this.activeSubscriptionForModal = {};
+    },
+    selectPlanForSubscription(plan) {
+      // store selected plan in UI + localStorage for 30 days
+      this.planSelectedName = plan.type;
+      this.planModalOpen = false;
+      this.planSelectedModalOpen = true;
+
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 30);
+
+      const scheduledChange = {
+        planName: plan.type,
+        expiresAt: expiry.toISOString(),
+      };
+
+      localStorage.setItem(
+        "scheduledPlanChange",
+        JSON.stringify(scheduledChange)
+      );
+
+      // ✅ show yellow alert immediately in the UI
+      this.activeSubscriptionForModal.planChangeScheduled = true;
+      this.activeSubscriptionForModal.nextPlan = plan.type;
+    },
+
+    closePlanSelectedModal() {
+      this.planSelectedModalOpen = false;
+      this.planSelectedName = null;
+    },
+
+    // check if there's a scheduled plan change stored
+    checkStoredPlanChange() {
+      const data = localStorage.getItem("scheduledPlanChange");
+      if (!data) return null;
+
+      const parsed = JSON.parse(data);
+      const now = new Date();
+
+      // if expired, remove it
+      if (new Date(parsed.expiresAt) < now) {
+        localStorage.removeItem("scheduledPlanChange");
+        return null;
+      }
+
+      // return plan name if still valid
+      return parsed.planName;
+    },
+    // cancel scheduled plan change (UI only + confirmation modal + yellow alert in card)
+    cancelPlanChange() {
+      // create confirmation modal
+      const modal = document.createElement("div");
+      modal.classList.add(
+        "fixed",
+        "inset-0",
+        "flex",
+        "items-center",
+        "justify-center",
+        "z-50"
+      );
+      modal.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+      modal.style.backdropFilter = "blur(3px)";
+
+      modal.innerHTML = `
+    <div class="bg-white rounded-2xl shadow-xl p-8 text-center max-w-sm w-full mx-4 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">
+        Cancel scheduled plan change?
+      </h2>
+      <p class="text-gray-500 mb-6 text-sm">
+        Are you sure you want to cancel your upcoming plan change?
+      </p>
+      <div class="flex justify-center gap-4">
+        <button id="confirmCancelPlan" class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition">
+          Yes, Cancel
+        </button>
+        <button id="closeCancelModal" class="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-300 transition">
+          Keep Plan
+        </button>
+      </div>
+    </div>
+  `;
+
+      document.body.appendChild(modal);
+
+      const confirmBtn = document.getElementById("confirmCancelPlan");
+      const closeBtn = document.getElementById("closeCancelModal");
+
+      closeBtn.addEventListener("click", () => modal.remove());
+
+      confirmBtn.addEventListener("click", () => {
+        // remove any previous upgrade from localStorage
+        localStorage.removeItem("scheduledPlanChange");
+
+        // create a new cancel notice stored for 30 days
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + 30);
+
+        const cancelNotice = {
+          canceled: true,
+          expiresAt: expiry.toISOString(),
+        };
+
+        localStorage.setItem(
+          "canceledPlanNotice",
+          JSON.stringify(cancelNotice)
+        );
+
+        // update UI immediately
+        this.subscriptions.forEach((sub) => {
+          sub.planChangeScheduled = false;
+          sub.nextPlan = null;
+          sub.cancelNotice = true;
+        });
+
+        modal.remove();
+      });
+    },
   },
 };
 </script>
+
+<style scoped>
+/* small fade effect could be added if needed */
+</style>
+
