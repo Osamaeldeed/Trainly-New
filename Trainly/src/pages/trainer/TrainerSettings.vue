@@ -205,7 +205,7 @@
                 <div
                   v-for="(cert, index) in formData.certifications"
                   :key="index"
-                  class="flex items-center justify-between dark:bg-gray-300 bg-gray-50 p-3 rounded-lg"
+                  class="flex items-center justify-between dark:bg-gray-700 bg-gray-50 p-3 rounded-lg"
                 >
                   <a
                     :href="cert"
@@ -683,15 +683,7 @@
           <!-- Cancel Subscription -->
           <button
             @click="cancelPlanChange(sub)"
-            class="border border-red-500 text-red-500 hover:bg-red-50 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
-          >
-            Cancel Subscription
-          </button>
-
-          <!-- Cancel Subscription -->
-          <button
-            @click="cancelPlanChange(sub)"
-            class="border border-red-500 text-red-500 hover:bg-red-50 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+            class="border border-red-500 text-red-500 hover:bg-red-50 font-medium rounded-lg text-sm px-6 py-3 w-full transition cursor-pointer"
           >
             Cancel Subscription
           </button>

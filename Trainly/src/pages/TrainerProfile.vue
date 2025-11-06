@@ -350,7 +350,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
-import { doc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, query, where, addDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
 
 const API_URL = "https://elenora-unexampled-carmon.ngrok-free.dev";
