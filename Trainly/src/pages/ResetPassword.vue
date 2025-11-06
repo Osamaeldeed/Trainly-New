@@ -1,14 +1,16 @@
 <script>
 import logoLight from "@/assets/images/Project LOGO.png";
 import logoDark from "@/assets/images/LOGO for (Dark mode).png";
+import { getAuth, verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
+
 export default {
   name: "ResetPassword",
   data() {
     return {
-      isOpen: false,
       isDark: false,
       passwordVisible: false,
       confirmPasswordVisible: false,
+      isLoading: false,
       formData: {
         password: "",
         confirmPassword: "",
@@ -17,6 +19,8 @@ export default {
         password: "",
         confirmPassword: "",
       },
+      message: "",
+      oobCode: "",
     };
   },
   computed: {
@@ -42,44 +46,69 @@ export default {
     toggleConfirmPasswordVisibility() {
       this.confirmPasswordVisible = !this.confirmPasswordVisible;
     },
-    handleSubmit(event) {
+    async handleSubmit(event) {
       event.preventDefault();
       this.errors.password = "";
       this.errors.confirmPassword = "";
+      this.message = "";
 
-      // Validate password
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$/;
+
       if (!this.formData.password) {
         this.errors.password = "Password is required";
+        return;
       } else if (!passwordRegex.test(this.formData.password)) {
-        this.errors.password = "Password must be 8+ characters with letters, numbers, and symbols";
+        this.errors.password =
+          "Must contain at least 8 characters including numbers and symbols";
+        return;
       }
 
-      // Validate confirm password
-      if (!this.formData.confirmPassword) {
-        this.errors.confirmPassword = "Please confirm your password";
-      } else if (this.formData.password !== this.formData.confirmPassword) {
-        this.errors.confirmPassword = "Passwords must match";
+      if (this.formData.password !== this.formData.confirmPassword) {
+        this.errors.confirmPassword = "Passwords do not match";
+        return;
       }
 
-      // If no errors, submit form
-      if (!this.errors.password && !this.errors.confirmPassword) {
-        // Submit logic here
-        console.log("Form submitted successfully");
+      this.isLoading = true;
+
+      try {
+        const auth = getAuth();
+
+        await verifyPasswordResetCode(auth, this.oobCode);
+
+        await confirmPasswordReset(auth, this.oobCode, this.formData.password);
+
+        this.message = "✅ Password changed successfully!";
+        setTimeout(() => {
+          this.$router.push("/resetpassword2");
+        }, 2000);
+      } catch (error) {
+        console.error(error);
+        this.isLoading = false;
+        if (error.code === "auth/invalid-action-code") {
+          this.message = "❌ Invalid or expired link.";
+        } else {
+          this.message = "An error occurred while changing the password.";
+        }
       }
     },
   },
   mounted() {
-    // حفظ الاتجاه بناءً على اللغة
     document.dir = this.$i18n.locale === "ar" ? "rtl" : "ltr";
 
-    // استرجاع الوضع الليلي المحفوظ
     const saved = localStorage.getItem("darkMode") === "true";
     this.isDark = saved;
     document.documentElement.classList.toggle("dark", this.isDark);
+
+    const params = new URLSearchParams(window.location.search);
+    this.oobCode = params.get("oobCode");
+
+    if (!this.oobCode) {
+      this.message = "❌ Invalid link or does not contain a valid code.";
+    }
   },
 };
 </script>
+
 
 <template>
   <section
@@ -196,9 +225,33 @@ export default {
 
               <button
                 type="submit"
-                class="px-10 py-1 rounded-4xl bg-gradient-to-r from-green-500 to-sky-400 text-white hover:opacity-90 transition font-semibold w-[50%] h-12 mb-5 text-[90%] cursor-pointer"
+                :disabled="isLoading"
+                class="px-10 py-1 rounded-4xl bg-gradient-to-r from-green-500 to-sky-400 text-white hover:opacity-90 transition font-semibold w-[50%] h-12 mb-5 text-[90%] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed relative"
               >
-                {{ $t("resetPasswordButton") }}
+                <svg
+                  v-if="isLoading"
+                  class="animate-spin h-5 w-5 text-white absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span :class="{ 'opacity-0': isLoading }">
+                  {{ $t("resetPasswordButton") }}
+                </span>
               </button>
             </form>
 
