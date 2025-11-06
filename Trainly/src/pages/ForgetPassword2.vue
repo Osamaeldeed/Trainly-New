@@ -8,11 +8,25 @@ export default {
     return {
       isOpen: false,
       isDark: false,
+      email: "",
     };
   },
   computed: {
     logoSrc() {
       return this.isDark ? logoDark : logoLight;
+    },
+    // 🕵️‍♀️ إخفاء جزء من الإيميل للخصوصية
+    maskedEmail() {
+      if (!this.email) return "";
+      const [name, domain] = this.email.split("@");
+      const hiddenName =
+        name.length > 1
+          ? name[0] + "****" + name[name.length - 1]
+          : name + "****";
+      const [domainName, domainExt] = domain.split(".");
+      const hiddenDomain =
+        domainName[0] + "****." + (domainExt || "com");
+      return hiddenName + "@" + hiddenDomain;
     },
   },
   methods: {
@@ -30,6 +44,9 @@ export default {
     const saved = localStorage.getItem("darkMode") === "true";
     this.isDark = saved;
     document.documentElement.classList.toggle("dark", this.isDark);
+
+    // 📩 قراءة الإيميل من الـ query
+    this.email = this.$route.query.email || "";
   },
 };
 </script>
@@ -70,10 +87,16 @@ export default {
         >
           <div class="bg-transparent w-full">
             <div class="flex justify-center">
-              <img src="@/assets/images/check email icon.png" alt="Check Email" class="w-15 h-15" />
+              <img
+                src="@/assets/images/check email icon.png"
+                alt="Check Email"
+                class="w-15 h-15"
+              />
             </div>
 
-            <h1 class="text-2xl font-bold text-black-600 dark:text-white mb-3 mt-3">
+            <h1
+              class="text-2xl font-bold text-black-600 dark:text-white mb-3 mt-3"
+            >
               {{ $t("checkEmailTitle") }}
             </h1>
 
@@ -81,8 +104,11 @@ export default {
               {{ $t("checkEmailMessage") }}
             </p>
 
+            <!-- 🕵️‍♀️ عرض الإيميل المخفي -->
             <p class="mb-5 font-normal text-gray-800 dark:text-white">
-              {{ $t("checkEmailTo") }}
+              <span class="font-semibold text-[#00B0FF]">
+                {{ maskedEmail }}
+              </span>
             </p>
 
             <p class="mb-3 font-normal text-gray-800 dark:text-white">

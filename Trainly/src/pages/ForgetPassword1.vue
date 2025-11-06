@@ -1,6 +1,8 @@
 <script>
 import logoLight from "@/assets/images/Project LOGO.png";
 import logoDark from "@/assets/images/LOGO for (Dark mode).png";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "@/Firebase/firebaseConfig";
 
 export default {
   name: "ForgetPassword1",
@@ -8,6 +10,8 @@ export default {
     return {
       isOpen: false,
       isDark: false,
+      email: "",
+      loading: false,
     };
   },
   computed: {
@@ -20,6 +24,31 @@ export default {
       this.isDark = !this.isDark;
       localStorage.setItem("darkMode", this.isDark);
       document.documentElement.classList.toggle("dark", this.isDark);
+    },
+
+    async handleForgetPassword() {
+      if (!this.email) {
+        alert("من فضلك أدخل البريد الإلكتروني 📧");
+        return;
+      }
+
+      this.loading = true;
+      try {
+        await sendPasswordResetEmail(auth, this.email);
+        this.$router.push({ 
+          path: '/forgetpassword2', 
+          query: { email: this.email } 
+        });
+      } catch (error) {
+        console.error(error.message);
+        if (error.code === "auth/user-not-found") {
+          alert("لا يوجد حساب بهذا البريد الإلكتروني ❌");
+        } else {
+          alert("حدث خطأ أثناء الإرسال 😢");
+        }
+      } finally {
+        this.loading = false;
+      }
     },
   },
   mounted() {
@@ -77,8 +106,10 @@ export default {
               />
             </div>
 
-            <form action="">
-              <h1 class="text-2xl font-bold text-black-600 dark:text-white mb-3 mt-5">
+            <form @submit.prevent="handleForgetPassword">
+              <h1
+                class="text-2xl font-bold text-black-600 dark:text-white mb-3 mt-5"
+              >
                 {{ $t("forgotPasswordTitle") }}
               </h1>
 
@@ -87,6 +118,7 @@ export default {
               </p>
 
               <input
+                v-model="email"
                 type="email"
                 :placeholder="$t('forgotPasswordPlaceholder')"
                 class="border border-gray-300 rounded-2xl px-4 py-3 mb-6 w-[70%] mx-auto focus:outline-none focus:ring-2 focus:ring-green-400"
@@ -95,11 +127,11 @@ export default {
               <br />
 
               <button
-                @click="$router.push('/forgetpassword2')"
                 type="submit"
+                :disabled="loading"
                 class="cursor-pointer px-10 py-1 rounded-4xl bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white hover:opacity-90 transition text-lg font-semibold w-[45%] h-12 mb-5"
               >
-                {{ $t("submitButton") }}
+                {{ loading ? "جارٍ الإرسال..." : $t("submitButton") }}
               </button>
             </form>
 
