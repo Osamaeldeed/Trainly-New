@@ -265,7 +265,7 @@
               <svg
                 v-if="!showCurrent"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                class="h-5 w-5 cursor-pointer"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -287,7 +287,7 @@
               <svg
                 v-else
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                class="h-5 w-5 "
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -331,7 +331,7 @@
               <svg
                 v-if="!showNew"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                class="h-5 w-5 cursor-pointer"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -399,7 +399,7 @@
               <svg
                 v-if="!showRepeat"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                class="h-5 w-5 cursor-pointer"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -539,9 +539,9 @@
           <!-- Single Button to open modal; pass sub so we know which subscription we're editing visually -->
           <button
             @click="openPlanModal(sub)"
-            class="text-white bg-[#00B0FF] hover:bg-[#36ace2] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+            class="text-white bg-[#00B0FF] hover:bg-[#36ace2] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition cursor-pointer"
           >
-            Upgrade Plan
+            Change Plan
           </button>
         </div>
       </div>
@@ -551,7 +551,7 @@
     <div v-if="planModalOpen" class="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
       <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 relative">
         <button
-          class="absolute top-3 right-4 text-gray-500 hover:text-gray-700"
+          class="absolute top-3 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
           @click="closePlanModal"
         >
           ✕
@@ -596,7 +596,7 @@
             <button
               :disabled="plan.type === activeSubscriptionForModal.planType"
               @click="selectPlanForSubscription(plan)"
-              class="w-full py-2 rounded-lg font-medium text-white transition"
+              class="w-full py-2 rounded-lg font-medium text-white transition cursor-pointer"
               :class="plan.type === activeSubscriptionForModal.planType
                 ? 'bg-gray-400'
                 : 'bg-blue-600 hover:bg-blue-700'"
@@ -624,7 +624,7 @@
         </p>
         <button
           @click="closePlanSelectedModal"
-          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition cursor-pointer"
         >
           OK
         </button>
@@ -694,13 +694,13 @@
           <!-- Buttons -->
           <div class="flex flex-col gap-3">
             <button
-              class="text-white bg-[#22C55E] hover:bg-[#16A34A] focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+              class="text-white bg-[#22C55E] hover:bg-[#16A34A] focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition cursor-pointer"
             >
               Add Payment Method
             </button>
 
             <button
-              class="border border-gray-300 text-gray-800 bg-white hover:bg-gray-50 focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+              class="border border-gray-300 text-gray-800 bg-white hover:bg-gray-50 focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition cursor-pointer"
             >
               Withdraw Earnings
             </button>

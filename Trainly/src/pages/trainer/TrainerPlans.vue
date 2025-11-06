@@ -780,7 +780,7 @@
             </div>
           </div>
 
-          <!-- ================= Manage AI Section ================= -->
+          <!-- ================= Manage AI Section (IMPROVED) ================= -->
           <div class="border-t pt-4 mt-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center gap-3">
@@ -790,7 +790,7 @@
                     AI Welcome Message
                   </h3>
                   <p class="text-xs text-gray-500 dark:text-gray-300">
-                    Enable, generate, edit or remove the AI welcome message for this plan.
+                    Generate a personalized welcome message for trainees
                   </p>
                 </div>
               </div>
@@ -803,101 +803,146 @@
               </label>
             </div>
 
-            <div v-if="manageUseAI" class="space-y-4">
+            <div v-if="manageUseAI" class="space-y-4 animate-fadeIn">
               <div class="bg-blue-50 dark:bg-[#797979] border border-blue-200 rounded-lg p-4">
-                <p class="text-sm text-blue-800">
-                  AI is enabled for this plan. You can regenerate a message (server will store it),
-                  edit it locally, or save your changes immediately.
+                <p class="text-sm text-blue-800 dark:text-white">
+                  <strong>📝 Instructions:</strong> Review or update the training schedule below.
+                  You can regenerate the AI message or edit it directly.
                 </p>
               </div>
 
-              <!-- Manage schedule (shows derived weeks or stored weeks) -->
-              <div v-if="manageTrainingWeeks.length > 0" class="space-y-2">
+              <!-- Training Schedule Table (SAME AS CREATE PLAN) -->
+              <div v-if="manageTrainingWeeks.length > 0" class="space-y-3">
                 <h4 class="font-semibold text-gray-700 dark:text-white">
                   Training Schedule ({{ manageTrainingWeeks.length }} weeks)
                 </h4>
-                <div class="space-y-2 max-h-56 overflow-y-auto">
+
+                <div class="space-y-3 max-h-96 overflow-y-auto">
                   <div
-                    v-for="(w, idx) in manageTrainingWeeks"
-                    :key="idx"
-                    class="bg-gray-50 dark:bg-[#3B3B3B] p-3 rounded"
+                    v-for="(week, index) in manageTrainingWeeks"
+                    :key="index"
+                    class="bg-gray-50 dark:bg-[#3B3B3B] border border-gray-200 rounded-lg p-4"
                   >
-                    <div class="text-sm font-medium dark:text-white">Week {{ w.weekNumber }}</div>
-                    <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                      Sessions:
-                      <input
-                        v-model="w.sessions"
-                        class="inline ml-2 px-2 py-1 text-xs rounded border"
-                      />
-                    </div>
-                    <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                      Exercises:
-                      <input
-                        v-model="w.exercises"
-                        class="inline ml-2 px-2 py-1 text-xs rounded border"
-                      />
-                    </div>
-                    <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                      Note:
-                      <input
-                        v-model="w.notes"
-                        class="inline ml-2 px-2 py-1 text-xs rounded border"
-                      />
+                    <h5 class="font-medium text-gray-800 dark:text-white mb-3">
+                      Week {{ week.weekNumber }}
+                    </h5>
+                    <div class="grid grid-cols-1 gap-3">
+                      <div>
+                        <label
+                          class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
+                        >
+                          Sessions per week
+                        </label>
+                        <input
+                          v-model="week.sessions"
+                          type="text"
+                          placeholder="e.g., 3 sessions"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 dark:text-white dark:bg-[#2a2a2a] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
+                        >
+                          Exercises/Focus
+                        </label>
+                        <input
+                          v-model="week.exercises"
+                          type="text"
+                          placeholder="e.g., Upper body strength, Cardio"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 dark:text-white dark:bg-[#2a2a2a] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
+                        >
+                          Notes (optional)
+                        </label>
+                        <input
+                          v-model="week.notes"
+                          type="text"
+                          placeholder="e.g., Focus on form, Rest day on Sunday"
+                          class="w-full px-3 py-2 text-sm border border-gray-300 dark:text-white dark:bg-[#2a2a2a] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                <!-- Generate & Save Buttons -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    @click="generateManageAIMessage"
+                    :disabled="manageGeneratingAI"
+                    class="w-full py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold rounded-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                  >
+                    <span v-if="manageGeneratingAI" class="animate-spin">⚙️</span>
+                    <span v-else>✨</span>
+                    <span>{{
+                      manageGeneratingAI ? "Generating..." : "Regenerate AI Message"
+                    }}</span>
+                  </button>
+
+                  <button
+                    @click="saveAiToPlan"
+                    :disabled="!manageAiGeneratedMessage || manageSavingAI"
+                    class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                  >
+                    <span v-if="manageSavingAI" class="animate-spin">⚙️</span>
+                    <span v-else>💾</span>
+                    <span>{{ manageSavingAI ? "Saving..." : "Save AI Message" }}</span>
+                  </button>
+                </div>
               </div>
 
-              <!-- Generate & Preview -->
-              <div class="flex flex-col sm:flex-row gap-3">
-                <button
-                  @click="generateManageAIMessage"
-                  :disabled="manageGeneratingAI"
-                  class="flex-1 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:scale-105 transition transform disabled:opacity-50"
-                >
-                  <span v-if="manageGeneratingAI" class="animate-spin">⚙️</span>
-                  <span v-else>Generate AI message</span>
-                </button>
-
-                <button
-                  @click="saveAiToPlan"
-                  :disabled="!manageAiGeneratedMessage || manageSavingAI"
-                  class="flex-1 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
-                >
-                  <span v-if="manageSavingAI">Saving...</span>
-                  <span v-else>Save AI</span>
-                </button>
+              <div v-else class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p class="text-sm text-yellow-800">
+                  ⚠️ No training schedule available. Please select a duration first.
+                </p>
               </div>
 
-              <div v-if="manageAIPreview && manageAiGeneratedMessage" class="space-y-2">
+              <!-- AI Message Preview (SAME AS CREATE PLAN) -->
+              <div
+                v-if="manageAIPreview && manageAiGeneratedMessage"
+                class="space-y-3 animate-fadeIn"
+              >
                 <div class="flex items-center justify-between">
-                  <h5 class="font-semibold dark:text-white">AI Message Preview</h5>
-                  <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded"
-                    >Stored:
+                  <h4 class="font-semibold text-gray-700 dark:text-white">
+                    Generated Message Preview
+                  </h4>
+                  <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                    ✓ Last saved:
                     {{
                       selectedPlan.aiGeneratedAt
                         ? formatRelativeDate(selectedPlan.aiGeneratedAt)
-                        : "—"
-                    }}</span
-                  >
+                        : "Never"
+                    }}
+                  </span>
                 </div>
-                <textarea
-                  v-model="manageAiGeneratedMessage"
-                  rows="8"
-                  class="w-full p-3 rounded border dark:bg-[#3B3B3B] dark:text-white resize-none"
-                ></textarea>
+                <div
+                  class="bg-white dark:bg-[#3B3B3B] border border-gray-300 rounded-lg p-4 max-h-64 overflow-y-auto"
+                >
+                  <textarea
+                    v-model="manageAiGeneratedMessage"
+                    rows="10"
+                    class="w-full text-sm text-gray-700 dark:text-white focus:outline-none resize-none bg-transparent"
+                    placeholder="AI generated message will appear here..."
+                  ></textarea>
+                </div>
                 <p class="text-xs text-gray-500 dark:text-gray-300">
-                  Edit the message above and click "Save AI" to persist changes immediately.
+                  💡 You can edit the message above before saving.
                 </p>
               </div>
             </div>
 
             <div v-else class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <p class="text-sm text-yellow-800">
-                ⚠️ AI is disabled for this plan. Toggle the switch to enable AI features.
+                ⚠️ AI is disabled for this plan. Toggle the switch above to enable AI features.
               </p>
             </div>
           </div>
+          <!-- ================= end manage ai ================= -->
           <!-- ================= end manage ai ================= -->
         </div>
 
