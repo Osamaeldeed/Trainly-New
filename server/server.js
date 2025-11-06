@@ -7,6 +7,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { nutritionPlans, greetings, findMatchingResponse } = require("./nutritionData");
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -1155,6 +1156,426 @@ app.post("/plans/:planId/set-ai", async (req, res) => {
 });
 
 /**
+ * AI Chat Endpoint
+ * POST /api/ai/chat
+ * body: { userId: string, message: string, conversationId?: string }
+ * response: { conversationId: string, reply: string }
+ */
+app.post("/api/ai/chat", async (req, res) => {
+  try {
+    const { userId, message, conversationId } = req.body;
+
+    if (!userId || !message) {
+      return res.status(400).json({ error: "userId and message are required" });
+    }
+
+    // Verify user exists and is a trainee
+    try {
+      const userDoc = await db.collection("users").doc(userId).get();
+      if (!userDoc.exists) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const userData = userDoc.data();
+      if (userData.role !== "trainee") {
+        return res.status(403).json({ error: "AI Assistant is only available for trainees" });
+      }
+    } catch (err) {
+      console.error("Error verifying user:", err);
+      return res.status(500).json({ error: "Failed to verify user" });
+    }
+
+    // Check for keyword-based responses first (before calling Gemini)
+    const matchingResponse = findMatchingResponse(message);
+    
+    if (matchingResponse) {
+      console.log(`✅ Found matching response for category: ${matchingResponse.category}`);
+      return res.json({
+        conversationId: conversationId || `conv-${userId}-${Date.now()}`,
+        reply: matchingResponse.response,
+      });
+    }
+
+    // System prompt for Gemini (for other questions)
+    const systemPrompt = `You are Trainly AI Assistant. Behave like a friendly, helpful fitness & nutrition coach.
+
+Rules:
+1. Provide general fitness and nutrition advice, meal suggestions, and simple exercise explanations. Do NOT provide medical diagnoses — if user asks for medical advice, respond: "أنا لست طبيب، لو عندك مشكلة صحية لازم تستشير متخصص."
+
+2. When the user asks to "find a trainer" or gives requirements (sport, city, max price), reply with a short natural-language summary PLUS a JSON block with an array "trainers" where each trainer has: id, name, city, sports, plans (planId, title, price), averageRating, matchScore (0-100).
+
+3. Keep replies concise (max 6 short paragraphs) and include actionable tips.
+
+4. If asked for meal suggestions, ask about allergies/preferences and caloric goal.
+
+5. When suggesting trainers, prioritize by averageRating (desc), then by matchScore.
+
+6. Respond in Arabic (العربية) when the user writes in Arabic, and in English when the user writes in English.`;
+
+    // Call Gemini (using EXACT same pattern as generateWelcomeMessageUsingGemini)
+    let reply = "";
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY not configured");
+      }
+
+      const fullPrompt = `${systemPrompt}\n\nUser: ${message}\n\nAssistant:`;
+      
+      console.log("🤖 Calling Gemini API...");
+      console.log("📝 Message preview:", message.substring(0, 100));
+      
+      // Use EXACT same pattern as generateWelcomeMessageUsingGemini
+      const model = genAI.getGenerativeModel
+        ? genAI.getGenerativeModel({ model: "gemini-pro" })
+        : genAI;
+
+      if (model.generateContent) {
+        // original approach (same as generateWelcomeMessageUsingGemini)
+        const result = await model.generateContent(fullPrompt);
+        const response = result?.response || result;
+        if (response) {
+          if (typeof response.text === "function") {
+            reply = response.text();
+          } else if (response.text) {
+            reply = response.text;
+          }
+        }
+        if (!reply && result?.outputText) {
+          reply = result.outputText;
+        }
+      } else if (model.generate) {
+        // alternate pattern
+        const result = await model.generate({ prompt: fullPrompt });
+        reply = result?.outputText || result?.candidates?.[0]?.content || null;
+      } else if (typeof genAI.generate === "function") {
+        const result = await genAI.generate(fullPrompt);
+        reply = result?.text || result?.outputText || null;
+      } else {
+        console.warn("⚠️ Unknown Gemini SDK shape, will fallback");
+      }
+      
+      if (!reply) {
+        console.warn("⚠️ No AI message received — using fallback");
+        reply = "عذرًا، لم أتمكن من الحصول على استجابة. يرجى المحاولة مرة أخرى.";
+      }
+      
+      console.log("✅ Gemini API response received (length:", reply.length, ")");
+    } catch (geminiErr) {
+      console.error("❌ Gemini API error:", geminiErr);
+      console.error("Error details:", geminiErr.message || geminiErr);
+      console.error("Error stack:", geminiErr.stack);
+      
+      // Fallback response based on error type
+      if (geminiErr.message?.includes("API_KEY")) {
+        reply = "عذرًا، هناك مشكلة في إعدادات المساعد الذكي. يرجى التواصل مع الدعم الفني.";
+      } else {
+        reply = "عذرًا، حدث خطأ في التواصل مع المساعد الذكي. يرجى المحاولة مرة أخرى لاحقًا.";
+      }
+    }
+
+    // Generate or use existing conversation ID
+    const finalConversationId = conversationId || `conv-${userId}-${Date.now()}`;
+
+    // Optional: Store conversation in Firestore (for future context)
+    try {
+      await db.collection("ai_conversations").add({
+        userId,
+        message,
+        reply,
+        conversationId: finalConversationId,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    } catch (storeErr) {
+      console.warn("Could not store conversation:", storeErr);
+      // Non-fatal error, continue
+    }
+
+    res.json({
+      conversationId: finalConversationId,
+      reply,
+    });
+  } catch (err) {
+    console.error("❌ Error in /api/ai/chat:", err);
+    res.status(500).json({ error: "AI error" });
+  }
+});
+
+/**
+ * Recommend Trainers Endpoint
+ * POST /api/ai/recommend-trainers
+ * body: { userId: string, filters: { sport?, city?, maxPrice?, language? }, limit?: number }
+ * response: { trainers: [{ id, name, city, sports, plans, averageRating, matchScore }] }
+ */
+app.post("/api/ai/recommend-trainers", async (req, res) => {
+  try {
+    const { userId, filters = {}, limit = 5 } = req.body;
+
+    console.log("🔍 /api/ai/recommend-trainers called with filters:", JSON.stringify(filters));
+
+    if (!userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
+
+    // Verify user exists and is a trainee
+    try {
+      const userDoc = await db.collection("users").doc(userId).get();
+      if (!userDoc.exists) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const userData = userDoc.data();
+      if (userData.role !== "trainee") {
+        return res.status(403).json({ error: "This feature is only available for trainees" });
+      }
+    } catch (err) {
+      console.error("Error verifying user:", err);
+      return res.status(500).json({ error: "Failed to verify user" });
+    }
+
+    // Build query for trainers (get all trainers first, then filter manually for flexibility)
+    const trainersSnapshot = await db.collection("users").where("role", "==", "trainer").get();
+    let trainers = [];
+
+    for (const docSnap of trainersSnapshot.docs) {
+      const trainerData = docSnap.data();
+      const trainerId = docSnap.id;
+
+      // Filter by city if provided (case-insensitive, partial match)
+      if (filters.city && filters.city.trim()) {
+        const trainerCity = (trainerData.city || "").toLowerCase().trim();
+        const filterCity = filters.city.toLowerCase().trim();
+        // Check if city matches (exact or partial)
+        if (trainerCity && filterCity && !trainerCity.includes(filterCity) && !filterCity.includes(trainerCity)) {
+          continue; // Skip this trainer
+        }
+      }
+
+      // Filter by sport if provided (case-insensitive, partial match)
+      if (filters.sport && filters.sport.trim()) {
+        const trainerSport = (trainerData.sport || "").toLowerCase();
+        const filterSport = filters.sport.toLowerCase().trim();
+        
+        // Sport mappings for better matching - comprehensive list
+        const sportVariations = {
+          // Tennis: تنس, tennis, كرة المضرب
+          "tennis": ["تنس", "tennis", "كرة المضرب", "كرة مضرب", "table tennis"],
+          // Padel: بادل, padel
+          "padel": ["بيدل", "padel", "بادل"],
+          // Bodybuilding/Fitness: bodybuilding, fitness, fit, gym, cardio, فيتنس, فيت, جيم, كارديو, رفع أثقال, weight lifting
+          "bodybuilding": ["bodybuilding", "fitness", "fit", "gym", "cardio", "فيتنس", "فيت", "جيم", "كارديو", "رفع أثقال", "weight lifting", "weights", "كمال أجسام", "lifting", "strength"],
+          "football": ["كرة قدم", "football", "soccer", "كورة"],
+          "yoga": ["يوجا", "yoga", "pilates", "بيلاتس"],
+          "basketball": ["كرة سلة", "basketball", "باسكت"],
+          "swimming": ["سباحة", "swimming", "swim"],
+          "boxing": ["ملاكمة", "boxing", "box"],
+        };
+        
+        let found = false;
+        
+        // First check direct match
+        if (trainerSport.includes(filterSport) || filterSport.includes(trainerSport)) {
+          found = true;
+          console.log(`✅ Direct sport match: ${filterSport} ↔ ${trainerSport}`);
+        } else {
+          // Check if filter matches any sport variation
+          for (const [sportKey, variations] of Object.entries(sportVariations)) {
+            // Check if filter matches this sport
+            const filterMatchesSport = variations.some(v => {
+              const vLower = v.toLowerCase();
+              return filterSport.includes(vLower) || vLower.includes(filterSport) || filterSport === sportKey;
+            });
+            
+            if (filterMatchesSport) {
+              // Check if trainer's sport matches this sport
+              const trainerMatchesSport = variations.some(v => {
+                const vLower = v.toLowerCase();
+                return trainerSport.includes(vLower) || vLower.includes(trainerSport);
+              }) || trainerSport === sportKey;
+              
+              if (trainerMatchesSport) {
+                found = true;
+                console.log(`✅ Sport variation match: ${filterSport} (${sportKey}) ↔ ${trainerSport}`);
+                break;
+              }
+            }
+          }
+        }
+        
+        if (!found) {
+          continue; // Skip this trainer
+        }
+      }
+
+      // Fetch trainer's plans
+      const plansSnapshot = await db
+        .collection("plans")
+        .where("trainer_uid", "==", trainerId)
+        .get();
+
+      const plans = plansSnapshot.docs.map((planDoc) => ({
+        planId: planDoc.id,
+        title: planDoc.data().title || planDoc.data().name || "Plan",
+        price: planDoc.data().price || 0,
+      }));
+
+      // Filter by maxPrice if provided
+      if (filters.maxPrice && filters.maxPrice > 0) {
+        const affordablePlans = plans.filter((p) => p.price && p.price > 0 && p.price <= filters.maxPrice);
+        if (affordablePlans.length === 0) {
+          continue; // Skip trainer if no affordable plans
+        }
+      }
+
+      // Calculate average rating from reviews
+      const reviewsSnapshot = await db
+        .collection("reviews")
+        .where("trainerId", "==", trainerId)
+        .get();
+
+      let totalRating = 0;
+      let reviewCount = 0;
+
+      reviewsSnapshot.forEach((reviewDoc) => {
+        const rating = reviewDoc.data().rating;
+        if (typeof rating === "number" && rating >= 0 && rating <= 5) {
+          totalRating += rating;
+          reviewCount++;
+        }
+      });
+
+      const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
+
+      // Calculate match score (0-100)
+      let matchScore = 0;
+
+      // Sport match component (40% weight) - CRITICAL: Sport must match!
+      let sportMatch = 0;
+      if (filters.sport && filters.sport.trim()) {
+        const trainerSport = (trainerData.sport || "").toLowerCase();
+        const filterSport = filters.sport.toLowerCase().trim();
+        
+        // Sport mappings for matching - comprehensive list
+        const sportVariations = {
+          // Tennis: تنس, tennis, كرة المضرب
+          "tennis": ["تنس", "tennis", "كرة المضرب", "كرة مضرب", "table tennis"],
+          // Padel: بادل, padel
+          "padel": ["بيدل", "padel", "بادل"],
+          // Bodybuilding/Fitness: bodybuilding, fitness, fit, gym, cardio, فيتنس, فيت, جيم, كارديو, رفع أثقال, weight lifting
+          "bodybuilding": ["bodybuilding", "fitness", "fit", "gym", "cardio", "فيتنس", "فيت", "جيم", "كارديو", "رفع أثقال", "weight lifting", "weights", "كمال أجسام", "lifting", "strength"],
+          "football": ["كرة قدم", "football", "soccer", "كورة"],
+          "yoga": ["يوجا", "yoga", "pilates", "بيلاتس"],
+          "basketball": ["كرة سلة", "basketball", "باسكت"],
+          "swimming": ["سباحة", "swimming", "swim"],
+          "boxing": ["ملاكمة", "boxing", "box"],
+        };
+        
+        let found = false;
+        // Check if filter matches any sport variation
+        for (const [sportKey, variations] of Object.entries(sportVariations)) {
+          const filterMatchesSport = variations.some(v => 
+            filterSport.includes(v.toLowerCase()) || v.toLowerCase().includes(filterSport) || filterSport === sportKey
+          );
+          
+          if (filterMatchesSport) {
+            // Check if trainer's sport matches this sport
+            const trainerMatchesSport = variations.some(v => 
+              trainerSport.includes(v.toLowerCase()) || v.toLowerCase().includes(trainerSport)
+            ) || trainerSport === sportKey;
+            
+            if (trainerMatchesSport) {
+              found = true;
+              sportMatch = 100; // Perfect match
+              break;
+            }
+          }
+        }
+        
+        // If no match found, sportMatch = 0 (will severely penalize)
+        if (!found) {
+          sportMatch = 0;
+        }
+      } else {
+        // No sport filter, give neutral score
+        sportMatch = 50;
+      }
+      matchScore += sportMatch * 0.4;
+
+      // Rating component (30% weight) - reduced from 70%
+      const ratingNormalized = (averageRating / 5) * 100;
+      matchScore += ratingNormalized * 0.3;
+
+      // Price match component (20% weight)
+      if (filters.maxPrice && plans.length > 0) {
+        const minPrice = Math.min(...plans.map((p) => p.price));
+        const priceMatch = minPrice <= filters.maxPrice ? 100 : Math.max(0, 100 - ((minPrice - filters.maxPrice) / filters.maxPrice) * 100);
+        matchScore += priceMatch * 0.2;
+      } else {
+        matchScore += 50 * 0.2; // Neutral score if no price filter
+      }
+
+      // City match component (10% weight)
+      let cityMatch = 50; // Neutral
+      if (filters.city && filters.city.trim()) {
+        const trainerCity = (trainerData.city || "").toLowerCase().trim();
+        const filterCity = filters.city.toLowerCase().trim();
+        if (trainerCity && filterCity && (trainerCity.includes(filterCity) || filterCity.includes(trainerCity))) {
+          cityMatch = 100; // Perfect match
+        } else {
+          cityMatch = 0; // No match
+        }
+      }
+      matchScore += cityMatch * 0.1;
+
+      // Normalize matchScore to 0-100
+      matchScore = Math.min(100, Math.max(0, matchScore));
+
+      trainers.push({
+        id: trainerId,
+        name: `${trainerData.firstName || ""} ${trainerData.lastName || ""}`.trim() || "Trainer",
+        city: trainerData.city || "",
+        sports: trainerData.sport ? [trainerData.sport] : [],
+        plans: plans,
+        averageRating: averageRating,
+        matchScore: Math.round(matchScore),
+      });
+    }
+
+    // Sort by matchScore (desc) first, then by averageRating (desc), then by price (asc)
+    // This ensures trainers matching the requested sport appear first, then by rating, then by price
+    trainers.sort((a, b) => {
+      // First sort by matchScore (most important - sport match)
+      if (b.matchScore !== a.matchScore) {
+        return b.matchScore - a.matchScore;
+      }
+      // Then sort by averageRating (from highest to lowest)
+      if (b.averageRating !== a.averageRating) {
+        return b.averageRating - a.averageRating;
+      }
+      // Then by minimum price (from lowest to highest - cheaper first)
+      const aMinPrice = a.plans && a.plans.length > 0 ? Math.min(...a.plans.map(p => p.price || 0)) : Infinity;
+      const bMinPrice = b.plans && b.plans.length > 0 ? Math.min(...b.plans.map(p => p.price || 0)) : Infinity;
+      if (aMinPrice !== bMinPrice) {
+        return aMinPrice - bMinPrice;
+      }
+      // Finally by number of plans
+      return (b.plans?.length || 0) - (a.plans?.length || 0);
+    });
+
+    // Limit results
+    trainers = trainers.slice(0, limit);
+
+    console.log(`✅ Found ${trainers.length} trainers matching filters`);
+    if (trainers.length > 0) {
+      console.log("Sample trainer:", JSON.stringify(trainers[0]).substring(0, 200));
+    }
+
+    // If no trainers found, return empty array (not an error)
+    res.json({ trainers });
+  } catch (err) {
+    console.error("❌ Error in /api/ai/recommend-trainers:", err);
+    res.status(500).json({ error: "Failed to get trainers" });
+  }
+});
+
+/**
  * Root endpoint
  */
 app.get("/", (req, res) => {
@@ -1172,6 +1593,8 @@ app.get("/", (req, res) => {
       "GET /trainer/:trainerId/subscription",
       "POST /plans/:planId/generate-ai",
       "POST /plans/:planId/set-ai",
+      "POST /api/ai/chat",
+      "POST /api/ai/recommend-trainers",
     ],
   });
 });
