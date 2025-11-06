@@ -278,7 +278,6 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
-          'terms'
         ].includes($route.name)
       "
     />

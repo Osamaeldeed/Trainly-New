@@ -716,7 +716,7 @@ export default {
         username: "",
         sport: "",
         experience: "",
-         agreeToTerms: false,
+        agreeToTerms: false,
       },
       errors: {},
       profilePicture: null,
@@ -727,7 +727,7 @@ export default {
       usernameMessage: "",
       usernameTimeout: null,
       bgSignup,
-       terms: '',
+      terms: "",
     };
   },
   computed: {
@@ -867,9 +867,9 @@ export default {
       return valid;
     },
     validateStep3() {
-       this.errors = {
-    terms: ''
-  };
+      this.errors = {
+        terms: "",
+      };
       if (!this.formData.username || this.formData.username.trim().length < 3) {
         this.errors.username = "Username must be at least 3 characters";
         return false;
@@ -879,9 +879,9 @@ export default {
         return false;
       }
       if (!this.formData.agreeToTerms) {
-    this.errors.terms = "You must agree to the Terms and Conditions";
-    return false;
-  }
+        this.errors.terms = "You must agree to the Terms and Conditions";
+        return false;
+      }
       return true;
     },
     handleProfilePictureUpload(event) {

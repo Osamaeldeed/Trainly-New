@@ -1,22 +1,45 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-black">
-    <!-- Header -->
     <header class="bg-white dark:bg-[#3b3b3b] shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center gap-3">
-          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-            ></path>
-          </svg>
-          <div>
-            <h1 class="text-3xl dark:text-white font-bold text-gray-900">Terms and Conditions</h1>
-            <p class="text-sm dark:text-gray-200 text-gray-600 mt-1">
-              Last updated: November 5, 2025
-            </p>
+        <!-- Use justify-between to split left & right -->
+        <div class="flex items-center justify-between">
+          <!-- Left section -->
+          <div class="flex items-center gap-3">
+            <svg
+              class="w-8 h-8 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              ></path>
+            </svg>
+            <div>
+              <h1 class="text-3xl dark:text-white font-bold text-gray-900">
+                {{ $t("Terms and Conditions") }}
+              </h1>
+              <p class="text-sm dark:text-gray-200 text-gray-600 mt-1">
+                {{ $t("Terms 1") }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Right section -->
+          <div class="hidden md:flex items-center gap-3">
+            <button @click="toggleDarkMode" class="py-2 cursor-pointer">
+              {{ isDark ? "☀️" : "🌙" }}
+            </button>
+            <img
+              src="@/assets/images/language switch(1)(1).png"
+              alt="Language"
+              class="w-[40px] cursor-pointer transition-transform duration-500 hover:rotate-180"
+              @click="switchLang"
+            />
           </div>
         </div>
       </div>
@@ -27,9 +50,10 @@
         <!-- Sidebar Navigation -->
         <aside class="lg:col-span-1">
           <div
-            class="fixed-sidebar dark:bg-[#3b3b3b] dark:text-white bg-white rounded-lg shadow-md p-6 fixed left-8 top-32 w-64 max-h-[calc(100vh-10rem)] overflow-y-auto z-50 hidden lg:block transition-opacity duration-300"
+            class="fixed-sidebar dark:bg-[#3b3b3b] dark:text-white bg-white rounded-lg shadow-md p-6 fixed top-32 w-64 max-h-[calc(100vh-10rem)] overflow-y-auto z-50 hidden lg:block transition-all duration-500 ease-in-out"
+            :style="sidebarStyle"
           >
-            <h2 class="font-semibold dark:text-white text-gray-900 mb-4">Quick Navigation</h2>
+            <h2 class="font-semibold dark:text-white text-gray-900 mb-4">{{ $t("Terms 2") }}</h2>
             <nav class="space-y-2">
               <a
                 v-for="section in sections"
@@ -44,7 +68,7 @@
                 ]"
               >
                 <component :is="section.icon" class="w-4 h-4" />
-                <span class="dark:text-gray-200 text-xs">{{ section.title }}</span>
+                <span class="dark:text-gray-200 text-xs">{{ $t(section.title) }}</span>
               </a>
             </nav>
           </div>
@@ -54,11 +78,12 @@
         <main class="lg:col-span-3">
           <div class="bg-white dark:bg-[#3b3b3b] rounded-lg shadow-md p-8 space-y-8">
             <!-- Introduction -->
-            <div class="border-l-4 border-blue-500 pl-6">
+            <div
+              class="border-blue-500 transition-all duration-500"
+              :class="isRTL ? 'border-r-4 border-l-0 pr-6 pl-0' : 'border-l-4 border-r-0 pl-6 pr-0'"
+            >
               <p class="text-gray-700 dark:text-gray-200 leading-relaxed">
-                Welcome to our training platform. These Terms and Conditions govern your use of our
-                services that connect trainers with trainees. By accessing or using our platform,
-                you agree to be bound by these terms.
+                {{ $t("Terms 3") }}
               </p>
             </div>
 
@@ -79,18 +104,15 @@
                   ></path>
                 </svg>
                 <h2 class="text-2xl font-bold dark:text-white text-gray-900">
-                  1. Acceptance of Terms
+                  {{ $t("Terms 5") }}
                 </h2>
               </div>
               <div class="space-y-4 dark:text-gray-200 text-gray-700">
                 <p>
-                  By creating an account and using our platform, you acknowledge that you have read,
-                  understood, and agree to be bound by these Terms and Conditions. If you do not
-                  agree to these terms, you must not use our services.
+                  {{ $t("Terms 6") }}
                 </p>
                 <p>
-                  We reserve the right to modify these terms at any time. Continued use of the
-                  platform after changes constitutes acceptance of the modified terms.
+                  {{ $t("Terms 7") }}
                 </p>
               </div>
             </section>
@@ -111,26 +133,28 @@
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   ></path>
                 </svg>
-                <h2 class="text-2xl font-bold dark:text-white text-gray-900">2. Definitions</h2>
+                <h2 class="text-2xl font-bold dark:text-white text-gray-900">
+                  {{ $t("Terms 8") }}
+                </h2>
               </div>
               <div
                 class="bg-gray-50 dark:bg-[#292929] dark:text-gray-300 rounded-lg p-6 space-y-3 text-gray-700"
               >
                 <p>
-                  <strong class="dark:text-gray-200 text-gray-900">Platform:</strong> The website,
-                  mobile applications, and all related services we provide.
+                  <strong class="dark:text-gray-200 text-gray-900">{{ $t("Terms 9") }}</strong>
+                  {{ $t("Terms 10") }}
                 </p>
                 <p>
-                  <strong class="dark:text-gray-200 text-gray-900">Trainer:</strong> A registered
-                  user who offers training services through our platform.
+                  <strong class="dark:text-gray-200 text-gray-900">{{ $t("Terms 11") }}:</strong>
+                  {{ $t("Terms 12") }}
                 </p>
                 <p>
-                  <strong class="dark:text-gray-200 text-gray-900">Trainee:</strong> A registered
-                  user who seeks and receives training services through our platform.
+                  <strong class="dark:text-gray-200 text-gray-900">{{ $t("Terms 13") }}</strong>
+                  {{ $t("Terms 14") }}
                 </p>
                 <p>
-                  <strong class="dark:text-gray-200 text-gray-900">Services:</strong> All features,
-                  content, and functionality available through the platform.
+                  <strong class="dark:text-gray-200 text-gray-900">{{ $t("Terms 65") }}</strong>
+                  {{ $t("Terms 15") }}
                 </p>
               </div>
             </section>
@@ -152,22 +176,20 @@
                   ></path>
                 </svg>
                 <h2 class="text-2xl font-bold dark:text-white text-gray-900">
-                  3. Account Registration
+                  {{ $t("Terms 16") }}
                 </h2>
               </div>
               <div class="space-y-4 dark:text-gray-300 text-gray-700">
                 <p>
-                  To use our platform, you must register for an account and provide accurate,
-                  complete, and current information. You are responsible for maintaining the
-                  confidentiality of your account credentials.
+                  {{ $t("Terms 17") }}
                 </p>
                 <div class="bg-blue-50 border dark:bg-blue-200 border-blue-200 rounded-lg p-4">
-                  <h3 class="font-semibold text-blue-900 mb-2">Registration Requirements:</h3>
+                  <h3 class="font-semibold text-blue-900 mb-2">{{ $t("Terms 18") }}</h3>
                   <ul class="space-y-2 text-blue-800">
-                    <li>• Must be at least 18 years of age</li>
-                    <li>• Provide valid email address and contact information</li>
-                    <li>• Verify identity as required by the platform</li>
-                    <li>• Agree to receive communications from the platform</li>
+                    <li>• {{ $t("Terms 19") }}</li>
+                    <li>• {{ $t("Terms 20") }}</li>
+                    <li>• {{ $t("Terms 21") }}</li>
+                    <li>• {{ $t("Terms 22") }}</li>
                   </ul>
                 </div>
               </div>
@@ -190,47 +212,54 @@
                   ></path>
                 </svg>
                 <h2 class="text-2xl font-bold dark:text-white text-gray-900">
-                  4. Trainer Obligations
+                  {{ $t("Terms 23") }}
                 </h2>
               </div>
               <div class="space-y-4 dark:text-gray-300 text-gray-700">
-                <p>Trainers using our platform agree to the following obligations:</p>
+                <p>{{ $t("Terms 24") }}</p>
                 <div class="space-y-3">
-                  <div class="border-l-4 dark:text-gray-300 border-green-500 pl-4">
-                    <h3 class="font-semibold  text-gray-900 mb-1">
-                      Qualifications
-                    </h3>
+                  <div
+                    class="border-green-500 transition-all duration-500 dark:text-gray-300"
+                    :class="
+                      isRTL ? 'border-r-4 border-l-0 pr-4 pl-0' : 'border-l-4 border-r-0 pl-4 pr-0'
+                    "
+                  >
+                    <h3 class="font-semibold text-gray-900 mb-1">{{ $t("Terms 66") }}</h3>
                     <p>
-                      Maintain valid certifications, licenses, and qualifications relevant to the
-                      training services offered. Provide proof of credentials upon request.
+                      {{ $t("Terms 25") }}
                     </p>
                   </div>
-                  <div class="border-l-4 dark:text-gray-300 border-green-500 pl-4">
-                    <h3 class="font-semibold  text-gray-900 mb-1">
-                      Professional Conduct
-                    </h3>
+                  <div
+                    class="border-green-500 transition-all duration-500 dark:text-gray-300"
+                    :class="
+                      isRTL ? 'border-r-4 border-l-0 pr-4 pl-0' : 'border-l-4 border-r-0 pl-4 pr-0'
+                    "
+                  >
+                    <h3 class="font-semibold text-gray-900 mb-1">{{ $t("Terms 26") }}</h3>
                     <p>
-                      Conduct all training sessions professionally, safely, and in accordance with
-                      industry standards. Respect trainee boundaries and maintain appropriate
-                      professional relationships.
+                      {{ $t("Terms 27") }}
                     </p>
                   </div>
-                  <div class="border-l-4 dark:text-gray-300 border-green-500 pl-4">
-                    <h3 class="font-semibold  text-gray-900 mb-1">
-                      Service Delivery
-                    </h3>
+                  <div
+                    class="border-green-500 transition-all duration-500 dark:text-gray-300"
+                    :class="
+                      isRTL ? 'border-r-4 border-l-0 pr-4 pl-0' : 'border-l-4 border-r-0 pl-4 pr-0'
+                    "
+                  >
+                    <h3 class="font-semibold text-gray-900 mb-1">{{ $t("Terms 28") }}</h3>
                     <p>
-                      Deliver training services as described in your profile. Honor scheduled
-                      sessions and provide adequate notice for cancellations or rescheduling.
+                      {{ $t("Terms 29") }}
                     </p>
                   </div>
-                  <div class="border-l-4 dark:text-gray-300 border-green-500 pl-4">
-                    <h3 class="font-semibold  text-gray-900 mb-1">
-                      Safety and Insurance
-                    </h3>
+                  <div
+                    class="border-green-500 transition-all duration-500 dark:text-gray-300"
+                    :class="
+                      isRTL ? 'border-r-4 border-l-0 pr-4 pl-0' : 'border-l-4 border-r-0 pl-4 pr-0'
+                    "
+                  >
+                    <h3 class="font-semibold text-gray-900 mb-1">{{ $t("Terms 30") }}</h3>
                     <p>
-                      Maintain appropriate liability insurance. Ensure training environments meet
-                      safety standards and comply with all applicable health and safety regulations.
+                      {{ $t("Terms 31") }}
                     </p>
                   </div>
                 </div>
@@ -254,39 +283,54 @@
                   ></path>
                 </svg>
                 <h2 class="text-2xl font-bold dark:text-white text-gray-900">
-                  5. Trainee Obligations
+                  {{ $t("Terms 32") }}
                 </h2>
               </div>
               <div class="space-y-4 dark:text-gray-200 text-gray-700">
-                <p>Trainees using our platform agree to the following obligations:</p>
+                <p>{{ $t("Terms 33") }}</p>
                 <div class="space-y-3">
-                  <div class="border-l-4 dark:text-gray-200 border-purple-500 pl-4">
-                    <h3 class="font-semibold text-gray-900 mb-1">Accurate Information</h3>
+                  <div
+                    class="border-purple-500 transition-all duration-500 dark:text-gray-200"
+                    :class="
+                      isRTL ? 'border-r-4 border-l-0 pr-4 pl-0' : 'border-l-4 border-r-0 pl-4 pr-0'
+                    "
+                  >
+                    <h3 class="font-semibold text-gray-900 mb-1">{{ $t("Terms 34") }}</h3>
                     <p>
-                      Provide accurate information about your fitness level, health conditions,
-                      injuries, and any other factors relevant to training. Disclose all medical
-                      conditions that may affect your ability to train safely.
+                      {{ $t("Terms 35") }}
                     </p>
                   </div>
-                  <div class="border-l-4 dark:text-gray-200 border-purple-500 pl-4">
-                    <h3 class="font-semibold text-gray-900 mb-1">Medical Clearance</h3>
+                  <div
+                    class="border-purple-500 transition-all duration-500 dark:text-gray-200"
+                    :class="
+                      isRTL ? 'border-r-4 border-l-0 pr-4 pl-0' : 'border-l-4 border-r-0 pl-4 pr-0'
+                    "
+                  >
+                    <h3 class="font-semibold text-gray-900 mb-1">{{ $t("Terms 36") }}</h3>
                     <p>
-                      Obtain medical clearance from a healthcare professional before beginning any
-                      training program, especially if you have pre-existing health conditions.
+                      {{ $t("Terms 37") }}
                     </p>
                   </div>
-                  <div class="border-l-4 dark:text-gray-200 border-purple-500 pl-4">
-                    <h3 class="font-semibold text-gray-900 mb-1">Payment Obligations</h3>
+                  <div
+                    class="border-purple-500 transition-all duration-500 dark:text-gray-200"
+                    :class="
+                      isRTL ? 'border-r-4 border-l-0 pr-4 pl-0' : 'border-l-4 border-r-0 pl-4 pr-0'
+                    "
+                  >
+                    <h3 class="font-semibold text-gray-900 mb-1">{{ $t("Terms 38") }}</h3>
                     <p>
-                      Pay for services as agreed upon with your trainer. Honor payment commitments
-                      and cancellation policies established by the trainer.
+                      {{ $t("Terms 39") }}
                     </p>
                   </div>
-                  <div class="border-l-4 dark:text-gray-200 border-purple-500 pl-4">
-                    <h3 class="font-semibold text-gray-900 mb-1">Respectful Behavior</h3>
+                  <div
+                    class="border-purple-500 transition-all duration-500 dark:text-gray-200"
+                    :class="
+                      isRTL ? 'border-r-4 border-l-0 pr-4 pl-0' : 'border-l-4 border-r-0 pl-4 pr-0'
+                    "
+                  >
+                    <h3 class="font-semibold text-gray-900 mb-1">{{ $t("Terms 40") }}</h3>
                     <p>
-                      Treat trainers with respect and professionalism. Follow instructions during
-                      training sessions and communicate openly about concerns or limitations.
+                      {{ $t("Terms 41") }}
                     </p>
                   </div>
                 </div>
@@ -310,35 +354,31 @@
                   ></path>
                 </svg>
                 <h2 class="text-2xl font-bold dark:text-white text-gray-900">
-                  6. Payments and Fees
+                  {{ $t("Terms 42") }}
                 </h2>
               </div>
               <div class="space-y-4 dark:text-gray-200 text-gray-700">
                 <p>
-                  Our platform facilitates payments between trainers and trainees. The following
-                  terms apply:
+                  {{ $t("Terms 43") }}
                 </p>
-                <div class="bg-amber-50 border dark:text-white dark:bg-[#292929] border-amber-200 rounded-lg p-4 space-y-3">
+                <div
+                  class="bg-amber-50 border dark:text-white dark:bg-[#292929] border-amber-200 rounded-lg p-4 space-y-3"
+                >
                   <p>
-                    <strong class="text-amber-900">Platform Fees:</strong> We charge a service fee
-                    on all transactions processed through the platform. This fee is clearly
-                    disclosed before any payment is made.
+                    <strong class="text-amber-900">{{ $t("Terms 44") }}</strong
+                    >{{ $t("Terms 45") }}
                   </p>
                   <p>
-                    <strong class="text-amber-900">Payment Processing:</strong> All payments are
-                    processed securely through our third-party payment providers. We do not store
-                    credit card information.
+                    <strong class="text-amber-900">{{ $t("Terms 46") }}</strong>
+                    {{ $t("Terms 47") }}
                   </p>
                   <p>
-                    <strong class="text-amber-900">Refund Policy:</strong> Refunds are subject to
-                    the cancellation policy agreed upon between trainer and trainee. Disputes should
-                    be resolved directly between parties, with platform mediation available if
-                    needed.
+                    <strong class="text-amber-900">{{ $t("Terms 48") }}</strong>
+                    {{ $t("Terms 49") }}
                   </p>
                   <p>
-                    <strong class="text-amber-900">Trainer Payouts:</strong> Trainers receive
-                    payment according to the schedule outlined in their agreement, minus applicable
-                    platform fees and payment processing charges.
+                    <strong class="text-amber-900">{{ $t("Terms 50") }}</strong>
+                    {{ $t("Terms 51") }}
                   </p>
                 </div>
               </div>
@@ -361,33 +401,26 @@
                   ></path>
                 </svg>
                 <h2 class="text-2xl font-bold dark:text-white text-gray-900">
-                  7. Liability and Disputes
+                  {{ $t("Terms 52") }}
                 </h2>
               </div>
               <div class="space-y-4 dark:text-gray-200 text-gray-700">
                 <div class="bg-red-50 border border-red-200 rounded-lg p-4">
                   <h3 class="font-semibold dark:text-black text-red-900 mb-2">
-                    Limitation of Liability
+                    {{ $t("Terms 53") }}
                   </h3>
                   <p class="text-red-800">
-                    The platform acts as an intermediary connecting trainers and trainees. We are
-                    not responsible for the quality, safety, or legality of training services
-                    provided. Users assume all risks associated with training activities.
+                    {{ $t("Terms 54") }}
                   </p>
                 </div>
                 <p>
-                  Trainers and trainees are independent parties. The platform does not employ
-                  trainers and is not responsible for their actions, qualifications, or conduct.
+                  {{ $t("Terms 55") }}
                 </p>
                 <p>
-                  In the event of disputes between trainers and trainees, parties agree to first
-                  attempt resolution through our dispute resolution process. The platform may assist
-                  in mediation but is not obligated to resolve disputes.
+                  {{ $t("Terms 56") }}
                 </p>
                 <p>
-                  By using the platform, you release the platform, its owners, employees, and
-                  affiliates from any claims, damages, or liability arising from your use of the
-                  services or interactions with other users.
+                  {{ $t("Terms 57") }}
                 </p>
               </div>
             </section>
@@ -408,23 +441,23 @@
                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                   ></path>
                 </svg>
-                <h2 class="text-2xl font-bold dark:text-white text-gray-900">8. Termination</h2>
+                <h2 class="text-2xl font-bold dark:text-white text-gray-900">
+                  {{ $t("Terms 58") }}
+                </h2>
               </div>
               <div class="space-y-4 dark:text-gray-200 text-gray-700">
                 <p>
-                  We reserve the right to suspend or terminate any account that violates these Terms
-                  and Conditions, engages in fraudulent activity, or poses a risk to other users.
+                  {{ $t("Terms 59") }}
                 </p>
                 <p>
-                  Users may terminate their accounts at any time by contacting our support team.
-                  Termination does not relieve users of any outstanding payment obligations.
+                  {{ $t("Terms 61") }}
                 </p>
                 <div class="bg-gray-100 dark:bg-[#292929] rounded-lg p-4">
-                  <h3 class="font-semibold dark:text-gray-300 text-gray-900 mb-2">Grounds for Termination:</h3>
+                  <h3 class="font-semibold dark:text-gray-300 text-gray-900 mb-2">
+                    {{ $t("Terms 60") }}
+                  </h3>
                   <p>
-                    Accounts may be terminated for violation of terms, fraudulent activity,
-                    harassment of other users, provision of false information, non-payment, or any
-                    activity that compromises platform integrity or user safety.
+                    {{ $t("Terms 62") }}
                   </p>
                 </div>
               </div>
@@ -432,10 +465,12 @@
 
             <!-- Contact Section -->
             <section class="border-t pt-8 mt-8">
-              <h2 class="text-2xl font-bold dark:text-white text-gray-900 mb-4">Contact Us</h2>
+              <h2 class="text-2xl font-bold dark:text-white text-gray-900 mb-4">
+                {{ $t("contact") }}
+              </h2>
               <div class="bg-blue-50 dark:bg-[#292929] rounded-lg p-6">
                 <p class="text-gray-700 dark:text-gray-200 mb-4">
-                  If you have any questions about these Terms and Conditions, please contact us:
+                  {{ $t("Terms 63") }}
                 </p>
                 <div class="space-y-2 dark:text-gray-200 text-gray-700">
                   <p><strong>Email:</strong> legal@trainly.com</p>
@@ -448,8 +483,7 @@
             <div class="border-t pt-8 mt-8">
               <div class="bg-white dark:bg-[#292929] rounded-lg p-6 text-center">
                 <p class="text-gray-800 dark:text-gray-200 font-medium mb-4">
-                  By using our platform, you acknowledge that you have read and understood these
-                  Terms and Conditions and agree to be bound by them.
+                  {{ $t("Terms 64") }}
                 </p>
               </div>
             </div>
@@ -457,13 +491,6 @@
         </main>
       </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-8 mt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p>&copy; 2025 Trainer Platform. All rights reserved.</p>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -472,31 +499,43 @@ export default {
   data() {
     return {
       activeSection: "",
+      isOpen: false,
+      isDark: false,
+      isRTL: false,
       sections: [
-        { id: "acceptance", title: "1. Acceptance of Terms", icon: "check-circle" },
-        { id: "definitions", title: "2. Definitions", icon: "file-text" },
-        { id: "registration", title: "3. Account Registration", icon: "users" },
-        { id: "trainers", title: "4. Trainer Obligations", icon: "award" },
-        { id: "trainees", title: "5. Trainee Obligations", icon: "users" },
-        { id: "payments", title: "6. Payments and Fees", icon: "credit-card" },
-        { id: "liability", title: "7. Liability and Disputes", icon: "alert-circle" },
-        { id: "termination", title: "8. Termination", icon: "x-circle" },
+        { id: "acceptance", title: "section1", icon: "check-circle" },
+        { id: "definitions", title: "section2", icon: "file-text" },
+        { id: "registration", title: "section3", icon: "users" },
+        { id: "trainers", title: "section4", icon: "award" },
+        { id: "trainees", title: "section5", icon: "users" },
+        { id: "payments", title: "section6", icon: "credit-card" },
+        { id: "liability", title: "section7", icon: "alert-circle" },
+        { id: "termination", title: "section8", icon: "x-circle" },
       ],
     };
+  },
+  computed: {
+    sidebarStyle() {
+      return {
+        left: this.isRTL ? "auto" : "2rem",
+        right: this.isRTL ? "2rem" : "auto",
+        opacity: 1,
+        transform: "translateX(0)",
+      };
+    },
   },
   methods: {
     scrollToSection(sectionId) {
       this.activeSection = sectionId;
       const element = document.getElementById(sectionId);
       if (element) {
-        const yOffset = -100; // Offset to account for header
+        const yOffset = -100;
         const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: y, behavior: "smooth" });
       }
     },
     acceptTerms() {
       alert("Thank you for accepting the Terms and Conditions!");
-      // You can add your logic here to handle the acceptance
     },
     handleScroll() {
       const footer = document.querySelector("footer");
@@ -506,7 +545,6 @@ export default {
         const footerRect = footer.getBoundingClientRect();
         const sidebarRect = sidebar.getBoundingClientRect();
 
-        // If sidebar would overlap footer, hide it
         if (footerRect.top < sidebarRect.bottom) {
           sidebar.style.opacity = "0";
           sidebar.style.pointerEvents = "none";
@@ -516,9 +554,32 @@ export default {
         }
       }
     },
+    switchLang() {
+      const newLocale = this.$i18n.locale === "en" ? "ar" : "en";
+      this.$i18n.locale = newLocale;
+      localStorage.setItem("lang", newLocale);
+      this.isRTL = newLocale === "ar";
+      document.dir = newLocale === "ar" ? "rtl" : "ltr";
+      document.documentElement.lang = newLocale;
+      document.body.style.fontFamily =
+        newLocale === "ar" ? "'Tajawal', sans-serif" : "'Poppins', sans-serif";
+    },
+    saveDark(val) {
+      localStorage.setItem("darkMode", val);
+      if (val) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    },
+    toggleDarkMode() {
+      const newValue = !this.isDark;
+      this.isDark = !this.isDark;
+      this.saveDark(this.isDark);
+      window.dispatchEvent(new CustomEvent("darkModeChanged", { detail: newValue }));
+    },
   },
   mounted() {
-    // Set up intersection observer to track active section
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -540,9 +601,15 @@ export default {
       }
     });
 
-    // Add scroll listener to handle footer overlap
+    // Initialize RTL state
+    this.isRTL = this.$i18n.locale === "ar";
+    document.dir = this.$i18n.locale === "ar" ? "rtl" : "ltr";
+    const saved = localStorage.getItem("darkMode") === "true";
+    this.isDark = saved;
+    this.saveDark(saved);
+
     window.addEventListener("scroll", this.handleScroll);
-    this.handleScroll(); // Initial check
+    this.handleScroll();
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
