@@ -39,102 +39,37 @@
     <!-- Main Content -->
     <div v-else class="max-w-7xl mx-auto px-4 py-10">
       <!-- HERO -->
-        <div class="relative mb-10 transition-colors duration-500">
+      <div class="relative mb-10 transition-colors duration-500">
         <div
-            class="border border-sky-200 dark:border-gray-700 rounded-2xl p-6 pl-36 pr-6 flex items-center shadow-sm bg-linear-to-r from-sky-50 to-blue-50 dark:bg-[#3B3B3B] dark:bg-none"
-          >
-            <!-- Profile Image -->
-            <img
-              :src="trainer.profilePicture || placeholder"
-              alt="trainer profile"
-              class="absolute -top-6 left-6 w-40 h-40 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl"
-              @error="handleImageError"
-            />
+          class="border border-sky-200 dark:border-gray-700 rounded-2xl p-6 pl-36 pr-6 flex items-center shadow-sm bg-linear-to-r from-sky-50 to-blue-50 dark:bg-[#3B3B3B] dark:bg-none"
+        >
+          <!-- Profile Image -->
+          <img
+            :src="trainer.profilePicture || placeholder"
+            alt="trainer profile"
+            class="absolute -top-6 left-6 w-40 h-40 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl"
+            @error="handleImageError"
+          />
 
-            <!-- Info -->
-            <div class="ml-28 w-full flex items-center justify-between flex-wrap gap-4">
-              <div class="flex-1 min-w-0">
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                  {{ trainer.firstName }} {{ trainer.lastName }}
-                </h1>
+          <!-- Info -->
+          <div class="ml-28 w-full flex items-center justify-between flex-wrap gap-4">
+            <div class="flex-1 min-w-0">
+              <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                {{ trainer.firstName }} {{ trainer.lastName }}
+              </h1>
 
-                <p class="text-sky-600 dark:text-gray-300 font-medium text-lg mb-4">
-                  {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
-                </p>
+              <p class="text-sky-600 dark:text-gray-300 font-medium text-lg mb-4">
+                {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
+              </p>
 
-                <!-- Details -->
-                <div
-                  class="flex flex-wrap items-center gap-6 text-sm text-gray-700 dark:text-gray-200"
-                >
-                  <div class="flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="w-4 h-4 text-gray-500 dark:text-gray-200"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    <span class="font-semibold">Username:</span>
-                    <span class="text-gray-600 dark:text-gray-200"
-                      >@{{ trainer.username || trainer.userName || "N/A" }}</span
-                    >
-                  </div>
-
-                  <div class="flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="w-4 h-4 text-gray-500 dark:text-gray-200"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                      />
-                    </svg>
-                    <span class="font-semibold">Experience:</span>
-                    <span class="text-gray-600 dark:text-gray-200"
-                      >{{ getExperience() }} years</span
-                    >
-                  </div>
-
-                  <div class="flex items-center gap-2 text-gray-600 dark:text-gray-200">
-                    <svg
-                      class="w-4 h-4 text-gray-500 dark:text-gray-200"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                      ></path>
-                      <circle cx="12" cy="9" r="2.5"></circle>
-                    </svg>
-                    <span class="capitalize dark:text-gray-200">{{ getLocation() }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Contact Button -->
-              <div class="flex items-center gap-3">
-                <button
-                  @click="contactTrainer"
-                  class="px-6 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:scale-105 cursor-pointer bg-linear-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white dark:bg-gray-600 dark:hover:bg-gray-500"
-                >
+              <!-- Details -->
+              <div
+                class="flex flex-wrap items-center gap-6 text-sm text-gray-700 dark:text-gray-200"
+              >
+                <div class="flex items-center gap-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 inline mr-2"
+                    class="w-4 h-4 text-gray-500 dark:text-gray-200"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -143,14 +78,77 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
-                  Contact Trainer
-                </button>
+                  <span class="font-semibold">Username:</span>
+                  <span class="text-gray-600 dark:text-gray-200"
+                    >@{{ trainer.username || trainer.userName || "N/A" }}</span
+                  >
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 text-gray-500 dark:text-gray-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                    />
+                  </svg>
+                  <span class="font-semibold">Experience:</span>
+                  <span class="text-gray-600 dark:text-gray-200">{{ getExperience() }} years</span>
+                </div>
+
+                <div class="flex items-center gap-2 text-gray-600 dark:text-gray-200">
+                  <svg
+                    class="w-4 h-4 text-gray-500 dark:text-gray-200"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                    ></path>
+                    <circle cx="12" cy="9" r="2.5"></circle>
+                  </svg>
+                  <span class="capitalize dark:text-gray-200">{{ getLocation() }}</span>
+                </div>
               </div>
             </div>
+
+            <!-- Contact Button -->
+            <div class="flex items-center gap-3">
+              <button v-if="!isAdminView"
+                @click="contactTrainer"
+                class="px-6 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:scale-105 cursor-pointer bg-linear-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white dark:bg-gray-600 dark:hover:bg-gray-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 inline mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                Contact Trainer
+              </button>
+            </div>
           </div>
+        </div>
       </div>
 
       <!-- Plans -->
@@ -224,7 +222,7 @@
                 </div>
               </div>
 
-              <button
+              <button v-if="!isAdminView"
                 @click="bookPlan(plan, $event)"
                 :disabled="bookingPlanId === plan.id"
                 class="w-full py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold transition-all transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -330,8 +328,10 @@
           </div>
 
           <button
+            v-if="hasBookedWithTrainer"
             @click="openAddReview"
-            class="bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 cursor-pointer"
+            :disabled="checkingBooking"
+            class="bg-sky-500 hover:bg-sky-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -347,8 +347,31 @@
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            Add Review
+            <span v-if="checkingBooking">Checking...</span>
+            <span v-else>Add Review</span>
           </button>
+
+          <!-- Optional: Message for users who haven't booked -->
+          <div
+            v-else-if="!checkingBooking&&!isAdminView"
+            class="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-3 rounded-xl text-sm flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>You need to book a plan with this trainer to leave a review</span>
+          </div>
         </div>
 
         <div
@@ -416,12 +439,6 @@
 
                 <div v-if="rev.status || rev.sessionType" class="flex flex-wrap gap-3 text-xs">
                   <span
-                    v-if="rev.status"
-                    class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-medium"
-                  >
-                    {{ capitalize(rev.status) }}
-                  </span>
-                  <span
                     v-if="rev.sessionType"
                     class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
                   >
@@ -434,7 +451,81 @@
         </div>
       </section>
     </div>
+<!--activateanddelete-->
+  <!-- Show buttons only if admin view -->
+  <div v-if="isAdminView" class="flex gap-3">
+    <!-- 🔹 Activate Button -->
+    <button
+      @click="openModal('activate')"
+      :disabled="trainer.status === 'active'"
+      class="px-5 py-2 rounded-lg text-white font-medium"
+      :class="trainer.status === 'active' 
+        ? 'bg-gray-400 cursor-not-allowed' 
+        : 'bg-green-600 hover:bg-green-700 hover:cursor-pointer'"
+    >
+      Activate Account
+    </button>
 
+    <!-- 🔹 Delete Button -->
+    <button
+      @click="openModal('delete')"
+      class="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium hover:cursor-pointer"
+    >
+      Delete Account
+    </button>
+
+    <!-- 🔹 Modal -->
+    <div
+      v-if="showModal"
+      class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[9999]"
+    >
+      <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md shadow-2xl text-center">
+        <!-- ✅ Activate Modal -->
+        <div v-if="modalType === 'activate'">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">Activate Trainer Account</h2>
+          <p class="text-gray-600 mb-6">
+            Are you sure you want to activate {{ trainer.firstName }}’s account?
+          </p>
+          <div class="flex justify-center gap-3">
+            <button
+              @click="confirmAction"
+              class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white hover:cursor-pointer"
+            >
+              Confirm
+            </button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- ✅ Delete Modal -->
+        <div v-else-if="modalType === 'delete'">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">Delete Trainer Account</h2>
+          <p class="text-gray-600 mb-4">
+            Please provide a reason for deleting {{ trainer.firstName }}’s account.
+          </p>
+          <textarea
+            v-model="deleteReason"
+            placeholder="Type reason..."
+            class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-red-400 text-black"
+            rows="3"
+          ></textarea>
+          <div class="flex justify-center gap-3">
+            <button
+              @click="confirmAction"
+              class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white hover:cursor-pointer"
+            >
+              Send & Delete
+            </button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     <!-- Add Review Modal -->
     <Teleport to="body">
       <div
@@ -535,7 +626,7 @@
                 >
                 <select
                   v-model="newReview.sessionType"
-                    class="w-full p-3 border cursor-pointer border-gray-300 text-black dark:text-white bg-white dark:bg-[#3B3B3B] rounded-lg focus:ring-2 outline-none transition"
+                  class="w-full p-3 border cursor-pointer border-gray-300 text-black dark:text-white bg-white dark:bg-[#3B3B3B] rounded-lg focus:ring-2 outline-none transition"
                 >
                   <option value="">Select type</option>
                   <option value="online">Online</option>
@@ -577,6 +668,8 @@ import {
   doc,
   getDoc,
   collection,
+  updateDoc,
+  deleteDoc,
   getDocs,
   query,
   where,
@@ -592,12 +685,16 @@ const API_URL = " https://elenora-unexampled-carmon.ngrok-free.dev";
 const route = useRoute();
 const router = useRouter();
 const auth = getAuth();
-
+const props = defineProps({
+  trainer: Object,
+  isAdminView: Boolean,
+});
 // trainer uid source (query or params)
 const uid = route.query.uid || route.params.uid || null;
 
 // placeholders
 const placeholder = "https://via.placeholder.com/400x300?text=No+Image";
+const isAdminView = computed(() => route.path.includes('/admin') || route.query.admin === 'true');
 
 // state
 const trainer = ref({});
@@ -612,6 +709,8 @@ const reviewsCount = ref(0);
 
 // add-review modal state
 const showAddReview = ref(false);
+const hasBookedWithTrainer = ref(false); // check if trainee booked with this trainer
+const checkingBooking = ref(false); // loading state
 const addingReview = ref(false);
 const newReview = ref({
   reviewerName: "",
@@ -777,6 +876,42 @@ const fetchReviews = async () => {
   }
 };
 
+// ------------------ Check if current user has booked with this trainer ------------------
+const checkUserBooking = async () => {
+  const user = auth.currentUser;
+
+  // If no user logged in OR no trainer uid, return false
+  if (!user || !uid) {
+    hasBookedWithTrainer.value = false;
+    return;
+  }
+
+  checkingBooking.value = true;
+
+  try {
+    // Query bookings collection
+    const bookingsQuery = query(
+      collection(db, "bookings"),
+      where("traineeId", "==", user.uid),
+      where("trainerId", "==", uid),
+    );
+
+    const snapshot = await getDocs(bookingsQuery);
+
+    // If we found at least one booking, user has booked with this trainer
+    hasBookedWithTrainer.value = !snapshot.empty;
+
+    console.log(
+      `✅ Booking check: ${hasBookedWithTrainer.value ? "User has booked" : "No bookings found"}`,
+    );
+  } catch (err) {
+    console.error("checkUserBooking error:", err);
+    hasBookedWithTrainer.value = false;
+  } finally {
+    checkingBooking.value = false;
+  }
+};
+
 // ------------------ Overall load ------------------
 const loadData = async () => {
   loading.value = true;
@@ -790,7 +925,11 @@ const loadData = async () => {
 
   await fetchTrainer();
   if (!error.value) {
-    await Promise.all([fetchPlans(), fetchReviews()]);
+    await Promise.all([
+      fetchPlans(),
+      fetchReviews(),
+      checkUserBooking(), // 👈 أضف السطر ده
+    ]);
   }
 
   loading.value = false;
@@ -1049,8 +1188,88 @@ const submitReview = async () => {
     addingReview.value = false;
   }
 };
-</script>
 
+
+// 🔹 Reactive state
+const showModal = ref(false);
+const modalType = ref(""); // 'activate' or 'delete'
+const deleteReason = ref("");
+
+// 🔹 Modal controls
+const openModal = (type) => {
+  modalType.value = type;
+  showModal.value = true;
+};
+const closeModal = () => {
+  showModal.value = false;
+  deleteReason.value = "";
+};
+
+// 🔹 Email helper
+const sendEmail = async (to, subject, message) => {
+  try {
+    const res = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, subject, message }),
+    });
+    if (!res.ok) throw new Error("Email failed to send");
+    console.log("✅ Email sent:", subject);
+  } catch (err) {
+    console.error("❌ Error sending email:", err);
+  }
+};
+
+// 🔹 Confirm Action
+const confirmAction = async () => {
+  if (!trainer.value || !trainer.value.id) {
+    alert("Trainer not loaded yet.");
+    return;
+  }
+
+  try {
+    const trainerRef = doc(db, "users", trainer.value.id);
+
+    if (modalType.value === "activate") {
+      // 1️⃣ Update Firestore
+      await updateDoc(trainerRef, { status: "active" });
+
+      // 2️⃣ Send email
+      await sendEmail(
+        trainer.value.email,
+        "Your Trainer Account Has Been Activated",
+        `Hello ${trainer.value.firstName},\n\nYour trainer account has been successfully activated.\n\nBest regards,\nAdmin Team`
+      );
+
+      alert("✅ Trainer activated and email sent!");
+    }
+
+    if (modalType.value === "delete") {
+      if (!deleteReason.value.trim()) return alert("Please provide a reason before deleting.");
+
+      // 1️⃣ Send email first
+      await sendEmail(
+        trainer.value.email,
+        "Your Trainer Account Has Been Deleted",
+        `Hello ${trainer.value.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
+      );
+
+      // 2️⃣ Delete from Firestore
+      await deleteDoc(trainerRef);
+
+      alert("✅ Trainer deleted and email sent!");
+      router.push("/admin/trainers");
+    }
+
+    closeModal();
+  } catch (err) {
+    console.error("❌ confirmAction error:", err);
+    alert("An error occurred. Check console for details.");
+  }
+};
+
+
+</script>
 <style scoped>
 .line-clamp-2 {
   overflow: hidden;

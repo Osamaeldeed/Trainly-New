@@ -129,7 +129,7 @@
             </p>
           </div>
 
-          <div class="p-4 bg-[#FCFBFB]  dark:bg-[#3B3B3B]rounded-2xl shadow-md">
+          <div class="p-4 bg-[#FCFBFB]  dark:bg-[#3B3B3B] rounded-2xl shadow-md">
             <h4 class="font-medium dark:text-white text-gray-800">How do billing and payments work?</h4>
             <p class="text-sm dark:text-gray-300 text-gray-500 mt-1">
               Payments are processed automatically. You can manage billing in Settings.

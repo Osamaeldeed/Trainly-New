@@ -41,7 +41,7 @@
           <div class="flex text-yellow-400 text-2xl mt-1">
             <span v-for="n in 5" :key="n">{{ n <= Math.round(avgRating) ? "★" : "☆" }}</span>
           </div>
-          <span class="text-gray-500 text-sm mt-1">
+          <span class="text-gray-500 dark:text-gray-200 text-sm mt-1">
             Based on {{ reviewsCount }} review{{ reviewsCount !== 1 ? "s" : "" }}
           </span>
         </div>
@@ -49,14 +49,14 @@
         <!-- Rating Distribution Bars -->
         <div class="w-full md:w-1/2">
           <div v-for="n in [5, 4, 3, 2, 1]" :key="n" class="flex items-center gap-3 mb-2">
-            <span class="w-3 text-sm font-medium text-gray-600">{{ n }}</span>
+            <span class="w-3 text-sm font-medium dark:text-gray-200 text-gray-600">{{ n }}</span>
             <div class="flex-1 bg-gray-200 rounded-full h-2 relative overflow-hidden">
               <div
                 class="bg-orange-400 h-2 rounded-full transition-all duration-300"
                 :style="{ width: getPercentage(n) + '%' }"
               ></div>
             </div>
-            <span class="text-sm text-gray-500 w-4 text-right">{{ getCount(n) }}</span>
+            <span class="text-sm text-gray-500 dark:text-gray-200 w-4 text-right">{{ getCount(n) }}</span>
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@
         <div
           v-for="rev in reviews"
           :key="rev.id"
-          class="bg-white dark:bg-[#3B3B3B] rounded-xl p-5 flex gap-4 shadow-lg shadow-gray-200 transition"
+          class="bg-white dark:bg-[#3B3B3B] rounded-xl p-5 flex gap-4 shadow-lg shadow-gray-200 dark:shadow-black transition"
         >
           <img
             :src="rev.traineeProfilePic || placeholder"

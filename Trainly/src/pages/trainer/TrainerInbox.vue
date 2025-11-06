@@ -1,5 +1,7 @@
 <template>
-  <div class="page-root flex items-start justify-center min-h-screen rounded-2xl bg-blue-100 py-6">
+  <div
+    class="page-root flex items-start justify-center min-h-screen rounded-2xl dark:bg-[#535353] bg-blue-100 py-6"
+  >
     <!-- البوكس الكبير -->
     <div
       class="inbox-wrapper w-full max-w-7xl bg-light-blue dark:bg-[#3B3B3B] rounded-2xl shadow-strong overflow-hidden flex"
@@ -17,12 +19,15 @@
         <div class="p-6 border-b border-gray-200">
           <h1 class="text-2xl font-bold dark:text-white text-gray-900 mb-4">Chats</h1>
           <div class="relative">
-            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-white text-gray-400">🔍</span>
+            <span
+              class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-white text-gray-400"
+              >🔍</span
+            >
             <input
               type="text"
               v-model="searchQuery"
               placeholder="Search clients..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full pl-10 pr-4 py-2 border text-dark dark:text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -67,7 +72,9 @@
               />
               <div class="flex-1 min-w-0 text-left">
                 <div class="flex items-center justify-between mb-1">
-                  <h3 class="font-semibold text-gray-900 dark:text-white truncate">{{ client.name }}</h3>
+                  <h3 class="font-semibold text-gray-900 dark:text-white truncate">
+                    {{ client.name }}
+                  </h3>
                   <span
                     v-if="client.lastMessageTime"
                     class="text-xs text-gray-500 flex-shrink-0 ml-2"
@@ -122,14 +129,21 @@
               class="w-10 h-10 rounded-full object-cover"
             />
             <div>
-              <div class="font-semibold dark:text-white text-gray-900 text-sm">{{ selectedClient.name }}</div>
-              <div class="text-xs dark:text-white text-gray-500">{{ selectedClient.email || "Client" }}</div>
+              <div class="font-semibold dark:text-white text-gray-900 text-sm">
+                {{ selectedClient.name }}
+              </div>
+              <div class="text-xs dark:text-white text-gray-500">
+                {{ selectedClient.email || "Client" }}
+              </div>
             </div>
           </div>
         </div>
 
         <!-- desktop header -->
-        <div v-else class="bg-white dark:bg-[#3B3B3B] border-b border-gray-200 p-4 flex items-center gap-3">
+        <div
+          v-else
+          class="bg-white dark:bg-[#3B3B3B] border-b border-gray-200 p-4 flex items-center gap-3"
+        >
           <img
             v-if="selectedClient"
             :src="
@@ -154,7 +168,7 @@
           <!-- messages container: flex-1 so it fills available height, scrolls internally -->
           <div
             ref="messagesContainer"
-            class="messages-container flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50"
+            class="messages-container flex-1 overflow-y-auto p-6 space-y-4 dark:bg-[#3b3b3b] bg-gray-50"
           >
             <div v-if="!selectedClient" class="flex-1 flex items-center justify-center">
               <div class="text-center dark:text-white text-gray-400">
@@ -208,14 +222,15 @@
                     >
                       <div
                         :class="[
-                          'message-box dark:bg-black rounded-2xl px-5 py-3 break-words',
+                          'message-box rounded-2xl px-5 py-3 break-words',
                           msg.senderId === trainerId
-                            ? 'bg-blue-600 dark:bg-[#3B3B3B] dark:text-white text-dark rounded-br-sm'
-                            : 'bg-white dark:bg-[#3B3B3B] dark:text-white text-gray-900 rounded-bl-sm',
+                            ? 'bg-blue-600 text-white dark:bg-[#090909] dark:text-white rounded-br-sm'
+                            : 'bg-white dark:bg-[#1c1c1c] dark:text-white text-gray-900 rounded-bl-sm',
                         ]"
                       >
                         <p class="text-sm whitespace-pre-wrap">{{ msg.text }}</p>
                       </div>
+
                       <p class="text-xs text-gray-500 mt-2">{{ formatTime(msg.timestamp) }}</p>
                     </div>
                     <img

@@ -1,26 +1,32 @@
 <template>
-  <div class="bg-white w-full relative p-1 mb-15">
+  <div class="bg-white dark:bg-black w-full relative p-1 mb-15">
     <!-- Header -->
     <header class="mb-6">
-      <h1 class="text-2xl font-medium text-gray-900">Manage Trainers</h1>
-      <p class="text-gray-500 mt-1">View and manage all registered trainers</p>
+      <h1 class="text-2xl font-medium dark:text-white text-gray-900">
+        Manage Trainers
+      </h1>
+      <p class="text-gray-500 dark:text-gray-300 mt-1">
+        View and manage all registered trainers
+      </p>
     </header>
 
     <!-- Search & Filter -->
     <div
       class="flex flex-col md:flex-row justify-between items-center mb-6 gap-3"
     >
-      <h2 class="text-xl font-medium text-gray-900">Trainers List</h2>
+      <h2 class="text-xl font-medium dark:text-white text-gray-900">
+        Trainers List
+      </h2>
       <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search trainers..."
-          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          class="flex-1 px-4 py-2 border dark:text-white border-gray-300 dark:bg-[#3b3b3b] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         <select
           v-model="filterStatus"
-          class="px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-left "
+          class="px-4 py-2 pr-8 border border-gray-300 dark:text-white dark:bg-[#3b3b3b] cursor-pointer rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-left"
         >
           <option value="">All Status</option>
           <option value="active">Active</option>
@@ -30,10 +36,12 @@
     </div>
 
     <!-- TABLE VIEW (desktop & tablet) -->
-    <div class="hidden sm:block overflow-x-auto bg-white shadow-lg rounded-xl">
+    <div
+      class="hidden sm:block overflow-x-auto bg-white dark:bg-[#292929] shadow-lg rounded-xl"
+    >
       <table class="min-w-full divide-y divide-gray-200 text-sm sm:text-base">
-        <thead class="bg-blue-50">
-          <tr class="text-gray-600 text-sm font-semibold">
+        <thead class="dark:bg-[#292929] bg-blue-50">
+          <tr class="text-gray-600 dark:text-white text-sm font-semibold">
             <th class="px-4 py-3 text-left">Trainer</th>
             <th class="px-4 py-3 text-left">Sport</th>
             <th class="px-4 py-3 text-left hidden md:table-cell">Email</th>
@@ -48,7 +56,7 @@
           <tr
             v-for="trainer in filteredTrainers"
             :key="trainer.id"
-            class="hover:bg-gray-50 transition-all"
+            class="hover:bg-gray-50 dark:hover:bg-gray-600 transition-all"
           >
             <!-- Trainer -->
             <td class="px-4 py-4 align-middle">
@@ -69,26 +77,30 @@
                 >
                   {{ getInitials(trainer.firstName, trainer.lastName) }}
                 </div>
-                <p class="font-medium text-gray-800 whitespace-nowrap">
+                <p
+                  class="font-medium dark:text-white text-gray-800 whitespace-nowrap"
+                >
                   {{ trainer.firstName }} {{ trainer.lastName }}
                 </p>
               </div>
             </td>
 
             <!-- Sport -->
-            <td class="px-4 py-4 text-gray-700 align-middle">
+            <td class="px-4 py-4 dark:text-white text-gray-700 align-middle">
               {{ trainer.sport || "-" }}
             </td>
 
             <!-- Email -->
             <td
-              class="px-4 py-4 text-gray-700 align-middle hidden md:table-cell"
+              class="px-4 py-4 dark:text-white text-gray-700 align-middle hidden md:table-cell"
             >
               {{ trainer.email }}
             </td>
 
             <!-- Rating -->
-            <td class="px-4 py-4 text-gray-700 align-middle text-center">
+            <td
+              class="px-4 py-4 dark:text-white text-gray-700 align-middle text-center"
+            >
               <div class="flex items-center justify-center gap-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -106,13 +118,13 @@
 
             <!-- Clients -->
             <td
-              class="px-4 py-4 text-gray-700 align-middle text-center hidden sm:table-cell"
+              class="px-4 py-4 dark:text-white text-gray-700 align-middle text-center hidden sm:table-cell"
             >
               {{ trainer.clients || 0 }}
             </td>
 
             <!-- Status -->
-            <td class="px-4 py-4 text-center align-middle">
+            <td class="px-4 py-4 text-center dark:text-white align-middle">
               <span
                 class="px-3 py-1 rounded-full text-xs sm:text-sm font-medium capitalize"
                 :class="{
@@ -129,7 +141,7 @@
             <td class="px-4 py-4 text-right align-middle relative">
               <button
                 @click="toggleMenu(trainer.id, $event)"
-                class="text-gray-500 hover:text-gray-700 hover:scale-110"
+                class="text-gray-500 dark:text-white cursor-pointer hover:text-gray-700 hover:scale-110"
               >
                 ⋮
               </button>
@@ -141,17 +153,17 @@
                   :style="dropdownStyle"
                   class="fixed w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]"
                 >
-                
-                  <button @click="goToTrainer(trainer)"
+                  <button
+                    @click="goToTrainer(trainer)"
                     class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
                   >
                     View Account
                   </button>
-                  
+
                   <button
                     v-if="trainer.status === 'pending'"
                     @click="openModal('accept', trainer)"
-                    class="block w-full text-left px-4 py-2 text-green-600 hover:bg-gray-100"
+                    class="block w-full text-left px-4 py-2 cursor-pointer text-green-600 hover:bg-gray-100"
                   >
                     Accept
                   </button>
@@ -217,7 +229,7 @@
       </div>
     </div>
 
-    <!-- Confirmation Modal -->
+    <!-- Confirmation / Delete-Reason Modal -->
     <div
       v-if="showModal"
       class="fixed inset-0 bg-black/40 backdrop-blur-[6px] flex items-center justify-center z-[9998]"
@@ -225,43 +237,52 @@
       <div
         class="bg-white/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl w-[90%] max-w-md text-center border border-gray-200"
       >
-        <template v-if="modalState === 'message'">
+        <!-- Delete reason form -->
+        <template v-if="modalType === 'delete' && modalState === 'confirm'">
           <h2 class="text-xl font-semibold mb-4 text-gray-800">
-            {{ modalMessageTitle }}
+            Delete Trainer Account
           </h2>
-          <p class="text-gray-600">{{ modalMessageText }}</p>
+          <p class="text-gray-600 mb-3">
+            Please write the reason for deleting
+            {{ selectedTrainer.firstName }}’s account:
+          </p>
+          <textarea
+            v-model="deleteReason"
+            rows="4"
+            placeholder="Type reason..."
+            class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-red-400 text-black"
+          ></textarea>
+          <div class="flex justify-center gap-3">
+            <button
+              @click="confirmAction"
+              class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white"
+            >
+              Send & Delete
+            </button>
+            <button
+              @click="closeModal"
+              class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+          </div>
         </template>
-        <template v-if="modalState === 'confirm'">
-          
+
+        <!-- Activate -->
+        <template
+          v-else-if="modalType === 'accept' && modalState === 'confirm'"
+        >
           <h2 class="text-xl font-semibold mb-4 text-gray-800">
-            {{
-              modalType === "accept"
-                ? "Activate Trainer"
-                : modalType === "suspend"
-                ? "Suspend Trainer"
-                : "Delete Trainer"
-            }}
+            Activate Trainer
           </h2>
           <p class="text-gray-600 mb-6">
-            Are you sure you want to
-            {{
-              modalType === "accept"
-                ? "activate"
-                : modalType === "suspend"
-                ? "suspend"
-                : "delete"
-            }}
-            {{ selectedTrainer.firstName }}'s account?
+            Are you sure you want to activate {{ selectedTrainer.firstName }}’s
+            account?
           </p>
           <div class="flex justify-center gap-3">
             <button
               @click="confirmAction"
-              class="px-4 py-2 rounded-lg text-white"
-              :class="{
-                'bg-green-600 hover:bg-green-700': modalType === 'accept',
-                'bg-yellow-600 hover:bg-yellow-700': modalType === 'suspend',
-                'bg-red-600 hover:bg-red-700': modalType === 'delete',
-              }"
+              class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white"
             >
               Confirm
             </button>
@@ -273,14 +294,49 @@
             </button>
           </div>
         </template>
+        <!-- Suspend -->
+        <div v-else-if="modalType === 'suspend' && modalState === 'confirm'">
+  <h2 class="text-xl font-semibold mb-4 text-gray-800">
+    Suspend Trainer Account
+  </h2>
+  <p class="text-gray-600 mb-4">
+    Please provide a reason for suspending
+    {{ selectedTrainer?.firstName }}’s account.
+  </p>
+  <textarea
+    v-model="suspendReason"
+    placeholder="Type reason..."
+    class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-black"
+    rows="3"
+  ></textarea>
+  <div class="flex justify-center gap-3">
+    <button
+      @click="confirmAction"
+      class="px-4 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white"
+    >
+      Send & Suspend
+    </button>
+    <button
+      @click="closeModal"
+      class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+
+
+        <!-- Message after action -->
+        <template v-else-if="modalState === 'message'">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">
+            {{ modalMessageTitle }}
+          </h2>
+          <p class="text-gray-600">{{ modalMessageText }}</p>
+        </template>
       </div>
     </div>
   </div>
 </template>
-
-
-
-
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
@@ -306,6 +362,10 @@ const selectedTrainer = ref(null);
 const modalState = ref("confirm");
 const modalMessageTitle = ref("");
 const modalMessageText = ref("");
+const suspendReason = ref("");
+
+// new: delete reason used in delete modal
+const deleteReason = ref("");
 
 const router = useRouter();
 const goToTrainer = (trainer) => {
@@ -321,11 +381,10 @@ const goToTrainer = (trainer) => {
   }
 
   router.push({
-    path: '/admin/trainer',
-    query: { uid: trainerId }
+    path: "/admin/trainer",
+    query: { uid: trainerId },
   });
 };
-
 
 // 🔹 تصفية المدربين
 const filteredTrainers = computed(() =>
@@ -384,42 +443,137 @@ const openModal = (type, trainer) => {
   }
 };
 
-
 // 🔹 غلق المودال
 const closeModal = () => {
   showModal.value = false;
   selectedTrainer.value = null;
+  deleteReason.value = "";
+  modalState.value = "confirm";
+  modalMessageTitle.value = "";
+  modalMessageText.value = "";
 };
 
-// 🔹 تنفيذ الإجراء
+// ------------------ helper: send email via backend ------------------
+const sendEmail = async (to, subject, message) => {
+  try {
+    const res = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, subject, message }),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      console.error("Email send failed:", res.status, text);
+      throw new Error("Email failed to send");
+    }
+  } catch (err) {
+    console.error("Email error:", err);
+    // still let caller handle it — don't block UI silently
+    throw err;
+  }
+};
+
+// 🔹 تنفيذ الإجراء (Accept / Delete / Suspend)
 const confirmAction = async () => {
   if (!selectedTrainer.value) return;
   const trainer = selectedTrainer.value;
+  const trainerRef = doc(db, "users", trainer.id);
 
   try {
     if (modalType.value === "delete") {
-      await deleteDoc(doc(db, "users", trainer.id));
+      if (!deleteReason.value.trim()) {
+        alert("Please provide a reason before sending.");
+        return;
+      }
+
+      // 1) send deletion email
+      try {
+        await sendEmail(
+          trainer.email,
+          "Your Trainer Account Has Been Deleted",
+          `Hello ${trainer.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
+        );
+      } catch (emailErr) {
+        // If email fails, warn admin but continue with deletion if desired.
+        // Here we stop and show error so admin can retry or check backend.
+        alert("Failed to send deletion email. Check console for details.");
+        console.error("Deletion email error:", emailErr);
+        return;
+      }
+
+      // 2) delete trainer doc
+      await deleteDoc(trainerRef);
       trainers.value = trainers.value.filter((t) => t.id !== trainer.id);
+
       modalMessageTitle.value = "Trainer Deleted";
-      modalMessageText.value = `${trainer.firstName}'s account has been removed.`;
+      modalMessageText.value = `${trainer.firstName}'s account has been deleted and an email has been sent.`;
+      
     } else if (modalType.value === "accept") {
-      const trainerRef = doc(db, "users", trainer.id);
+      // 1) update status
       await updateDoc(trainerRef, { status: "active" });
+      // Update local copy in trainers list if present
+      const idx = trainers.value.findIndex((t) => t.id === trainer.id);
+      if (idx !== -1) trainers.value[idx].status = "active";
+      // keep selectedTrainer in sync
       trainer.status = "active";
+
+      // 2) send activation email
+      try {
+        await sendEmail(
+          trainer.email,
+          "Your Trainer Account Has Been Activated",
+          `Hello ${trainer.firstName},\n\nYour trainer account has been successfully activated. You can now log in and start managing your sessions.\n\nBest regards,\nAdmin Team`
+        );
+      } catch (emailErr) {
+        alert("Failed to send activation email. Check console for details.");
+        console.error("Activation email error:", emailErr);
+        return;
+      }
+
       modalMessageTitle.value = "Trainer Activated";
-      modalMessageText.value = `${trainer.firstName}'s account is now active.`;
+      modalMessageText.value = `${trainer.firstName}'s account is now active and an email has been sent.`;
     } else if (modalType.value === "suspend") {
-      const trainerRef = doc(db, "users", trainer.id);
-      await updateDoc(trainerRef, { status: "pending" });
-      trainer.status = "pending";
-      modalMessageTitle.value = "Trainer Suspended";
-      modalMessageText.value = `${trainer.firstName}'s account is now pending again.`;
-    }
+  if (!suspendReason.value.trim()) return alert("Please provide a reason");
+
+  try {
+    await sendEmail(
+      trainer.email,
+      "Your Trainer Account Has Been Suspended",
+      `Hello ${trainer.firstName},\n\nYour trainer account has been suspended for the following reason:\n\n"${suspendReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest,\nAdmin Team`
+    );
+  } catch (emailErr) {
+    alert("Failed to send suspension email. Check console for details.");
+    console.error("Suspension email error:", emailErr);
+    return;
+  }
+
+  await updateDoc(trainerRef, { status: "suspended" });
+  // Update locally if needed
+  const idx = trainers.value.findIndex((t) => t.id === trainer.id);
+  if (idx !== -1) trainers.value[idx].status = "suspended";
+  trainer.status = "suspended";
+
+  modalMessageTitle.value = "Trainer Suspended";
+  modalMessageText.value = `${trainer.firstName}'s account has been suspended and an email has been sent.`;
+  suspendReason.value = "";
+}
 
     modalState.value = "message";
-    setTimeout(() => (showModal.value = false), 2000);
+    // reset delete reason after successful action
+    deleteReason.value = "";
+
+    // auto-close after short delay so admin can read message
+    setTimeout(() => {
+      showModal.value = false;
+      modalState.value = "confirm";
+      modalType.value = "";
+      selectedTrainer.value = null;
+      modalMessageTitle.value = "";
+      modalMessageText.value = "";
+    }, 2000);
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error in confirmAction:", error);
+    alert("An error occurred. Check console for details.");
   }
 };
 
