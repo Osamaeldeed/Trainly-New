@@ -175,7 +175,7 @@ const publicPages = [
   "/forgetpassword1",
   "/forgetpassword2",
   "/:pathMatch(.*)*",
-
+  "/terms",
 ];
 const traineePages = [
   "/traineehome",

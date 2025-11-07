@@ -153,17 +153,26 @@ const confirmDelete = async () => {
     );
 
     // Send email to trainee about deletion
-    await fetch("https://YOUR_BACKEND_URL/send-review-deletion-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        traineeEmail: traineeToDelete.value.email,
-        traineeName: traineeToDelete.value.name,
-        reason: deleteReason.value,
-      }),
-    });
+    try {
+      const response = await fetch("http://localhost:3000/send-account-deletion-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          traineeEmail: traineeToDelete.value.email,
+          traineeName: traineeToDelete.value.name,
+          reason: deleteReason.value.trim(),
+        }),
+      });
 
-    console.log("✅ Trainee deletion email sent successfully");
+      if (!response.ok) {
+        throw new Error('Failed to send deletion email');
+      }
+
+      console.log("✅ Trainee deletion email sent successfully");
+    } catch (emailError) {
+      console.error("❌ Error sending deletion email:", emailError);
+      // Continue with the deletion even if email fails
+    }
   } catch (error) {
     console.error("❌ Error deleting trainee or sending email:", error);
   }
@@ -173,25 +182,32 @@ const confirmDelete = async () => {
   deleteReason.value = ""; // reset reason
 };
 
-  
+
 
 
 onMounted(async () => {
   try {
+    // Fetch all users once, then filter/sort client-side to avoid Firestore index issues
     const snapshot = await getDocs(collection(db, "users"));
-    trainees.value = snapshot.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() }))
-      .filter((u) => u.role === "trainee")
-      .map((u) => ({
-        id: u.id,
-        name: `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown",
-        email: u.email || "-",
-        joined: u.createdAt
-          ? new Date(u.createdAt.seconds * 1000).toLocaleDateString()
-          : "-",
-        profilePicture: u.profilePicture || null,
-        status: u.status || "active",
-      }));
+    const users = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const traineesList = users.filter((u) => u.role === "trainee");
+
+    // sort newest -> oldest by createdAt (handle missing createdAt gracefully)
+    traineesList.sort((a, b) => {
+      const aTs = a.createdAt ? (a.createdAt.seconds || a.createdAt._seconds || 0) : 0;
+      const bTs = b.createdAt ? (b.createdAt.seconds || b.createdAt._seconds || 0) : 0;
+      return bTs - aTs;
+    });
+
+    trainees.value = traineesList.map((u) => ({
+      id: u.id,
+      name: `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown",
+      email: u.email || "-",
+      joined: u.createdAt ? new Date((u.createdAt.seconds || u.createdAt._seconds) * 1000).toLocaleDateString() : "-",
+      profilePicture: u.profilePicture || null,
+      status: u.status || "active",
+      createdAt: u.createdAt || null,
+    }));
   } catch (error) {
     console.error("Error fetching trainees:", error);
   }

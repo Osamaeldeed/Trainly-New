@@ -458,15 +458,17 @@
                   <div
                     v-for="(file, index) in certifications"
                     :key="index"
-                    class="flex items-center justify-between p-2 bg-gray-100 rounded-md text-sm mb-1"
+                    class="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-sm mb-1"
                   >
-                    <span class="flex-1 truncate">{{ file.name }}</span>
+                    <span class="flex-1 truncate text-black dark:text-white">{{ file.name }}</span>
                     <button
                       type="button"
                       @click="removeCertification(index)"
                       class="text-red-500 text-lg ml-2 hover:text-red-700"
                       @focus="errors.certificationsError = ''"
-                    ></button>
+                    >
+                      <span class="font-bold">×</span>
+                    </button>
                   </div>
                   <p class="text-xs text-gray-600 dark:text-gray-300 mt-2">
                     *You can upload files only with (PDF, JPG, PNG, JPEG).

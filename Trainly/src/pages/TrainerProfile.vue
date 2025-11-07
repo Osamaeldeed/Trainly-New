@@ -111,7 +111,7 @@
                   <span class="font-bold text-green-600 dark:text-gray-300 text-lg">{{ formatPrice(plan.price) }}</span>
                 </div>
               </div>
-              <button @click="bookPlan(plan, $event)" :disabled="bookingPlanId === plan.id || isAlreadyBooked(plan.id)" class="w-full py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold transition-all transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <button v-if="!isAdminView" @click="bookPlan(plan, $event)" :disabled="bookingPlanId === plan.id || isAlreadyBooked(plan.id)" class="w-full py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold transition-all transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                 <svg v-if="bookingPlanId === plan.id" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -169,7 +169,7 @@
             <span v-if="checkingBooking">Checking...</span>
             <span v-else>Add Review</span>
           </button>
-          <div v-else-if="!checkingBooking" class="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-3 rounded-xl text-sm flex items-center gap-2">
+          <div v-else-if="!checkingBooking && !isAdminView" class="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-3 rounded-xl text-sm flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -209,81 +209,40 @@
         </div>
       </section>
     </div>
-<!--activateanddelete-->
-  <!-- Show buttons only if admin view -->
-  <div v-if="isAdminView" class="flex gap-3">
-    <!-- 🔹 Activate Button -->
-    <button
-      @click="openModal('activate')"
-      :disabled="trainer.status === 'active'"
-      class="px-5 py-2 rounded-lg text-white font-medium"
-      :class="trainer.status === 'active'
-        ? 'bg-gray-400 cursor-not-allowed'
-        : 'bg-green-600 hover:bg-green-700 hover:cursor-pointer'"
-    >
-      Activate Account
-    </button>
-
-    <!-- 🔹 Delete Button -->
-    <button
-      @click="openModal('delete')"
-      class="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium hover:cursor-pointer"
-    >
-      Delete Account
-    </button>
-
-    <!-- 🔹 Modal -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[9999]"
-    >
+    <!-- Admin action bar (centered bottom) -->
+    <div v-if="isAdminView" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[10000]">
+      <div class="bg-white dark:bg-[#1f1f1f] px-4 py-3 rounded-xl shadow-xl flex items-center gap-3">
+        <button @click="openModal('activate')" :disabled="trainer.status === 'active'" :class="[
+            'px-4 py-2 rounded-lg text-white font-medium',
+            trainer.status === 'active' ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+          ]">
+          Activate Account
+        </button>
+        <button @click="openModal('delete')" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium">Delete Account</button>
+      </div>
+    </div>
+    <!-- Admin Confirm Modal (activate / delete) -->
+    <div v-if="showModal" class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[9999]">
       <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md shadow-2xl text-center">
         <!-- ✅ Activate Modal -->
         <div v-if="modalType === 'activate'">
           <h2 class="text-xl font-semibold mb-4 text-gray-800">Activate Trainer Account</h2>
-          <p class="text-gray-600 mb-6">
-            Are you sure you want to activate {{ trainer.firstName }}’s account?
-          </p>
+          <p class="text-gray-600 mb-6">Are you sure you want to activate {{ trainer.firstName }}’s account?</p>
           <div class="flex justify-center gap-3">
-            <button
-              @click="confirmAction"
-              class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white hover:cursor-pointer"
-            >
-              Confirm
-            </button>
-            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">
-              Cancel
-            </button>
+            <button @click="confirmAction" class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white hover:cursor-pointer">Confirm</button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">Cancel</button>
           </div>
         </div>
 
         <!-- ✅ Delete Modal -->
         <div v-else-if="modalType === 'delete'">
           <h2 class="text-xl font-semibold mb-4 text-gray-800">Delete Trainer Account</h2>
-          <p class="text-gray-600 mb-4">
-            Please provide a reason for deleting {{ trainer.firstName }}’s account.
-          </p>
-          <textarea
-            v-model="deleteReason"
-            placeholder="Type reason..."
-            class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-red-400 text-black"
-            rows="3"
-          ></textarea>
-          <div class="flex justify-center gap-3">
-            <button
-              @click="confirmAction"
-              class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white hover:cursor-pointer"
-            >
-              Send & Delete
-            </button>
-            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">
-              Cancel
-            </button>
-          </div>
+          <p class="text-gray-600 mb-4">Please provide a reason for deleting {{ trainer.firstName }}’s account.</p>
+          <textarea v-model="deleteReason" placeholder="Type reason..." class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-red-400 text-black" rows="3"></textarea>
         </div>
       </div>
     </div>
-  </div>
+
     <!-- Add Review Modal -->
     <Teleport to="body">
       <div v-if="showAddReview" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" @click.self="closeAddReview">
@@ -838,18 +797,34 @@ const closeModal = () => {
   deleteReason.value = "";
 };
 
-// 🔹 Email helper
+// 🔹 Email helper (uses backend absolute URL and returns/throws errors so callers can react)
 const sendEmail = async (to, subject, message) => {
   try {
-    const res = await fetch("/api/send-email", {
+    const res = await fetch("http://localhost:3000/api/send-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ to, subject, message }),
     });
-    if (!res.ok) throw new Error("Email failed to send");
-    console.log("✅ Email sent:", subject);
+
+    const text = await res.text().catch(() => "");
+    let body = text;
+    try {
+      body = text ? JSON.parse(text) : text;
+    } catch {
+      // not JSON
+    }
+
+    console.log("sendEmail -> status:", res.status, "body:", body);
+
+    if (!res.ok) {
+      const errMsg = (body && body.error) || (typeof body === "string" ? body : `Status ${res.status}`);
+      throw new Error(`Email failed: ${errMsg}`);
+    }
+
+    return body;
   } catch (err) {
     console.error("❌ Error sending email:", err);
+    throw err;
   }
 };
 
@@ -871,7 +846,7 @@ const confirmAction = async () => {
       await sendEmail(
         trainer.value.email,
         "Your Trainer Account Has Been Activated",
-        `Hello ${trainer.value.firstName},\n\nYour trainer account has been successfully activated.\n\nBest regards,\nAdmin Team`
+        `Hello ${trainer.value.firstName},\n\nYour trainer account has been successfully activated and you can now log in and use your account.\n\nBest regards,\nAdmin Team`
       );
 
       alert("✅ Trainer activated and email sent!");
@@ -900,6 +875,10 @@ const confirmAction = async () => {
     alert("An error occurred. Check console for details.");
   }
 };
+
+/* Admin modal for activate/delete (kept separate so buttons are in bottom bar)
+   This was moved from inline controls into a centralized modal shown when showModal is true. */
+// Modal markup will be rendered by the template via the following v-if block (inserted before Add Review Teleport)
 
 
 </script>

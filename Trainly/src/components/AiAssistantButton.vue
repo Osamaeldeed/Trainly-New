@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isTrainee" class="fixed bottom-6 right-6 z-50">
+    <div v-if="isTrainee && !isExcludedRoute" class="fixed bottom-6 right-6 z-50">
       <button
         @click="toggleChat"
         class="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#00C853] to-[#00B0FF] hover:opacity-90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110"
@@ -56,6 +56,7 @@
 
 <script>
 import { ref, onMounted, computed } from "vue";
+import { useRoute } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
@@ -67,6 +68,7 @@ export default {
     AiChatWidget,
   },
   setup() {
+    const route = useRoute();
     const isChatOpen = ref(false);
     const currentUser = ref(null);
     const userRole = ref(null);
@@ -75,6 +77,25 @@ export default {
     // Check if current user is a trainee
     const isTrainee = computed(() => {
       return userRole.value === "trainee";
+    });
+
+    // Public/excluded routes (hide button)
+    const excludedPaths = [
+      "/",
+      "/login",
+      "/signup",
+      "/terms",
+      "/terms-and-conditions",
+      "/aboutus",
+      "/contactus",
+      "/sports",
+      "/forgot-password",
+      "/reset-password",
+    ];
+
+    const isExcludedRoute = computed(() => {
+      const p = (route.path || "").toLowerCase();
+      return excludedPaths.includes(p);
     });
 
     // Toggle chat widget
@@ -108,6 +129,7 @@ export default {
     return {
       isChatOpen,
       isTrainee,
+      isExcludedRoute,
       toggleChat,
       loading,
       currentUser,
