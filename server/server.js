@@ -572,6 +572,39 @@ app.post(
 app.use(express.json());
 
 /**
+ * Generic API endpoint to send arbitrary emails from the backend.
+ * body: { to, subject, message }
+ * Note: keep this endpoint internal / protected for production. For local/dev it's convenient.
+ */
+app.post("/api/send-email", async (req, res) => {
+  try {
+    const { to, subject, message } = req.body || {};
+
+    if (!to || !subject || !message) {
+      return res.status(400).json({ error: "Missing required fields: to, subject, message" });
+    }
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to,
+      subject,
+      text: message,
+      html: `<div style="font-family: Arial, sans-serif; padding:20px;">${message
+        .split("\n")
+        .map((p) => `<p>${p}</p>`)
+        .join("")}</div>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ Email sent to ${to} (subject: ${subject})`);
+    res.json({ success: true });
+  } catch (error) {
+    console.error("❌ Error in /api/send-email:", error);
+    res.status(500).json({ error: error.message || "Failed to send email" });
+  }
+});
+
+/**
  * Helper: generate welcome message using Gemini (reused by endpoints)
  * payload: { planTitle, weeks, trainerName, trainerPhone, location }
  *
@@ -1578,6 +1611,55 @@ app.post("/api/ai/recommend-trainers", async (req, res) => {
 /**
  * Root endpoint
  */
+/**
+ * Send Account Deletion Email
+ */
+app.post("/send-account-deletion-email", async (req, res) => {
+  try {
+    const { traineeEmail, traineeName, reason } = req.body;
+
+    if (!traineeEmail || !traineeName) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: traineeEmail,
+      subject: "Account Deletion Notice - Trainly",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+          <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h1 style="color: #2563eb; margin-bottom: 20px;">Account Deletion Notice</h1>
+            
+            <div style="background-color: #fee2e2; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h2 style="color: #991b1b; margin-top: 0;">Important Information</h2>
+              <p><strong>Dear ${traineeName},</strong></p>
+              <p>We regret to inform you that your Trainly account has been deleted by the platform administration.</p>
+              ${reason ? `<p><strong>Reason for Deletion:</strong> ${reason}</p>` : ''}
+            </div>
+
+            <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px;">
+              <p style="margin-top: 0;">If you believe this was done in error or have any questions, please contact our support team.</p>
+              <p>Thank you for your understanding.</p>
+            </div>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
+              <p>This is an automated notification from Trainly</p>
+            </div>
+          </div>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("✅ Account deletion email sent successfully");
+    res.json({ success: true, message: "Email sent successfully" });
+  } catch (error) {
+    console.error("❌ Error sending account deletion email:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get("/", (req, res) => {
   res.json({
     message: "🚀 Server is running!",
