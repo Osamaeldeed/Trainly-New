@@ -62,6 +62,7 @@
           </tr>
         </tbody>
       </table>
+
     </div>
 
     <!-- Delete Confirmation Modal -->
@@ -97,6 +98,46 @@
         </div>
       </div>
     </div>
+    <!-- Mobile Cards -->
+<div class="grid grid-cols-1 gap-4 md:hidden">
+  <div
+    v-for="trainee in filteredTrainees"
+    :key="trainee.id"
+    class="border border-gray-200 rounded-xl p-4 shadow-sm bg-white dark:bg-[#292929]"
+  >
+    <div class="flex items-center gap-3 mb-3">
+      <div
+        class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold overflow-hidden"
+      >
+        <img
+          v-if="trainee.profilePicture"
+          :src="trainee.profilePicture"
+          alt="Profile"
+          class="w-full h-full object-cover"
+        />
+        <span v-else>{{ getInitials(trainee.name) }}</span>
+      </div>
+      <div>
+        <p class="font-medium dark:text-white text-gray-900">{{ trainee.name }}</p>
+        <p class="text-sm text-gray-500">{{ trainee.email }}</p>
+      </div>
+    </div>
+
+    <p class="text-sm text-gray-600 mb-2">
+      <strong>Joined:</strong> {{ trainee.joined || "-" }}
+    </p>
+
+    <div class="flex justify-end gap-2">
+      <button
+        @click="openDeleteModal(trainee)"
+        class="text-red-600 text-sm hover:underline"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
   </div>
 </template>
 
