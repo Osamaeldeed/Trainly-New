@@ -188,7 +188,7 @@
                   <ul class="space-y-2 text-blue-800">
                     <li>• {{ $t("Terms 19") }}</li>
                     <li>• {{ $t("Terms 20") }}</li>
-                    <li>• {{ $t("Terms 21") }}</li>
+                    <li>• {{ $t("terms 21") }}</li>
                     <li>• {{ $t("Terms 22") }}</li>
                   </ul>
                 </div>
