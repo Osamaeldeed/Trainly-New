@@ -506,7 +506,7 @@
       </form>
     </div>
 
-    <!-- ========= Subscription Section ========= -->
+     <!-- ========= Subscription Section ========= -->
     <div
       v-for="(sub, index) in subscriptions"
       :key="index"
@@ -692,8 +692,7 @@
     </div>
 
     <!-- MODAL: Plan chooser -->
-    
-    <div 
+    <div
       v-if="planModalOpen"
       class="fixed inset-0 flex items-center justify-center bg-black/40 z-50"
     >
@@ -1043,13 +1042,30 @@ export default {
       showNew: false,
       showRepeat: false,
 
-      // ========= Subscription Data =========
+      // subscriptions fetched from Firestore (no data changes done here)
       subscriptions: [],
-      plans: [],
+
+      // modal controls and plans (added)
       planModalOpen: false,
       planSelectedModalOpen: false,
-      cancelModalOpen: false,
+      activeSubscriptionForModal: {}, // subscription object currently being shown in modal
+      planSelectedName: null,
 
+      // available plans to show in modal
+      plans: [
+        {
+          type: "Starter",
+          price: 100,
+          description: "Ideal for trainers starting out.",
+          limit: 3,
+        },
+        {
+          type: "Pro",
+          price: 150,
+          description: "For growing trainers who need more plans.",
+          limit: 6,
+        },
+      ],
       // ========= Payment Data =========
       totalIncome: 0,
       monthlyIncome: 0,
@@ -1059,9 +1075,7 @@ export default {
       // ✅ Fix: use unique variable name for withdraw modal
       withdrawModalOpen: false,
 
-      // ========= Misc =========
-      activeSubscriptionForModal: {},
-      planSelectedName: "",
+    
     };
   },
 
@@ -1452,7 +1466,11 @@ export default {
         toast.error(error.message);
       }
     },
+  
 
+    // ===========================
+    // Plan modal helpers (UI only + localStorage persistence)
+    // ===========================
     openPlanModal(sub) {
       this.activeSubscriptionForModal = sub || {};
       this.planModalOpen = true;
@@ -1462,38 +1480,54 @@ export default {
       this.activeSubscriptionForModal = {};
     },
     selectPlanForSubscription(plan) {
+      // store selected plan in UI + localStorage for 30 days
       this.planSelectedName = plan.type;
       this.planModalOpen = false;
       this.planSelectedModalOpen = true;
+
       const expiry = new Date();
       expiry.setDate(expiry.getDate() + 30);
+
       const scheduledChange = {
         planName: plan.type,
         expiresAt: expiry.toISOString(),
       };
+
       localStorage.setItem(
         "scheduledPlanChange",
         JSON.stringify(scheduledChange)
       );
+
+      // ✅ show yellow alert immediately in the UI
       this.activeSubscriptionForModal.planChangeScheduled = true;
       this.activeSubscriptionForModal.nextPlan = plan.type;
     },
+
     closePlanSelectedModal() {
       this.planSelectedModalOpen = false;
       this.planSelectedName = null;
     },
+
+    // check if there's a scheduled plan change stored
     checkStoredPlanChange() {
       const data = localStorage.getItem("scheduledPlanChange");
       if (!data) return null;
+
       const parsed = JSON.parse(data);
       const now = new Date();
+
+      // if expired, remove it
       if (new Date(parsed.expiresAt) < now) {
         localStorage.removeItem("scheduledPlanChange");
         return null;
       }
+
+      // return plan name if still valid
       return parsed.planName;
     },
+    // cancel scheduled plan change (UI only + confirmation modal + yellow alert in card)
     cancelPlanChange() {
+      // create confirmation modal
       const modal = document.createElement("div");
       modal.classList.add(
         "fixed",
@@ -1505,6 +1539,7 @@ export default {
       );
       modal.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
       modal.style.backdropFilter = "blur(3px)";
+
       modal.innerHTML = `
     <div class="bg-white rounded-2xl shadow-xl p-8 text-center max-w-sm w-full mx-4 border border-gray-200">
       <h2 class="text-lg font-semibold text-gray-800 mb-4">
@@ -1523,27 +1558,39 @@ export default {
       </div>
     </div>
   `;
+
       document.body.appendChild(modal);
+
       const confirmBtn = document.getElementById("confirmCancelPlan");
       const closeBtn = document.getElementById("closeCancelModal");
+
       closeBtn.addEventListener("click", () => modal.remove());
+
       confirmBtn.addEventListener("click", () => {
+        // remove any previous upgrade from localStorage
         localStorage.removeItem("scheduledPlanChange");
+
+        // create a new cancel notice stored for 30 days
         const expiry = new Date();
         expiry.setDate(expiry.getDate() + 30);
+
         const cancelNotice = {
           canceled: true,
           expiresAt: expiry.toISOString(),
         };
+
         localStorage.setItem(
           "canceledPlanNotice",
           JSON.stringify(cancelNotice)
         );
+
+        // update UI immediately
         this.subscriptions.forEach((sub) => {
           sub.planChangeScheduled = false;
           sub.nextPlan = null;
           sub.cancelNotice = true;
         });
+
         modal.remove();
       });
     },
