@@ -24,7 +24,7 @@
     <!-- Desktop Table -->
     <div class="hidden md:block bg-white dark:bg-[#292929] shadow-lg rounded-xl overflow-hidden">
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-blue-50 dark:bg-[#292929] ">
+        <thead class="bg-blue-50 dark:bg-[#292929]">
           <tr>
             <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-left">Trainee</th>
             <th class="px-6 py-3 dark:text-white text-gray-600 font-medium text-center">Email</th>
@@ -39,8 +39,15 @@
             class="hover:bg-gray-50 dark:hover:bg-gray-600 transition"
           >
             <td class="px-5 py-4 flex items-center gap-3">
-              <div class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold text-sm uppercase overflow-hidden">
-                <img v-if="trainee.profilePicture" :src="trainee.profilePicture" alt="Profile" class="w-full h-full object-cover" />
+              <div
+                class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold text-sm uppercase overflow-hidden"
+              >
+                <img
+                  v-if="trainee.profilePicture"
+                  :src="trainee.profilePicture"
+                  alt="Profile"
+                  class="w-full h-full object-cover"
+                />
                 <span v-else>{{ getInitials(trainee.name) }}</span>
               </div>
               <span class="font-medium dark:text-white text-gray-900">{{ trainee.name }}</span>
@@ -65,13 +72,17 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow-xl p-6 w-[90%] max-w-sm text-center">
-        <h3 class="text-lg font-semibold dark:text-white text-gray-900 mb-3">
-          Confirm Deletion
-        </h3>
+    <div
+      v-if="showDeleteModal"
+      class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white dark:bg-[#3b3b3b] rounded-2xl shadow-xl p-6 w-[90%] max-w-sm text-center"
+      >
+        <h3 class="text-lg font-semibold dark:text-white text-gray-900 mb-3">Confirm Deletion</h3>
         <p class="text-gray-600 dark:text-gray-200 mb-3">
-          Are you sure you want to delete <strong>{{ traineeToDelete?.name }}</strong>?
+          Are you sure you want to delete <strong>{{ traineeToDelete?.name }}</strong
+          >?
         </p>
 
         <!-- Reason Input -->
@@ -97,9 +108,44 @@
         </div>
       </div>
     </div>
+    <!-- Mobile Cards -->
+    <div class="grid grid-cols-1 gap-4 md:hidden">
+      <div
+        v-for="trainee in filteredTrainees"
+        :key="trainee.id"
+        class="border border-gray-200 rounded-xl p-4 shadow-sm bg-white dark:bg-[#292929]"
+      >
+        <div class="flex items-center gap-3 mb-3">
+          <div
+            class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold overflow-hidden"
+          >
+            <img
+              v-if="trainee.profilePicture"
+              :src="trainee.profilePicture"
+              alt="Profile"
+              class="w-full h-full object-cover"
+            />
+            <span v-else>{{ getInitials(trainee.name) }}</span>
+          </div>
+          <div>
+            <p class="font-medium dark:text-white text-gray-900">{{ trainee.name }}</p>
+            <p class="text-sm text-gray-500">{{ trainee.email }}</p>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-600 mb-2">
+          <strong>Joined:</strong> {{ trainee.joined || "-" }}
+        </p>
+
+        <div class="flex justify-end gap-2">
+          <button @click="openDeleteModal(trainee)" class="text-red-600 text-sm hover:underline">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
@@ -123,11 +169,8 @@ const getInitials = (name) => {
 const filteredTrainees = computed(() =>
   trainees.value.filter((t) => {
     const q = searchQuery.value.toLowerCase();
-    return (
-      (t.name || "").toLowerCase().includes(q) ||
-      (t.email || "").toLowerCase().includes(q)
-    );
-  })
+    return (t.name || "").toLowerCase().includes(q) || (t.email || "").toLowerCase().includes(q);
+  }),
 );
 
 const openDeleteModal = (trainee) => {
@@ -148,9 +191,7 @@ const confirmDelete = async () => {
   try {
     // Delete trainee from Firestore
     await deleteDoc(doc(db, "users", traineeToDelete.value.id));
-    trainees.value = trainees.value.filter(
-      (t) => t.id !== traineeToDelete.value.id
-    );
+    trainees.value = trainees.value.filter((t) => t.id !== traineeToDelete.value.id);
 
     // Send email to trainee about deletion
     try {
@@ -165,7 +206,7 @@ const confirmDelete = async () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send deletion email');
+        throw new Error("Failed to send deletion email");
       }
 
       console.log("✅ Trainee deletion email sent successfully");
@@ -182,9 +223,6 @@ const confirmDelete = async () => {
   deleteReason.value = ""; // reset reason
 };
 
-
-
-
 onMounted(async () => {
   try {
     // Fetch all users once, then filter/sort client-side to avoid Firestore index issues
@@ -194,8 +232,8 @@ onMounted(async () => {
 
     // sort newest -> oldest by createdAt (handle missing createdAt gracefully)
     traineesList.sort((a, b) => {
-      const aTs = a.createdAt ? (a.createdAt.seconds || a.createdAt._seconds || 0) : 0;
-      const bTs = b.createdAt ? (b.createdAt.seconds || b.createdAt._seconds || 0) : 0;
+      const aTs = a.createdAt ? a.createdAt.seconds || a.createdAt._seconds || 0 : 0;
+      const bTs = b.createdAt ? b.createdAt.seconds || b.createdAt._seconds || 0 : 0;
       return bTs - aTs;
     });
 
@@ -203,7 +241,9 @@ onMounted(async () => {
       id: u.id,
       name: `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown",
       email: u.email || "-",
-      joined: u.createdAt ? new Date((u.createdAt.seconds || u.createdAt._seconds) * 1000).toLocaleDateString() : "-",
+      joined: u.createdAt
+        ? new Date((u.createdAt.seconds || u.createdAt._seconds) * 1000).toLocaleDateString()
+        : "-",
       profilePicture: u.profilePicture || null,
       status: u.status || "active",
       createdAt: u.createdAt || null,

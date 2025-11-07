@@ -245,7 +245,7 @@
 
         <div
           v-if="!(trainer.certifications && trainer.certifications.length)"
-          class="text-center py-12 bg-white rounded-xl border"
+          class="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

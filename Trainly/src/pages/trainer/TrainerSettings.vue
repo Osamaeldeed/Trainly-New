@@ -185,7 +185,7 @@
                 id="certificate"
                 type="file"
                 class="hidden"
-                @change="newCertificate = $event.target.files[0]"
+                @change="handleCertificateChange"
               />
               <label
                 for="certificate"
@@ -196,6 +196,27 @@
               <p class="text-xs dark:text-gray-300 text-gray-500 mt-2">
                 PDF, PNG, JPG, JPEG up to 10MB
               </p>
+              <!-- Upload Progress Bar -->
+              <div v-show="uploadProgress > 0" class="mt-4 w-full">
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                  <div
+                    class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                    :style="{ width: `${uploadProgress}%` }"
+                  ></div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {{ uploadProgress < 100 ? `Uploading: ${Math.round(uploadProgress)}%` : 'Upload Complete!' }}
+                </p>
+              </div>
+              <!-- Unsaved Changes Warning -->
+              <div v-if="hasUnsavedChanges" class="mt-4">
+                <p class="text-sm text-yellow-600 dark:text-yellow-400 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  Don't forget to save changes
+                </p>
+              </div>
 
               <!-- Certificate List with Remove Buttons -->
               <div
@@ -216,7 +237,7 @@
                   </a>
                   <button
                     type="button"
-                    @click="removeCertificate(index)"
+                    @click="confirmRemoveCertificate(index)"
                     class="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1 transition cursor-pointer"
                   >
                     <svg
@@ -947,6 +968,35 @@
         </div>
       </div>
 
+      <!-- Unsaved Changes Modal -->
+      <div
+        v-if="showUnsavedChangesModal"
+        class="fixed inset-0 flex items-center justify-center z-50 bg-black/40"
+      >
+        <div class="bg-white dark:bg-[#242424] rounded-xl shadow-lg p-8 max-w-sm w-full text-center border border-gray-200">
+          <h3 class="text-lg font-semibold mb-3 dark:text-white text-gray-800">
+            Unsaved Changes
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-300 mb-6">
+            You have unsaved changes. Are you sure you want to leave this page?
+          </p>
+          <div class="flex justify-center gap-4">
+            <button
+              @click="handleNavigationConfirm"
+              class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition"
+            >
+              Leave Page
+            </button>
+            <button
+              @click="handleNavigationCancel"
+              class="border border-gray-300 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-2 rounded-lg transition"
+            >
+              Stay Here
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Withdraw Modal -->
       <div
         v-if="withdrawModalOpen"
@@ -989,7 +1039,7 @@ import {
 } from "firebase/firestore";
 import {
   ref as storageRef,
-  uploadBytes,
+  uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
 import {
@@ -1002,13 +1052,19 @@ import { toast } from "vue3-toastify";
 
 export default {
   name: "TrainerSettings",
+  // component options continue below
 
   data() {
     return {
       // ===============================
       // 🧠 General Data
       // ===============================
+      hasUnsavedChanges: false,
+      uploadProgress: 0,
       userId: null,
+      originalFormData: null, // To track changes
+      showUnsavedChangesModal: false,
+      pendingNavigation: null,
       formData: {
         firstName: "",
         lastName: "",
@@ -1077,9 +1133,40 @@ export default {
     };
   },
 
+  beforeRouteLeave(to, from, next) {
+    if (this.hasUnsavedChanges) {
+      this.showUnsavedChangesModal = true;
+      this.pendingNavigation = next;
+      return;
+    }
+    next();
+  },
+
   // ===============================
   // ⚙️ Mounted Lifecycle
   // ===============================
+  watch: {
+    // Watch for changes in form data
+    'formData': {
+      handler(newVal) {
+        if (this.originalFormData) {
+          const hasChanges = Object.keys(newVal).some(key => {
+            // Ignore certifications as they have their own change handling
+            if (key === 'certifications') return false;
+            // Deep compare for objects, simple compare for primitives
+            return JSON.stringify(newVal[key]) !== JSON.stringify(this.originalFormData[key]);
+          });
+
+          if (hasChanges && !this.hasUnsavedChanges) {
+            this.hasUnsavedChanges = true;
+            toast.info("Don't forget to save your changes!");
+          }
+        }
+      },
+      deep: true
+    }
+  },
+
   async mounted() {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -1124,11 +1211,15 @@ export default {
         const docRef = doc(db, "users", this.userId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          this.formData = docSnap.data();
+          const data = docSnap.data();
+          this.formData = data;
+          // Store original data for change detection
+          this.originalFormData = JSON.parse(JSON.stringify(data));
+          this.hasUnsavedChanges = false;
         }
       } catch (error) {
         console.error("Error fetching trainer data:", error);
-        alert("An error occurred while loading your data.");
+        toast.error("An error occurred while loading your data.");
       }
     },
 
@@ -1258,6 +1349,23 @@ export default {
       this.showAllTransactions = !this.showAllTransactions;
     },
 
+    // Navigation confirmation handlers
+    handleNavigationConfirm() {
+      this.showUnsavedChangesModal = false;
+      if (this.pendingNavigation) {
+        this.pendingNavigation();
+        this.pendingNavigation = null;
+      }
+    },
+
+    handleNavigationCancel() {
+      this.showUnsavedChangesModal = false;
+      if (this.pendingNavigation) {
+        this.pendingNavigation(false);
+        this.pendingNavigation = null;
+      }
+    },
+
     // باقي الأكواد القديمة تحت هنا بدون أي تعديل
     async uploadFile(file, type) {
       if (!file) return null;
@@ -1268,7 +1376,7 @@ export default {
         "image/jpeg",
       ];
       if (!allowedTypes.includes(file.type)) {
-        alert("Only PDF, PNG, JPG, and JPEG files are allowed.");
+        toast.error("Only PDF, PNG, JPG, and JPEG files are allowed.");
         return null;
       }
       try {
@@ -1276,13 +1384,155 @@ export default {
           storage,
           `users/${this.userId}/${type}-${Date.now()}-${file.name}`
         );
-        await uploadBytes(fileRef, file);
-        return await getDownloadURL(fileRef);
+
+        // Create upload task
+        const uploadTask = uploadBytesResumable(fileRef, file);
+
+        // Return promise that resolves when upload is complete
+        return new Promise((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              // Update progress percentage
+              this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            },
+            (error) => {
+              // Handle errors
+              console.error("Upload failed:", error);
+              toast.error("File upload failed. Please try again.");
+              this.uploadProgress = 0;
+              reject(error);
+            },
+            async () => {
+              // Upload complete
+              try {
+                const url = await getDownloadURL(fileRef);
+                this.uploadProgress = 100;
+                setTimeout(() => { this.uploadProgress = 0 }, 1000); // Reset progress after 1s
+                resolve(url);
+              } catch (error) {
+                reject(error);
+              }
+            }
+          );
+        });
       } catch (error) {
         console.error("File upload failed:", error);
-        alert("File upload failed. Please try again.");
+        toast.error("File upload failed. Please try again.");
+        this.uploadProgress = 0;
         return null;
       }
+    },
+
+    // Certificate change handler
+    async handleCertificateChange(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const allowedTypes = ["application/pdf", "image/png", "image/jpg", "image/jpeg"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only PDF, PNG, JPG, and JPEG files are allowed.");
+        return;
+      }
+
+      this.uploadProgress = 0; // Reset progress
+
+      try {
+        // Upload file immediately
+        const fileRef = storageRef(
+          storage,
+          `users/${this.userId}/certificate-${Date.now()}-${file.name}`
+        );
+
+        const uploadTask = uploadBytesResumable(fileRef, file);
+
+        // Create promise to handle upload
+        const uploadResult = await new Promise((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              // Update progress
+              this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            },
+            (error) => {
+              reject(error);
+            },
+            async () => {
+              try {
+                const url = await getDownloadURL(fileRef);
+                resolve(url);
+              } catch (err) {
+                reject(err);
+              }
+            }
+          );
+        });
+
+        // After successful upload, update the UI
+        if (!this.formData.certifications) {
+          this.formData.certifications = [];
+        }
+        this.formData.certifications.push(uploadResult);
+
+        // Show save reminder after successful upload
+        this.hasUnsavedChanges = true;
+        toast.info("Certificate uploaded successfully. Don't forget to save your changes!");
+
+        // Reset progress after a short delay
+        setTimeout(() => {
+          this.uploadProgress = 0;
+        }, 1000);
+
+      } catch (error) {
+        console.error("Upload failed:", error);
+        toast.error("Failed to upload certificate. Please try again.");
+        this.uploadProgress = 0;
+      }
+    },    // Confirmation dialog for removing certificate
+    confirmRemoveCertificate(index) {
+      const confirmBox = document.createElement("div");
+      confirmBox.classList.add(
+        "fixed",
+        "inset-0",
+        "flex",
+        "items-center",
+        "justify-center",
+        "z-50"
+      );
+      confirmBox.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+      confirmBox.style.backdropFilter = "blur(3px)";
+
+      confirmBox.innerHTML = `
+        <div class="bg-white dark:bg-[#242424] rounded-2xl shadow-xl p-8 text-center max-w-sm w-full mx-4 border border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Remove Certificate
+          </h2>
+          <p class="text-gray-500 dark:text-gray-300 mb-6 text-sm">
+            Are you sure you want to remove this certificate? This action cannot be undone.
+          </p>
+          <div class="flex justify-center gap-4">
+            <button id="confirmRemove" class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition">
+              Yes, Remove
+            </button>
+            <button id="cancelRemove" class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-white px-5 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition">
+              Cancel
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(confirmBox);
+
+      const confirmBtn = document.getElementById("confirmRemove");
+      const cancelBtn = document.getElementById("cancelRemove");
+
+      cancelBtn.addEventListener("click", () => confirmBox.remove());
+      confirmBtn.addEventListener("click", async () => {
+        await this.removeCertificate(index);
+        confirmBox.remove();
+        this.hasUnsavedChanges = true;
+        toast.success("Certificate removed. Don't forget to save changes.");
+      });
     },
 
     async removeCertificate(index) {
@@ -1302,7 +1552,7 @@ export default {
     async updateTrainer() {
       try {
         if (!this.userId) {
-          alert("No user found!");
+          toast.error("No user found!");
           return;
         }
         const updateData = {};
@@ -1316,27 +1566,23 @@ export default {
             this.formData.profilePicture = photoUrl;
           }
         }
-        if (this.newCertificate) {
-          const certUrl = await this.uploadFile(
-            this.newCertificate,
-            "certificate"
-          );
-          if (certUrl) {
-            if (!this.formData.certifications)
-              this.formData.certifications = [];
-            this.formData.certifications.push(certUrl);
-            updateData.certifications = this.formData.certifications;
-          }
+
+        // No need to upload certificate here as it's already uploaded
+        if (this.formData.certifications && this.formData.certifications.length) {
+          updateData.certifications = this.formData.certifications;
         }
         Object.assign(updateData, this.formData);
         const docRef = doc(db, "users", this.userId);
         await updateDoc(docRef, updateData);
         this.newProfilePhoto = null;
         this.newCertificate = null;
-        this.showSuccessModal();
+        this.hasUnsavedChanges = false;
+        // Update original data after successful save
+        this.originalFormData = JSON.parse(JSON.stringify(this.formData));
+        toast.success("Changes saved successfully!");
       } catch (error) {
         console.error("Error updating trainer data:", error);
-        alert("An error occurred. Please try again.");
+        toast.error("An error occurred. Please try again.");
       }
     },
 

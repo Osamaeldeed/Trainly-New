@@ -200,6 +200,21 @@
         </div>
       </form>
 
+      <!-- Unsaved Changes Modal -->
+      <div
+        v-if="showUnsavedChangesModal"
+        class="fixed inset-0 flex items-center justify-center z-50 bg-black/40"
+      >
+        <div class="bg-white dark:bg-[#242424] rounded-xl shadow-lg p-8 max-w-sm w-full text-center border border-gray-200">
+          <h3 class="text-lg font-semibold mb-3 dark:text-white text-gray-800">Unsaved Changes</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-300 mb-6">You have unsaved changes. Are you sure you want to leave this page?</p>
+          <div class="flex justify-center gap-4">
+            <button @click="handleNavigationConfirm" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition">Leave Page</button>
+            <button @click="handleNavigationCancel" class="border border-gray-300 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-2 rounded-lg transition">Stay Here</button>
+          </div>
+        </div>
+      </div>
+
       <!-- ========= Security Section ========= -->
       <div
         class="w-full border border-gray-200 rounded-3xl dark:text-white shadow-xl dark:bg-[#3B3B3B] bg-white p-10"
@@ -445,6 +460,7 @@ import {
   EmailAuthProvider,
   onAuthStateChanged,
 } from "firebase/auth";
+import { toast } from "vue3-toastify";
 import { db, storage } from "@/Firebase/firebaseConfig.js";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -454,6 +470,10 @@ export default {
 
   data() {
     return {
+      hasUnsavedChanges: false,
+      originalFormData: null,
+      showUnsavedChangesModal: false,
+      pendingNavigation: null,
       userId: null,
       previewImage: null,
       formData: {
@@ -475,6 +495,15 @@ export default {
     };
   },
 
+  beforeRouteLeave(to, from, next) {
+    if (this.hasUnsavedChanges) {
+      this.showUnsavedChangesModal = true;
+      this.pendingNavigation = next;
+      return;
+    }
+    next();
+  },
+
   mounted() {
     const auth = getAuth();
     // keep auth listener as in your file (you asked not to touch password; auth check can remain)
@@ -490,6 +519,24 @@ export default {
         await this.fetchUserData();
       }
     });
+  },
+
+  watch: {
+    formData: {
+      handler(newVal) {
+        if (this.originalFormData) {
+          const hasChanges = Object.keys(newVal).some((key) => {
+            if (key === "profilePicture") return false; // file handled separately
+            return JSON.stringify(newVal[key]) !== JSON.stringify(this.originalFormData[key]);
+          });
+          if (hasChanges && !this.hasUnsavedChanges) {
+            this.hasUnsavedChanges = true;
+            toast.info("Don't forget to save your changes!");
+          }
+        }
+      },
+      deep: true,
+    },
   },
 
   methods: {
@@ -508,6 +555,9 @@ export default {
 
           const firstName = this.formData.firstName || "User";
           this.userData.name = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+          // store original snapshot for change detection
+          this.originalFormData = JSON.parse(JSON.stringify(this.formData));
+          this.hasUnsavedChanges = false;
         } else {
           console.log("No such user document found!");
         }
@@ -521,6 +571,8 @@ export default {
       const file = e.target.files[0];
       this.formData.profilePicture = file;
       this.previewImage = URL.createObjectURL(file);
+      this.hasUnsavedChanges = true;
+      toast.info("Don't forget to save your changes!");
     },
 
     // NEW: show confirm modal before performing update (same style as delete modal)
@@ -596,6 +648,10 @@ export default {
           experience: this.formData.experience,
           ...(imageUrl && { profilePicture: imageUrl }),
         });
+
+        // update original form snapshot and reset unsaved flag
+        this.originalFormData = JSON.parse(JSON.stringify(this.formData));
+        this.hasUnsavedChanges = false;
 
         // Success modal (same visual style as delete modal)
         const modal = document.createElement("div");
@@ -716,6 +772,23 @@ export default {
           alert("Failed to delete account!");
         }
       });
+    },
+
+    // Navigation confirmation handlers
+    handleNavigationConfirm() {
+      this.showUnsavedChangesModal = false;
+      if (this.pendingNavigation) {
+        this.pendingNavigation();
+        this.pendingNavigation = null;
+      }
+    },
+
+    handleNavigationCancel() {
+      this.showUnsavedChangesModal = false;
+      if (this.pendingNavigation) {
+        this.pendingNavigation(false);
+        this.pendingNavigation = null;
+      }
     },
   },
 };

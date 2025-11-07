@@ -10,8 +10,8 @@
       class="hidden md:flex items-center justify-center md:space-x-10 lg:space-x-16 font-[500] md:text-[85%] lg:text-[100%]"
     >
       <router-link to="/traineehome" class="nav-link">{{ $t("home") }}</router-link>
-      <router-link to="/aboutustrainee" class="nav-link">{{ $t("about") }}</router-link>
       <router-link to="/sportstrainee" class="nav-link">{{ $t("sports") }}</router-link>
+      <router-link to="/aboutustrainee" class="nav-link">{{ $t("about") }}</router-link>
       <router-link to="/contactustrainee" class="nav-link">{{ $t("contact") }}</router-link>
     </ul>
 

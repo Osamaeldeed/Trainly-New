@@ -26,7 +26,7 @@
             {{ $t("contactus3") }}
           </p>
 
-          <form @submit.prevent="submitForm">
+          <form @submit.prevent="sendReport">
             <div class="mb-5">
               <label class="block text-gray-700 dark:text-white text-sm font-medium mb-2">{{
                 $t("name")
@@ -35,9 +35,9 @@
                 type="text"
                 v-model="formData.name"
                 :placeholder="$t('contactus18')"
-                required
                 class="w-full px-4 py-3 bg-gray-50 text-black border border-gray-200 dark:bg-[#3B3B3B] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 dark:placeholder-gray-400"
               />
+              <p v-if="errors.name" class="text-red-500 text-xs mt-1">{{ errors.name }}</p>
             </div>
 
             <div class="mb-5">
@@ -46,11 +46,11 @@
               }}</label>
               <input
                 type="email"
-                required
                 v-model="formData.email"
                 :placeholder="$t('email')"
                 class="w-full px-4 py-3 bg-gray-50 text-black border border-gray-200 dark:bg-[#3B3B3B] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 dark:placeholder-gray-400"
               />
+              <p v-if="errors.email" class="text-red-500 text-xs mt-1">{{ errors.email }}</p>
             </div>
 
             <div class="mb-6">
@@ -61,9 +61,9 @@
                 v-model="formData.message"
                 :placeholder="$t('contactus17')"
                 rows="5"
-                required
                 class="w-full px-4 py-3 bg-gray-50 text-black border border-gray-200 dark:bg-[#3B3B3B] dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 dark:placeholder-gray-400"
               ></textarea>
+              <p v-if="errors.message" class="text-red-500 text-xs mt-1">{{ errors.message }}</p>
             </div>
 
             <button
@@ -178,41 +178,39 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Team Section -->
-      <div class="bg-white dark:bg-[#3B3B3B] rounded-2xl shadow-sm p-8">
-        <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">
-          {{ $t("contactus16") }}
-        </h2>
-
-        <div class="flex flex-wrap justify-center gap-8 md:gap-12">
-          <div v-for="member in teamMembers" :key="member.name" class="flex flex-col items-center">
-            <div
-              class="w-20 h-20 bg-gray-200 dark:bg-black rounded-full mb-3 overflow-hidden flex items-center justify-center"
-            >
-              <svg
-                class="w-12 h-12 text-gray-400 dark:text-white"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <p class="text-gray-800 dark:text-white font-medium text-sm text-center">
-              {{ member.name }}
-            </p>
-          </div>
+    <!-- Success Popup -->
+    <div
+      v-if="showPopup"
+      class="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 px-4"
+    >
+      <div
+        class="bg-white dark:bg-[#3B3B3B] p-6 rounded-2xl shadow-lg text-center w-full max-w-md animate-fadeIn"
+      >
+        <div class="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
         </div>
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Message Sent Successfully!</h3>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Your message has been sent successfully. Our team will review it soon.
+        </p>
+        <button
+          @click="showPopup = false"
+          class="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded-lg transition"
+        >
+          OK
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import emailjs from "emailjs-com";
+
 export default {
   name: "ContactUs",
   data() {
@@ -222,26 +220,87 @@ export default {
         email: "",
         message: "",
       },
-      teamMembers: [
-        { name: "Bassam Khaled" },
-        { name: "Osama Eldeeb" },
-        { name: "Ganna Ayman" },
-        { name: "Arwa Rabie" },
-        { name: "Maryam Hassan" },
-      ],
-    };
-  },
-  methods: {
-    submitForm() {
-      console.log("Form submitted:", this.formData);
-      this.formData = {
+      errors: {
         name: "",
         email: "",
         message: "",
-      };
+      },
+      showPopup: false,
+    };
+  },
+  methods: {
+    async sendReport() {
+      // Reset errors
+      this.errors = { name: "", email: "", message: "" };
+      let valid = true;
+
+      // Validation
+      if (!this.formData.name.trim()) {
+        this.errors.name = "Please enter your name";
+        valid = false;
+      }
+      if (!this.formData.email.trim()) {
+        this.errors.email = "Please enter your email";
+        valid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email)) {
+        this.errors.email = "Please enter a valid email";
+        valid = false;
+      }
+      if (!this.formData.message.trim()) {
+        this.errors.message = "Please enter your message";
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      try {
+        // Send email using EmailJS
+        await emailjs.send(
+          "service_wm84ejo", // your EmailJS service ID
+          "template_cgk08e7", // your EmailJS template ID
+          {
+            name: this.formData.name,
+            email: this.formData.email,
+            message: this.formData.message,
+          },
+          "37n0HAmFRsDDfRgJT" // your EmailJS public key
+        );
+
+        // Show success popup
+        this.showPopup = true;
+
+        // Reset form
+        this.formData = {
+          name: "",
+          email: "",
+          message: "",
+        };
+      } catch (error) {
+        console.error("EmailJS Error:", error);
+        alert("Something went wrong. Please try again later.");
+      }
     },
+  },
+  mounted() {
+    // Initialize EmailJS
+    emailjs.init("37n0HAmFRsDDfRgJT");
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+</style>

@@ -473,7 +473,7 @@
                   {{ $t("Terms 63") }}
                 </p>
                 <div class="space-y-2 dark:text-gray-200 text-gray-700">
-                  <p><strong>Email:</strong> legal@trainly.com</p>
+                  <p><strong>Email:</strong> Admin@trainly.com</p>
                   <p><strong>Phone:</strong> +1 (555) 123-4567</p>
                 </div>
               </div>
