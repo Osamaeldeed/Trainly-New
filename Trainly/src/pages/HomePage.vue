@@ -72,8 +72,8 @@
           <!-- Left Arrow (circular, vertically centered) -->
           <button
             @click="scrollLeft(sport)"
-            class="absolute -left-10 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-gray-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-20 transition-transform hover:scale-105 cursor-pointer"
-            aria-label="Scroll left "
+            class="absolute left-3 md:-left-10 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-gray-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-20 transition-transform hover:scale-105 cursor-pointer"
+            aria-label="Scroll left"
           >
             <img src="@/assets/images/left arrow.png" alt="left" class="w-4 h-4" />
           </button>

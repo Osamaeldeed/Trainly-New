@@ -4,13 +4,13 @@
   >
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
-      <h1 class="text-2xl dark:text-white  font-semibold mb-1">Manage All Reviews</h1>
-      <p class="text-gray-500 dark:text-gray-300  mb-6">
+      <h1 class="text-2xl dark:text-white font-semibold mb-1">Manage All Reviews</h1>
+      <p class="text-gray-500 dark:text-gray-300 mb-6">
         View, filter, and remove trainee reviews for trainers
       </p>
 
       <!-- Search + Rating Filter -->
-      <div class="bg-white dark:text-white dark:bg-[#3b3b3b]  rounded-lg shadow-sm p-4 mb-6">
+      <div class="bg-white dark:text-white dark:bg-[#3b3b3b] rounded-lg shadow-sm p-4 mb-6">
         <div class="flex flex-col md:flex-row gap-4 items-center">
           <!-- Search -->
           <div class="flex-1 relative">
@@ -31,7 +31,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search by trainee or trainer..."
-              class="w-full pl-10 pr-4 py-2 dark:text-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500  outline-none"
+              class="w-full pl-10 pr-4 py-2 dark:text-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
@@ -45,9 +45,7 @@
               <option v-for="n in 5" :key="n" :value="n">{{ n }} Stars</option>
             </select>
             <!-- SVG Arrow -->
-            <div
-              class="pointer-events-none absolute inset-y-0 right-3 flex items-center"
-            >
+            <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
               <svg
                 class="w-4 h-4 text-gray-400"
                 fill="none"
@@ -73,9 +71,7 @@
           :key="review.id"
           class="bg-white dark:bg-[#292929] rounded-lg shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow duration-200"
         >
-          <div
-            class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4"
-          >
+          <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <!-- Left Section: User Info + Review -->
             <div class="flex gap-4 flex-1">
               <!-- Avatar -->
@@ -99,15 +95,11 @@
               <!-- Review Content -->
               <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-2">
-                  <span
-                    class="font-semibold dark:text-white text-gray-900 text-base md:text-lg"
-                  >
+                  <span class="font-semibold dark:text-white text-gray-900 text-base md:text-lg">
                     {{ review.traineeName }}
                   </span>
                   <span class="text-gray-500 dark:text-gray-300 text-sm">reviewed</span>
-                  <span
-                    class="font-semibold text-gray-900 dark:text-white text-base md:text-lg"
-                  >
+                  <span class="font-semibold text-gray-900 dark:text-white text-base md:text-lg">
                     {{ review.trainerName }}
                   </span>
 
@@ -123,9 +115,7 @@
                         d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
                       />
                     </svg>
-                    <span class="text-[#FFA534] font-medium ml-1 text-sm">{{
-                      review.rating
-                    }}</span>
+                    <span class="text-[#FFA534] font-medium ml-1 text-sm">{{ review.rating }}</span>
                   </div>
                 </div>
 
@@ -175,13 +165,17 @@
           class="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
         >
           <div class="bg-white dark:bg-[#292929] rounded-lg shadow-xl max-w-md w-full p-6">
-            <h3 class="text-xl dark:text-white font-semibold text-gray-900 mb-4">
-              Delete Review
-            </h3>
-            <p class="text-gray-600 dark:text-gray-200 mb-6">
-              Are you sure you want to delete this review? This action cannot be
-              undone.
+            <h3 class="text-xl dark:text-white font-semibold text-gray-900 mb-4">Delete Review</h3>
+            <p class="text-gray-600 dark:text-gray-200 mb-4">
+              Please provide a reason for deleting this review. The trainee will receive an email
+              with this explanation.
             </p>
+            <textarea
+              v-model="deleteReason"
+              rows="3"
+              placeholder="Enter reason for deletion..."
+              class="w-full px-3 py-2 text-gray-700 dark:text-white border dark:bg-[#3b3b3b] rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mb-4"
+            ></textarea>
             <div class="flex gap-3 justify-end">
               <button
                 @click="cancelDelete"
@@ -191,9 +185,11 @@
               </button>
               <button
                 @click="deleteReview"
+                :disabled="!deleteReason.trim()"
                 class="px-4 py-2 bg-red-500 text-white cursor-pointer rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium"
+                :class="{ 'opacity-50 cursor-not-allowed': !deleteReason.trim() }"
               >
-                Delete
+                Send & Delete
               </button>
             </div>
           </div>
@@ -205,27 +201,28 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, getDoc, query, orderBy } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig.js";
-import axios from "axios";
+
 const reviews = ref([]);
 const searchQuery = ref("");
 const ratingFilter = ref("all");
 const showDeleteModal = ref(false);
 const reviewToDelete = ref(null);
+const deleteReason = ref("");
 
 const fetchReviews = async () => {
   try {
-    const snapshot = await getDocs(collection(db, "reviews"));
+    const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
     reviews.value = snapshot.docs.map((doc) => ({
       id: doc.id,
       comment: doc.data().comment,
       createdAt: doc.data().createdAt,
       rating: doc.data().rating,
       sessionType: doc.data().sessionType,
+      traineeId: doc.data().traineeId,
       traineeName: doc.data().traineeName,
-      traineeEmail: doc.data().traineeEmail, // ⚠️ Make sure this field exists in Firestore
-
       traineeProfilePic: doc.data().traineeProfilePic,
       trainerName: doc.data().trainerName,
       trainerProfilePic: doc.data().trainerProfilePic,
@@ -234,8 +231,6 @@ const fetchReviews = async () => {
     console.error("Error fetching reviews:", error);
   }
 };
-
-
 
 onMounted(fetchReviews);
 
@@ -247,14 +242,12 @@ const filteredReviews = computed(() => {
     filtered = filtered.filter(
       (review) =>
         review.traineeName.toLowerCase().includes(query) ||
-        review.trainerName.toLowerCase().includes(query)
+        review.trainerName.toLowerCase().includes(query),
     );
   }
 
   if (ratingFilter.value !== "all") {
-    filtered = filtered.filter(
-      (review) => review.rating === parseInt(ratingFilter.value)
-    );
+    filtered = filtered.filter((review) => review.rating === parseInt(ratingFilter.value));
   }
 
   return filtered;
@@ -267,41 +260,77 @@ const confirmDelete = (review) => {
 
 const deleteReview = async () => {
   if (reviewToDelete.value) {
+    if (!deleteReason.value.trim()) {
+      alert("Please provide a reason for deletion");
+      return;
+    }
+
     try {
       // 1️⃣ Delete from Firestore
       await deleteDoc(doc(db, "reviews", reviewToDelete.value.id));
-      reviews.value = reviews.value.filter(
-        (r) => r.id !== reviewToDelete.value.id
-      );
+      reviews.value = reviews.value.filter((r) => r.id !== reviewToDelete.value.id);
 
-      // 2️⃣ Send email to trainee
-      if (reviewToDelete.value.traineeEmail) {
+      // 2️⃣ Get trainee email from users collection
+      let traineeEmail = null;
+      if (reviewToDelete.value.traineeId) {
         try {
-          await axios.post("http://localhost:3000/api/send-email", {
-            to: reviewToDelete.value.traineeEmail,
-            subject: "Your Review Has Been Removed",
-            text: `Hello ${reviewToDelete.value.traineeName},
-
-Your review for trainer ${reviewToDelete.value.trainerName} has been removed because it violates the platform's terms or contains inappropriate language.
-
-If you believe this was a mistake, please contact our support team.
-
-Best regards,
-The Admin Team`,
-          });
-          console.log("Email sent successfully");
-        } catch (emailErr) {
-          console.error("Error sending email:", emailErr);
+          const traineeDocRef = doc(db, "users", reviewToDelete.value.traineeId);
+          const traineeDoc = await getDoc(traineeDocRef);
+          if (traineeDoc.exists()) {
+            const data = traineeDoc.data();
+            traineeEmail = data?.email || null;
+          }
+        } catch (err) {
+          console.warn("Could not fetch trainee email:", err);
         }
-      } else {
-        console.warn("No trainee email found for this review");
       }
 
-      // 3️⃣ Close modal
+      // 3️⃣ Send email to trainee if email found
+      if (traineeEmail) {
+        try {
+          const res = await fetch("http://localhost:3000/api/send-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              to: traineeEmail,
+              subject: "Your Review Has Been Removed - Trainly",
+              message: `Dear ${reviewToDelete.value.traineeName},
+
+We wanted to inform you that your review for trainer ${reviewToDelete.value.trainerName} has been removed by the platform administration for the following reason:
+
+${deleteReason.value.trim()}
+
+If you believe this was done in error or have any questions, please don't hesitate to contact our support team.
+
+Best regards,
+Trainly Admin Team`,
+            }),
+          });
+
+          if (!res.ok) {
+            throw new Error(`Failed to send email (${res.status})`);
+          }
+
+          const data = await res.json();
+          console.log("✅ Email sent successfully:", data);
+        } catch (emailErr) {
+          console.error("❌ Error sending email:", emailErr);
+          alert(
+            "Review was deleted but failed to send email notification. Check console for details.",
+          );
+        }
+      } else {
+        console.warn("⚠️ No trainee email found for this review");
+        alert("Review was deleted but couldn't find trainee email to send notification.");
+      }
+
+      // 4️⃣ Close modal & reset
       showDeleteModal.value = false;
       reviewToDelete.value = null;
+      deleteReason.value = "";
     } catch (error) {
-      console.error("Error deleting review:", error);
+      console.error("❌ Error deleting review:", error);
+      alert("Failed to delete review. Check console for details.");
     }
   }
 };
@@ -309,15 +338,12 @@ The Admin Team`,
 const cancelDelete = () => {
   showDeleteModal.value = false;
   reviewToDelete.value = null;
+  deleteReason.value = "";
 };
 
 const formatDate = (timestamp) => {
   if (!timestamp) return "";
-  const date = timestamp.seconds
-    ? new Date(timestamp.seconds * 1000)
-    : new Date(timestamp);
+  const date = timestamp.seconds ? new Date(timestamp.seconds * 1000) : new Date(timestamp);
   return date.toLocaleDateString() + " " + date.toLocaleTimeString();
 };
-
-
 </script>

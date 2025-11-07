@@ -15,14 +15,14 @@
         >{{ $t("home") }}</router-link
       >
       <router-link
-        to="/aboutus"
-        class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
-        >{{ $t("about") }}</router-link
-      >
-      <router-link
         to="/sports"
         class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
         >{{ $t("sports") }}</router-link
+      >
+      <router-link
+        to="/aboutus"
+        class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
+        >{{ $t("about") }}</router-link
       >
       <router-link
         to="/contactus"
