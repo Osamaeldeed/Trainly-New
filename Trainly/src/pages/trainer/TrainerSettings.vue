@@ -16,7 +16,7 @@
         <div
           class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
         >
-        <img :src="myImg" alt="" class="w-5 h-5" />
+          <img :src="myImg" alt="" class="w-5 h-5" />
         </div>
         <div>
           <h2 class="text-lg font-medium dark:text-white text-gray-900">
@@ -1060,6 +1060,7 @@ export default {
       // ===============================
       // 🧠 General Data
       // ===============================
+      myImg: myImg,
       hasUnsavedChanges: false,
       uploadProgress: 0,
       userId: null,
