@@ -12,10 +12,13 @@ const { nutritionPlans, greetings, findMatchingResponse } = require("./nutrition
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Initialize Firebase Admin
-const serviceAccount = require("./serviceAccountKey.json");
+// Initialize Firebase Admin - ✅ بالـ Environment Variables
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  }),
 });
 const db = admin.firestore();
 
@@ -37,6 +40,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:3000",
+       process.env.FRONTEND_URL || "https://trainly-110.netlify.app"
     ],
     credentials: true,
   })
@@ -979,8 +983,8 @@ app.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/failed`,
+      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/failed`,
       metadata: {
         purpose: "plan_booking",
         planId,

@@ -252,11 +252,7 @@
                   @click="togglePasswordVisibility"
                 >
                   <img
-                    :src="
-                      passwordVisible
-                        ? '/src/assets/images/eye off.png'
-                        : '/src/assets/images/Eye.png'
-                    "
+                    :src="passwordVisible ? eyeOffIcon : eyeIcon"
                     alt="Show/Hide"
                     class="w-full h-auto"
                   />
@@ -288,11 +284,7 @@
                   @click="toggleConfirmPasswordVisibility"
                 >
                   <img
-                    :src="
-                      confirmPasswordVisible
-                        ? '/src/assets/images/eye off.png'
-                        : '/src/assets/images/Eye.png'
-                    "
+                    :src="confirmPasswordVisible ? eyeOffIcon : eyeIcon"
                     alt="Show/Hide"
                     class="w-full h-auto"
                   />
@@ -691,6 +683,8 @@ import {
 } from "firebase/firestore";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import bgSignup from "../assets/images/signup.png";
+import eyeIcon from "../assets/images/Eye.png";
+import eyeOffIcon from "../assets/images/eye off.png";
 
 export default {
   name: "RegistrationForm",
@@ -730,6 +724,8 @@ export default {
       usernameTimeout: null,
       bgSignup,
       terms: "",
+      eyeIcon,
+      eyeOffIcon,
     };
   },
   computed: {
