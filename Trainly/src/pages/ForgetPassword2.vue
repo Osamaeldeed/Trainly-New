@@ -15,7 +15,6 @@ export default {
     logoSrc() {
       return this.isDark ? logoDark : logoLight;
     },
-    // 🕵️‍♀️ إخفاء جزء من الإيميل للخصوصية
     maskedEmail() {
       if (!this.email) return "";
       const [name, domain] = this.email.split("@");
