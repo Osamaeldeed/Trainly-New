@@ -16,7 +16,7 @@
         <div
           class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
         >
-          <img src="../../assets/images/page1.png" alt="" class="w-5 h-5" />
+        <img :src="myImg" alt="" class="w-5 h-5" />
         </div>
         <div>
           <h2 class="text-lg font-medium dark:text-white text-gray-900">
@@ -1049,6 +1049,7 @@ import {
   EmailAuthProvider,
 } from "firebase/auth";
 import { toast } from "vue3-toastify";
+import myImg from "@/assets/images/page1.png";
 
 export default {
   name: "TrainerSettings",
@@ -1070,6 +1071,7 @@ export default {
         lastName: "",
         email: "",
         gender: "",
+        myImg: myImg,
         city: "",
         country: "",
         birthdate: "",
