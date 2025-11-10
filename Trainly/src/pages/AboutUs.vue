@@ -255,7 +255,7 @@ export default {
     // Build a URL for an asset image using its filename so you can later swap by name only
     getImageUrl(filename) {
       // Direct import
-      const imagePath = `/src/assets/images/${filename}`;
+      const imagePath = `/images/${filename}`;
       try {
         // First try to return the direct path
         return imagePath;
