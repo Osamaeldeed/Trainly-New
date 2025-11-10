@@ -12,7 +12,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import i18n from "./i18n";
 import Toast from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
-import "../src/style.css";
+import "./style.css";
 
 // ----------------------------
 // ✅ استيراد صفحات الموقع

@@ -252,15 +252,8 @@ export default {
   },
   methods: {
     getImageUrl(filename) {
-      // Direct import
-      const imagePath = `/src/assets/images/${filename}`;
-      try {
-        // First try to return the direct path
-        return imagePath;
-      } catch {
-        console.warn(`Image not found: ${imagePath}`);
-        return "https://via.placeholder.com/150";
-      }
+      // Use public folder for team member images
+      return `/images/${filename}`;
     },
   },
 };

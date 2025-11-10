@@ -1,6 +1,8 @@
 <script>
 import logoLight from "@/assets/images/Project LOGO.png";
 import logoDark from "@/assets/images/LOGO for (Dark mode).png";
+import eyeIcon from "@/assets/images/Eye.png";
+import eyeOffIcon from "@/assets/images/eye off.png";
 import { getAuth, verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
 
 export default {
@@ -21,6 +23,8 @@ export default {
       },
       message: "",
       oobCode: "",
+      eyeIcon,
+      eyeOffIcon,
     };
   },
   computed: {
@@ -178,11 +182,7 @@ export default {
                   @click="togglePasswordVisibility"
                 >
                   <img
-                    :src="
-                      passwordVisible
-                        ? '/src/assets/images/eye off.png'
-                        : '/src/assets/images/Eye.png'
-                    "
+                    :src="passwordVisible ? eyeOffIcon : eyeIcon"
                     alt="Show/Hide"
                     class="w-full h-auto"
                   />
@@ -209,11 +209,7 @@ export default {
                   @click="toggleConfirmPasswordVisibility"
                 >
                   <img
-                    :src="
-                      confirmPasswordVisible
-                        ? '/src/assets/images/eye off.png'
-                        : '/src/assets/images/Eye.png'
-                    "
+                    :src="confirmPasswordVisible ? eyeOffIcon : eyeIcon"
                     alt="Show/Hide"
                     class="w-full h-auto"
                   />
