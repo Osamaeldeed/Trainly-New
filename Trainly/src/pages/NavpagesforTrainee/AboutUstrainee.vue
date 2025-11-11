@@ -241,11 +241,11 @@ export default {
   data() {
     return {
       teamMembers: [
-        // Developers: name + image filename. Replace img with your file in src/assets/images/
+        // Developers only: name + image filename. Replace img with your file in src/assets/images/
         { name: "Osama Eldeeb", img: "osama.jpg" },
-        { name: "Ganna Ayman", img: "user.png" },
+        { name: "Ganna Ayman", img: "ganna.jpeg" },
         { name: "Bassam Khaled", img: "bassam.jpg" },
-        { name: "Arwa Rabie", img: "user.png" },
+        { name: "Arwa Rabie", img: "arwa.png" },
         { name: "Maryam Hassan", img: "maryam.jpg" },
       ],
     };
