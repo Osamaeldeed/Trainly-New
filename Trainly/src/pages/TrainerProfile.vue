@@ -312,7 +312,7 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc, collection, getDocs, query, where, addDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app";
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 const route = useRoute();
 const router = useRouter();
