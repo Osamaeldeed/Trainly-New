@@ -247,7 +247,7 @@ export default {
         { name: "Ganna Ayman", img: "user.png" },
         { name: "Bassam Khaled", img: "user.png" },
         { name: "Arwa Rabie", img: "user.png" },
-        { name: "Maryam Hassan", img: "user.png" },
+        { name: "Maryam Hassan", img: "maryam.jpg" },
       ],
     };
   },
