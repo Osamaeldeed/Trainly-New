@@ -487,7 +487,7 @@ app.post(
 
                 // Call internal endpoint to send welcome message (includes planLocation)
                 const fetch = (await import("node-fetch")).default;
-                const baseUrl = process.env.BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app";
+                const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
                 await fetch(
                   `${baseUrl}/send-welcome-message`,
                   {
