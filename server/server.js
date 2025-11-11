@@ -40,7 +40,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:3000",
-       process.env.FRONTEND_URL || "https://trainly-110.netlify.app"
+      process.env.FRONTEND_URL || "https://trainly-110.netlify.app"
     ],
     credentials: true,
   })
@@ -487,10 +487,9 @@ app.post(
 
                 // Call internal endpoint to send welcome message (includes planLocation)
                 const fetch = (await import("node-fetch")).default;
+                const baseUrl = process.env.BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app";
                 await fetch(
-                  `http://localhost:${
-                    process.env.PORT || 3000
-                  }/send-welcome-message`,
+                  `${baseUrl}/send-welcome-message`,
                   {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -928,8 +927,8 @@ app.post("/create-subscription-checkout", async (req, res) => {
       mode: "subscription",
       success_url:
         success_url ||
-        `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancel_url || `http://localhost:5173/canceled`,
+        `${process.env.FRONTEND_URL || "https://trainly-110.netlify.app"}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancel_url || `${process.env.FRONTEND_URL || "https://trainly-110.netlify.app"}/canceled`,
       customer_email: trainerEmail || undefined,
       metadata: {
         purpose: "trainer_subscription",
@@ -983,8 +982,8 @@ app.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/failed`,
+      success_url: `${process.env.FRONTEND_URL || "https://trainly-110.netlify.app"}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL || "https://trainly-110.netlify.app"}/failed`,
       metadata: {
         purpose: "plan_booking",
         planId,

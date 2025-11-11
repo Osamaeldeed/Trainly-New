@@ -308,7 +308,7 @@ const closeModal = () => {
 
 const sendEmail = async (to, subject, message) => {
   try {
-    const res = await fetch("http://localhost:3000/api/send-email", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/api/send-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ to, subject, message }),

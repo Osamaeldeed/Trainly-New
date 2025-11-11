@@ -1058,7 +1058,7 @@ export default {
   name: "TrainerPlans",
   setup() {
     // ----- CONFIG: ضع هنا عنوان السيرفر بتاعك -----
-    const API_URL = "https://elenora-unexampled-carmon.ngrok-free.dev";
+    const API_URL = import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app";
     // --------------------------------------------
 
     const db = getFirestore();

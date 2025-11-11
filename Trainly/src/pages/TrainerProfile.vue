@@ -312,7 +312,7 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc, collection, getDocs, query, where, addDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
 
-const API_URL = "https://elenora-unexampled-carmon.ngrok-free.dev";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app";
 
 const route = useRoute();
 const router = useRouter();
@@ -800,7 +800,7 @@ const closeModal = () => {
 // 🔹 Email helper (uses backend absolute URL and returns/throws errors so callers can react)
 const sendEmail = async (to, subject, message) => {
   try {
-    const res = await fetch("http://localhost:3000/api/send-email", {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/api/send-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ to, subject, message }),
