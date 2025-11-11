@@ -244,7 +244,7 @@ export default {
         // Developers: name + image filename. Replace img with your file in src/assets/images/
         { name: "Osama Eldeeb", img: "osama.jpg" },
         { name: "Ganna Ayman", img: "user.png" },
-        { name: "Bassam Khaled", img: "user.png" },
+        { name: "Bassam Khaled", img: "bassam.jpg" },
         { name: "Arwa Rabie", img: "user.png" },
         { name: "Maryam Hassan", img: "maryam.jpg" },
       ],
