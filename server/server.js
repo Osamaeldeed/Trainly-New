@@ -12,14 +12,40 @@ const { nutritionPlans, greetings, findMatchingResponse } = require("./nutrition
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Initialize Firebase Admin - ✅ بالـ Environment Variables
-admin.initializeApp({
-  credential: admin.credential.cert({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  }),
-});
+// Initialize Firebase Admin
+let serviceAccountKey;
+
+try {
+  // Try to use individual env vars first
+  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+    serviceAccountKey = {
+      type: "service_account",
+      project_id: process.env.FIREBASE_PROJECT_ID,
+      private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      client_email: process.env.FIREBASE_CLIENT_EMAIL,
+    };
+    console.log('✅ Using Firebase credentials from environment variables');
+  } 
+  // Fallback: try JSON string
+  else if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    serviceAccountKey = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    console.log('✅ Using Firebase credentials from JSON string');
+  }
+  // Last resort: throw error
+  else {
+    throw new Error('Firebase credentials not found in environment variables');
+  }
+
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccountKey),
+  });
+  
+  console.log('✅ Firebase Admin initialized successfully');
+} catch (error) {
+  console.error('❌ Firebase Admin initialization failed:', error.message);
+  process.exit(1);
+}
+
 const db = admin.firestore();
 
 // Configure email transporter (Gmail)
