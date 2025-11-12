@@ -447,7 +447,7 @@ app.post(
                       planId: booking.planId,
                       trainerId: booking.trainerId,
                       amount: booking.amount,
-                      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                      createdAt: new Date().toISOString(),
                     }),
                   },
                   { merge: true }
@@ -468,7 +468,7 @@ app.post(
                       traineeId: traineeId,
                       bookingId: bookingRef.id,
                       planId: booking.planId,
-                      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                      createdAt: new Date().toISOString(),
                     }),
                     earnings: admin.firestore.FieldValue.increment(
                       booking.amount
