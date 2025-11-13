@@ -1093,7 +1093,7 @@ export default {
               hour12: true,
             });
 
-            await fetch(`${import.meta.env.VITE_API_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/send-trainer-registration-email`, {
+            await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/send-trainer-registration-email`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
