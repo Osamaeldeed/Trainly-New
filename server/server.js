@@ -901,24 +901,16 @@ app.post("/send-trainer-registration-email", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // ✅ رد فوراً بدون انتظار الـ email
-    res.json({ success: true, message: "Registration notification queued" });
-
-    // بعت الـ email في background (async)
-    sendNewTrainerEmail({
+    await sendNewTrainerEmail({
       trainerName,
       sport,
       registrationDate,
-    }).catch(err => {
-      console.error("❌ Background email error:", err);
     });
 
+    res.json({ success: true, message: "Email sent successfully" });
   } catch (error) {
-    console.error("❌ Error in registration endpoint:", error);
-    // لو حصل error قبل الـ response، نرد
-    if (!res.headersSent) {
-      res.status(500).json({ error: error.message });
-    }
+    console.error("❌ Error sending trainer registration email:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
