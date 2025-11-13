@@ -48,14 +48,18 @@ try {
 
 const db = admin.firestore();
 
-// Configure email transporter (Gmail)
+// Configure email transporter (Resend for Railway - Gmail SMTP blocked)
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: 'smtp.resend.com',
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: 'resend',
+    pass: process.env.RESEND_API_KEY,
   },
 });
+
+console.log('📧 Email configured with Resend (Railway compatible)');
 
 const app = express();
 
@@ -143,7 +147,7 @@ function getSportEmojisFromTitle(title = "") {
 // Helper function to send subscription email
 async function sendSubscriptionEmail(subscriptionData) {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: 'Trainly <onboarding@resend.dev>',
     to: "osamaeldeeb728@gmail.com",
     subject: "🎉 New Subscription - Training Platform",
     html: `
@@ -202,7 +206,7 @@ async function sendSubscriptionEmail(subscriptionData) {
 // Helper function to send new trainer registration email
 async function sendNewTrainerEmail(trainerData) {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: 'Trainly <onboarding@resend.dev>',
     to: "osamaeldeeb728@gmail.com",
     subject: "👤 New Trainer Registration - Trainly",
     html: `
@@ -614,7 +618,7 @@ app.post("/api/send-email", async (req, res) => {
     }
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: 'Trainly <onboarding@resend.dev>',
       to,
       subject,
       text: message,
@@ -1652,7 +1656,7 @@ app.post("/send-account-deletion-email", async (req, res) => {
     }
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: 'Trainly <onboarding@resend.dev>',
       to: traineeEmail,
       subject: "Account Deletion Notice - Trainly",
       html: `
