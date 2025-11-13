@@ -51,12 +51,18 @@ const db = admin.firestore();
 // Configure email transporter (Resend for Railway - Gmail SMTP blocked)
 const transporter = nodemailer.createTransport({
   host: 'smtp.resend.com',
-  port: 465,
-  secure: true,
+  port: 2587,  // ✅ جرب 2587 لو 587 مش شغال
+  secure: false,
   auth: {
     user: 'resend',
     pass: process.env.RESEND_API_KEY,
   },
+  tls: {
+    rejectUnauthorized: true,
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 });
 
 console.log('📧 Email configured with Resend (Railway compatible)');
