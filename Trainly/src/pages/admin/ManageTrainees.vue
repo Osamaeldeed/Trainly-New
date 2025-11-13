@@ -195,7 +195,7 @@ const confirmDelete = async () => {
 
     // Send email to trainee about deletion
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/send-account-deletion-email`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/send-account-deletion-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
