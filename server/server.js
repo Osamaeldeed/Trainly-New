@@ -660,10 +660,8 @@ app.post("/api/send-email", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields: to, subject, message" });
     }
 
-    const html = `<div style="font-family: Arial, sans-serif; padding:20px;">${message
-      .split("\n")
-      .map((p) => `<p>${p}</p>`)
-      .join("")}</div>`;
+    const escapedMessage = message.replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, '&#39;').replace(/\n/g, '<br>');
+    const html = `<div style="font-family: Arial, sans-serif; padding:20px;">${escapedMessage}</div>`;
 
     await sendEmailWithBrevo(to, subject, html);
 
@@ -1680,6 +1678,34 @@ app.post("/api/ai/recommend-trainers", async (req, res) => {
 });
 
 /**
+ * Delete User from Firebase Auth
+ */
+app.post("/delete-user", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
+
+    // Delete from Firebase Authentication
+    try {
+      await admin.auth().deleteUser(userId);
+      console.log("✅ Deleted user from Firebase Authentication");
+    } catch (error) {
+      console.warn("⚠️ Could not delete from Firebase Auth:", error.message);
+      // Return error if Auth deletion fails, as it's critical
+      return res.status(500).json({ error: `Failed to delete from Firebase Auth: ${error.message}` });
+    }
+
+    res.json({ success: true, message: "User deleted from Firebase Authentication" });
+  } catch (error) {
+    console.error("❌ Error deleting user:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * Send Account Deletion Email
  */
 app.post("/send-account-deletion-email", async (req, res) => {
@@ -1694,7 +1720,7 @@ app.post("/send-account-deletion-email", async (req, res) => {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
         <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
           <h1 style="color: #2563eb; margin-bottom: 20px;">Account Deletion Notice</h1>
-          
+
           <div style="background-color: #fee2e2; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h2 style="color: #991b1b; margin-top: 0;">Important Information</h2>
             <p><strong>Dear ${traineeName},</strong></p>
