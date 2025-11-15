@@ -347,6 +347,36 @@ const confirmAction = async () => {
       await sendEmail(trainer.email, "Your Trainer Account Has Been Deleted", `Hello ${trainer.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nTrainly Team`);
       await deleteDoc(trainerRef);
       trainers.value = trainers.value.filter((t) => t.id !== trainer.id);
+
+      // Delete from Firestore usernames collection
+      try {
+        await deleteDoc(doc(db, "usernames", trainer.id));
+        console.log("✅ Trainer deleted from usernames collection");
+      } catch (usernamesError) {
+        console.error("❌ Error deleting from usernames collection:", usernamesError);
+        // Continue with the deletion even if usernames delete fails
+      }
+
+      // Delete from Firebase Auth
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/delete-user`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: trainer.id,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to delete user from Auth");
+        }
+
+        console.log("✅ Trainer deleted from Firebase Auth");
+      } catch (authError) {
+        console.error("❌ Error deleting from Firebase Auth:", authError);
+        // Continue with the deletion even if Auth delete fails
+      }
+
       modalMessageTitle.value = "Trainer Deleted";
       modalMessageText.value = `${trainer.firstName}'s account has been deleted and an email has been sent.`;
 

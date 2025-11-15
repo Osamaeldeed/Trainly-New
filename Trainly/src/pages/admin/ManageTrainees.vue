@@ -189,9 +189,18 @@ const confirmDelete = async () => {
   }
 
   try {
-    // Delete trainee from Firestore
+    // Delete trainee from Firestore users collection
     await deleteDoc(doc(db, "users", traineeToDelete.value.id));
     trainees.value = trainees.value.filter((t) => t.id !== traineeToDelete.value.id);
+
+    // Delete from Firestore usernames collection
+    try {
+      await deleteDoc(doc(db, "usernames", traineeToDelete.value.id));
+      console.log("✅ Trainee deleted from usernames collection");
+    } catch (usernamesError) {
+      console.error("❌ Error deleting from usernames collection:", usernamesError);
+      // Continue with the deletion even if usernames delete fails
+    }
 
     // Send email to trainee about deletion
     try {
@@ -213,6 +222,26 @@ const confirmDelete = async () => {
     } catch (emailError) {
       console.error("❌ Error sending deletion email:", emailError);
       // Continue with the deletion even if email fails
+    }
+
+    // Delete from Firebase Auth
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/delete-user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: traineeToDelete.value.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete user from Auth");
+      }
+
+      console.log("✅ Trainee deleted from Firebase Auth");
+    } catch (authError) {
+      console.error("❌ Error deleting from Firebase Auth:", authError);
+      // Continue with the deletion even if Auth delete fails
     }
   } catch (error) {
     console.error("❌ Error deleting trainee or sending email:", error);

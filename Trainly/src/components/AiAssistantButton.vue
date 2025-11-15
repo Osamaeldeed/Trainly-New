@@ -39,17 +39,15 @@
         </svg>
       </button>
       <!-- AI Assistant Label -->
-      <div class="absolute -top-1 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+      <div
+        class="absolute -top-1 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity pointer-events-none"
+      >
         AI Assistant
       </div>
     </div>
     <!-- Chat Widget -->
     <Teleport to="body">
-      <AiChatWidget
-        v-if="isTrainee"
-        :is-open="isChatOpen"
-        @close="isChatOpen = false"
-      />
+      <AiChatWidget v-if="isTrainee" :is-open="isChatOpen" @close="isChatOpen = false" />
     </Teleport>
   </div>
 </template>
@@ -91,6 +89,12 @@ export default {
       "/sports",
       "/forgot-password",
       "/reset-password",
+      "/success",
+      "/failed",
+      "/resetpassword",
+      "/resetpassword2",
+      "/forgetpassword1",
+      "/forgetpassword2",
     ];
 
     const isExcludedRoute = computed(() => {
@@ -141,4 +145,3 @@ export default {
 <style scoped>
 /* Additional styles if needed */
 </style>
-
