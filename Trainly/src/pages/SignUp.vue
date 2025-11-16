@@ -973,6 +973,8 @@ export default {
       // Append new files to existing array
       this.certifications = [...this.certifications, ...validFiles];
       this.certificationsError = "";
+      // Show success toast
+      this.$toast.success("Certificate(s) added successfully!");
     },
     removeCertification(index) {
       this.certifications.splice(index, 1);

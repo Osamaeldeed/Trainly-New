@@ -212,16 +212,24 @@
     <!-- Admin action bar (centered bottom) -->
     <div v-if="isAdminView" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[10000]">
       <div class="bg-white dark:bg-[#1f1f1f] px-4 py-3 rounded-xl shadow-xl flex items-center gap-3">
-        <button @click="openModal('activate')" :disabled="trainer.status === 'active'" :class="[
+        <button v-if="trainer.status !== 'active'" @click="activateAccount" :disabled="activating" :class="[
             'px-4 py-2 rounded-lg text-white font-medium',
-            trainer.status === 'active' ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+            activating ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 cursor-pointer'
           ]">
-          Activate Account
+          <span v-if="activating">Activating...</span>
+          <span v-else>Activate Account</span>
         </button>
-        <button @click="openModal('delete')" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium">Delete Account</button>
+        <button v-if="trainer.status === 'active'" @click="openModal('suspend')" :disabled="suspending" :class="[
+            'px-4 py-2 rounded-lg text-white font-medium',
+            suspending ? 'bg-gray-400 cursor-not-allowed' : 'bg-yellow-600 hover:bg-yellow-700 cursor-pointer'
+          ]">
+          <span v-if="suspending">Suspending...</span>
+          <span v-else>Suspend Account</span>
+        </button>
+        <button @click="openModal('delete')" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium cursor-pointer">Delete Account</button>
       </div>
     </div>
-    <!-- Admin Confirm Modal (activate / delete) -->
+    <!-- Admin Confirm Modal (activate / delete / suspend) -->
     <div v-if="showModal" class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[9999]">
       <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md shadow-2xl text-center">
         <!-- ✅ Activate Modal -->
@@ -239,6 +247,21 @@
           <h2 class="text-xl font-semibold mb-4 text-gray-800">Delete Trainer Account</h2>
           <p class="text-gray-600 mb-4">Please provide a reason for deleting {{ trainer.firstName }}’s account.</p>
           <textarea v-model="deleteReason" placeholder="Type reason..." class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-red-400 text-black" rows="3"></textarea>
+          <div class="flex justify-center gap-3">
+            <button @click="confirmAction" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white hover:cursor-pointer">Send & Delete</button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">Cancel</button>
+          </div>
+        </div>
+
+        <!-- ✅ Suspend Modal -->
+        <div v-else-if="modalType === 'suspend'">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">Suspend Trainer Account</h2>
+          <p class="text-gray-600 mb-4">Please provide a reason for suspending {{ trainer.firstName }}’s account.</p>
+          <textarea v-model="suspendReason" placeholder="Type reason..." class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-black" rows="3"></textarea>
+          <div class="flex justify-center gap-3">
+            <button @click="confirmAction" class="px-4 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white hover:cursor-pointer">Confirm</button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -311,6 +334,7 @@ import { useRoute, useRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, collection, getDocs, query, where, addDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
+import { toast } from "vue3-toastify";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
@@ -339,6 +363,8 @@ const checkingBooking = ref(false);
 const addingReview = ref(false);
 const creatingConversation = ref(false);
 const newReview = ref({ reviewerName: "", rating: 5, comment: "", phone: "", sessionType: "" });
+const activating = ref(false);
+const suspending = ref(false);
 
 const avgRatingDisplay = computed(() => avgRating.value !== null ? avgRating.value.toFixed(1) : "N/A");
 const canSubmitReview = computed(() => newReview.value.reviewerName.trim() && newReview.value.comment.trim());
@@ -784,8 +810,9 @@ const submitReview = async () => {
 
 // 🔹 Reactive state
 const showModal = ref(false);
-const modalType = ref(""); // 'activate' or 'delete'
+const modalType = ref(""); // 'activate', 'delete', or 'suspend'
 const deleteReason = ref("");
+const suspendReason = ref("");
 
 // 🔹 Modal controls
 const openModal = (type) => {
@@ -795,6 +822,7 @@ const openModal = (type) => {
 const closeModal = () => {
   showModal.value = false;
   deleteReason.value = "";
+  suspendReason.value = "";
 };
 
 // 🔹 Email helper (uses backend absolute URL and returns/throws errors so callers can react)
@@ -849,32 +877,109 @@ const confirmAction = async () => {
         `Hello ${trainer.value.firstName},\n\nYour trainer account has been successfully activated and you can now log in and use your account.\n\nBest regards,\nAdmin Team`
       );
 
-      alert("✅ Trainer activated and email sent!");
+      toast.success("Trainer activated and email sent!", { position: "top-center", autoClose: 2000 });
     }
 
-    if (modalType.value === "delete") {
-      if (!deleteReason.value.trim()) return alert("Please provide a reason before deleting.");
+if (modalType.value === "delete") {
+  if (!deleteReason.value.trim()) return toast.error("Please provide a reason for deletion.", { position: "top-center", autoClose: 2000 });
 
-      // 1️⃣ Send email first
+  // 1️⃣ Send email first
+  await sendEmail(
+    trainer.value.email,
+    "Your Trainer Account Has Been Deleted",
+    `Hello ${trainer.value.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
+  );
+
+  // 2️⃣ Delete from Firestore
+  await deleteDoc(trainerRef);
+
+  // 3️⃣ Delete from usernames collection
+  try {
+    await deleteDoc(doc(db, "usernames", trainer.value.id));
+    console.log("✅ Trainer deleted from usernames collection");
+  } catch (usernamesError) {
+    console.error("❌ Error deleting from usernames collection:", usernamesError);
+  }
+
+  // 4️⃣ Delete from Firebase Auth
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/delete-user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: trainer.value.id,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete user from Auth");
+    }
+
+    console.log("✅ Trainer deleted from Firebase Auth");
+  } catch (authError) {
+    console.error("❌ Error deleting from Firebase Auth:", authError);
+  }
+
+  // 5️⃣ Show success message and redirect
+  toast.success("Account deleted successfully.", { position: "top-center", autoClose: 1500 });
+
+  // Close modal and redirect after short delay
+  closeModal();
+  setTimeout(() => {
+    router.push("/admin/managetrainers"); // ✅ المسار الصحيح
+  }, 1500);
+
+  return; // Exit early to prevent closing modal twice
+}
+
+    if (modalType.value === "suspend") {
+      if (!suspendReason.value.trim()) return alert("Please provide a reason before suspending.");
+
+      // 1️⃣ Update Firestore
+      await updateDoc(trainerRef, { status: "suspended" });
+
+      // 2️⃣ Send email
       await sendEmail(
         trainer.value.email,
-        "Your Trainer Account Has Been Deleted",
-        `Hello ${trainer.value.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
+        "Your Trainer Account Has Been Suspended",
+        `Hello ${trainer.value.firstName},\n\nYour trainer account has been suspended for the following reason:\n\n"${suspendReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
       );
 
-      // 2️⃣ Delete from Firestore
-      await deleteDoc(trainerRef);
-
-      alert("✅ Trainer deleted and email sent!");
-      router.push("/admin/trainers");
+      trainer.value.status = "suspended";
+      toast.success("Trainer suspended and email sent!", { position: "top-center", autoClose: 2000 });
     }
 
     closeModal();
   } catch (err) {
     console.error("❌ confirmAction error:", err);
-    alert("An error occurred. Check console for details.");
+    toast.error("An error occurred. Check console for details.", { position: "top-center", autoClose: 2000 });
+  } finally {
+    closeModal();
   }
 };
+
+const activateAccount = async () => {
+  if (activating.value) return;
+  activating.value = true;
+  try {
+    const trainerRef = doc(db, "users", trainer.value.id);
+    await updateDoc(trainerRef, { status: "active" });
+    await sendEmail(
+      trainer.value.email,
+      "Your Trainer Account Has Been Activated",
+      `Hello ${trainer.value.firstName},\n\nYour trainer account has been successfully activated and you can now log in and use your account.\n\nBest regards,\nAdmin Team`
+    );
+    trainer.value.status = "active";
+    toast.success("Trainer activated and email sent!", { position: "top-center", autoClose: 2000 });
+  } catch (err) {
+    console.error("❌ activateAccount error:", err);
+    toast.error("An error occurred. Check console for details.", { position: "top-center", autoClose: 2000 });
+  } finally {
+    activating.value = false;
+  }
+};
+
+
 
 /* Admin modal for activate/delete (kept separate so buttons are in bottom bar)
    This was moved from inline controls into a centralized modal shown when showModal is true. */
