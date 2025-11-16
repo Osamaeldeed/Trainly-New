@@ -114,6 +114,27 @@ async function sendEmailWithBrevo(to, subject, html, replyTo) {
   }
 }
 
+/**
+ * createTrainlyEmailTemplate - unified HTML template for all Trainly emails
+ * @param {string} title - email title
+ * @param {string} content - main content HTML
+ * @param {string} [footerText] - optional custom footer text
+ */
+function createTrainlyEmailTemplate(title, content, footerText = "This is an automated notification from Trainly") {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h1 style="color: #2563eb; margin-bottom: 20px; text-align: center; font-size: 24px;">${title}</h1>
+        ${content}
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 14px;">
+          <p style="margin: 0;">${footerText}</p>
+          <p style="margin: 10px 0 0 0; font-weight: bold; color: #2563eb;">Trainly</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 console.log('📧 Email configured to use Brevo (Sendinblue) API (Railway compatible)');
 
 const app = express();
@@ -201,44 +222,36 @@ function getSportEmojisFromTitle(title = "") {
 
 // Helper function to send subscription email
 async function sendSubscriptionEmail(subscriptionData) {
-  const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <h1 style="color: #2563eb; margin-bottom: 20px;">🎉 New Subscription!</h1>
-        
-        <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-          <h2 style="color: #1e40af; margin-top: 0;">Trainer Information</h2>
-          <p><strong>Name:</strong> ${subscriptionData.trainerName || "N/A"}</p>
-          <p><strong>Email:</strong> ${subscriptionData.trainerEmail || "N/A"}</p>
-          <p><strong>Trainer ID:</strong> ${subscriptionData.trainerUid}</p>
-        </div>
+  const content = `
+    <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <h2 style="color: #1e40af; margin-top: 0;">👨‍🏫 Trainer Information</h2>
+      <p><strong>Name:</strong> ${subscriptionData.trainerName || "N/A"}</p>
+      <p><strong>Email:</strong> ${subscriptionData.trainerEmail || "N/A"}</p>
+      <p><strong>Trainer ID:</strong> ${subscriptionData.trainerUid}</p>
+    </div>
 
-        <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-          <h2 style="color: #15803d; margin-top: 0;">Subscription Details</h2>
-          <p><strong>Plan Type:</strong> ${subscriptionData.planType}</p>
-          <p><strong>Plan Limit:</strong> ${subscriptionData.planLimit} plans</p>
-          <p><strong>Price:</strong> $${subscriptionData.price}/month</p>
-          <p><strong>Status:</strong> <span style="color: #15803d; font-weight: bold;">ACTIVE</span></p>
-        </div>
+    <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <h2 style="color: #15803d; margin-top: 0;">✅ Subscription Details</h2>
+      <p><strong>Plan Type:</strong> ${subscriptionData.planType}</p>
+      <p><strong>Plan Limit:</strong> ${subscriptionData.planLimit} plans</p>
+      <p><strong>Price:</strong> $${subscriptionData.price}/month</p>
+      <p><strong>Status:</strong> <span style="color: #15803d; font-weight: bold;">ACTIVE 🎉</span></p>
+    </div>
 
-        <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px;">
-          <h2 style="color: #92400e; margin-top: 0;">Payment Information</h2>
-          <p><strong>Stripe Session ID:</strong> ${subscriptionData.stripeSessionId || "N/A"}</p>
-          <p><strong>Stripe Subscription ID:</strong> ${subscriptionData.stripeSubscriptionId || "N/A"}</p>
-          <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-        </div>
-
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
-          <p>This is an automated notification from your Training Platform</p>
-        </div>
-      </div>
+    <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px;">
+      <h2 style="color: #92400e; margin-top: 0;">💳 Payment Information</h2>
+      <p><strong>Stripe Session ID:</strong> ${subscriptionData.stripeSessionId || "N/A"}</p>
+      <p><strong>Stripe Subscription ID:</strong> ${subscriptionData.stripeSubscriptionId || "N/A"}</p>
+      <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
     </div>
   `;
+
+  const html = createTrainlyEmailTemplate("🎉 New Subscription!", content, "This is an automated notification from your Training Platform");
 
   try {
     await sendEmailWithBrevo(
       "osamaeldeeb728@gmail.com",
-      "🎉 New Subscription - Training Platform",
+      "🎉 New Subscription - Trainly",
       html
     );
     console.log("✅ Subscription email sent successfully");
@@ -249,29 +262,21 @@ async function sendSubscriptionEmail(subscriptionData) {
 
 // Helper function to send new trainer registration email
 async function sendNewTrainerEmail(trainerData) {
-  const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <h1 style="color: #2563eb; margin-bottom: 20px;">👤 New Trainer Registration</h1>
-        
-        <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-          <h2 style="color: #1e40af; margin-top: 0;">Trainer Information</h2>
-          <p><strong>Name:</strong> ${trainerData.trainerName}</p>
-          <p><strong>Registration Date:</strong> ${trainerData.registrationDate}</p>
-          <p><strong>Sport:</strong> ${trainerData.sport}</p>
-        </div>
+  const content = `
+    <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <h2 style="color: #1e40af; margin-top: 0;">👨‍🏫 Trainer Information</h2>
+      <p><strong>Name:</strong> ${trainerData.trainerName}</p>
+      <p><strong>Registration Date:</strong> ${trainerData.registrationDate}</p>
+      <p><strong>Sport:</strong> ${trainerData.sport}</p>
+    </div>
 
-        <div style="margin-top: 30px; padding: 20px; background-color: #fef3c7; border-radius: 8px; text-align: center;">
-          <p style="margin: 0; color: #92400e; font-weight: bold;">A new trainer has signed up on your Trainly platform!</p>
-          <p style="margin: 10px 0 0 0; color: #92400e;">Please review their account to approve it</p>
-        </div>
-
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
-          <p>This is an automated notification from Trainly</p>
-        </div>
-      </div>
+    <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; text-align: center;">
+      <p style="margin: 0; color: #92400e; font-weight: bold;">A new trainer has signed up on your Trainly platform! 🎉</p>
+      <p style="margin: 10px 0 0 0; color: #92400e;">Please review their account to approve it</p>
     </div>
   `;
+
+  const html = createTrainlyEmailTemplate("👤 New Trainer Registration!", content, "This is an automated notification from Trainly");
 
   try {
     await sendEmailWithBrevo(
@@ -660,8 +665,54 @@ app.post("/api/send-email", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields: to, subject, message" });
     }
 
+    // Detect email type from subject (case-insensitive)
+    const subjectLower = subject.toLowerCase();
+    let emailType = "general";
+    if (subjectLower.includes("activation") || subjectLower.includes("activate")) {
+      emailType = "activation";
+    } else if (subjectLower.includes("suspend") || subjectLower.includes("suspension")) {
+      emailType = "suspension";
+    } else if (subjectLower.includes("delete") || subjectLower.includes("deletion")) {
+      emailType = "deletion";
+    }
+
+    // Escape the message for HTML
     const escapedMessage = message.replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, '&#39;').replace(/\n/g, '<br>');
-    const html = `<div style="font-family: Arial, sans-serif; padding:20px;">${escapedMessage}</div>`;
+
+    // Create styled content based on email type
+    let styledContent = "";
+    switch (emailType) {
+      case "activation":
+        styledContent = `
+          <div style="background-color: #d1fae5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: #065f46; margin-top: 0;">✅ Account Activated</h2>
+            <p style="margin-bottom: 0;">${escapedMessage}</p>
+          </div>
+        `;
+        break;
+      case "suspension":
+        styledContent = `
+          <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: #92400e; margin-top: 0;">⚠️ Account Suspended</h2>
+            <p style="margin-bottom: 0;">${escapedMessage}</p>
+          </div>
+        `;
+        break;
+      case "deletion":
+        styledContent = `
+          <div style="background-color: #fee2e2; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: #991b1b; margin-top: 0;">🚫 Account Deleted</h2>
+            <p style="margin-bottom: 0;">${escapedMessage}</p>
+          </div>
+        `;
+        break;
+      default:
+        // For general emails, use the escaped message directly
+        styledContent = `<div style="font-family: Arial, sans-serif; padding: 20px;">${escapedMessage}</div>`;
+        break;
+    }
+
+    const html = createTrainlyEmailTemplate(subject, styledContent, "This is an automated notification from Trainly");
 
     await sendEmailWithBrevo(to, subject, html);
 
