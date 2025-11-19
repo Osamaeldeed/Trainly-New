@@ -5,19 +5,28 @@
     <!-- البوكس الكبير -->
     <div
       class="inbox-wrapper w-full max-w-7xl bg-light-blue dark:bg-[#3B3B3B] rounded-2xl shadow-strong overflow-hidden flex"
-      :class="{ 'flex-col': isStacked }"
+      :class="{ 'flex-col mobile-layout': isStacked }"
     >
       <!-- Clients Sidebar -->
       <aside
         class="clients-column bg-white dark:bg-[#3B3B3B] border-r border-gray-200 flex flex-col"
         :class="{
           'w-80': !isStacked,
-          'w-full': isStacked && mobilePane === 'clients',
-          hidden: isStacked && mobilePane !== 'clients',
+          'w-full mobile-sidebar': isStacked && mobilePane === 'clients',
+          'hidden mobile-hidden': isStacked && mobilePane !== 'clients',
         }"
       >
-        <div class="p-6 border-b border-gray-200">
-          <h1 class="text-2xl font-bold dark:text-white text-gray-900 mb-4">Chats</h1>
+        <div class="p-4 sm:p-6 border-b border-gray-200">
+          <div class="flex items-center gap-3 mb-4">
+            <button
+              v-if="isStacked && selectedClient"
+              @click="mobilePane = 'chat'"
+              class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-[#4B4B4B] sm:hidden"
+            >
+              ←
+            </button>
+            <h1 class="text-xl sm:text-2xl font-bold dark:text-white text-gray-900">Chats</h1>
+          </div>
           <div class="relative">
             <span
               class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-white text-gray-400"
@@ -27,7 +36,7 @@
               type="text"
               v-model="searchQuery"
               placeholder="Search clients..."
-              class="w-full pl-10 pr-4 py-2 border text-dark dark:text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full pl-10 pr-4 py-2 border text-dark dark:text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-[#4B4B4B]"
             />
           </div>
         </div>
@@ -52,13 +61,13 @@
             </div>
           </div>
 
-          <div>
+          <div class="clients-list">
             <button
               v-for="client in filteredClients"
               :key="client.id"
               @click="onClientClick(client)"
               :class="[
-                'w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 cursor-pointer',
+                'w-full p-3 sm:p-4 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-[#4B4B4B] transition-colors border-b border-gray-100 dark:border-[#4B4B4B] cursor-pointer client-item',
                 selectedClient?.id === client.id ? 'bg-blue-50 dark:bg-[#191919]' : '',
               ]"
             >
@@ -68,11 +77,11 @@
                   `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name)}&background=random`
                 "
                 :alt="client.name"
-                class="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
               />
               <div class="flex-1 min-w-0 text-left">
                 <div class="flex items-center justify-between mb-1">
-                  <h3 class="font-semibold text-gray-900 dark:text-white truncate">
+                  <h3 class="font-semibold text-gray-900 dark:text-white truncate text-sm sm:text-base">
                     {{ client.name }}
                   </h3>
                   <span
@@ -83,7 +92,7 @@
                   </span>
                 </div>
                 <div class="flex items-center justify-between">
-                  <p class="text-sm dark:text-white text-gray-600 truncate">
+                  <p class="text-xs sm:text-sm dark:text-gray-300 text-gray-600 truncate">
                     {{ client.lastMessage || "Start a conversation" }}
                   </p>
                   <span
@@ -101,21 +110,21 @@
 
       <!-- Messages Panel -->
       <section
-        class="flex-1 flex flex-col"
+        class="flex-1 flex flex-col messages-panel"
         :class="{
-          'w-full': isStacked && mobilePane === 'chat',
-          hidden: isStacked && selectedClient && mobilePane !== 'chat',
+          'w-full mobile-chat': isStacked && mobilePane === 'chat',
+          'hidden mobile-hidden': isStacked && mobilePane !== 'chat',
+          'desktop-chat': !isStacked,
         }"
       >
-        <!-- top bar for mobile -->
+        <!-- Mobile Header -->
         <div
           v-if="isStacked"
-          class="mobile-top bg-white dark:bg-[#3B3B3B] border-b border-gray-200 p-3 flex items-center gap-3"
+          class="mobile-header bg-white dark:bg-[#3B3B3B] border-b border-gray-200 p-3 flex items-center gap-3"
         >
           <button
-            v-if="selectedClient"
             @click="mobilePane = 'clients'"
-            class="p-2 rounded-md hover:bg-gray-100"
+            class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-[#4B4B4B] back-button"
           >
             ←
           </button>
@@ -126,23 +135,29 @@
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedClient.name)}&background=random`
               "
               :alt="selectedClient.name"
-              class="w-10 h-10 rounded-full object-cover"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
             />
             <div>
-              <div class="font-semibold dark:text-white text-gray-900 text-sm">
+              <div class="font-semibold dark:text-white text-gray-900 text-sm sm:text-base">
                 {{ selectedClient.name }}
               </div>
-              <div class="text-xs dark:text-white text-gray-500">
+              <div class="text-xs dark:text-gray-300 text-gray-500">
                 {{ selectedClient.email || "Client" }}
               </div>
             </div>
           </div>
+          <div v-else class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-gray-200 dark:bg-[#4B4B4B] rounded-full flex items-center justify-center">
+              <span class="text-sm">💬</span>
+            </div>
+            <div class="font-semibold dark:text-white text-gray-900">Select a client</div>
+          </div>
         </div>
 
-        <!-- desktop header -->
+        <!-- Desktop Header -->
         <div
           v-else
-          class="bg-white dark:bg-[#3B3B3B] border-b border-gray-200 p-4 flex items-center gap-3"
+          class="desktop-header bg-white dark:bg-[#3B3B3B] border-b border-gray-200 p-4 sm:p-6 flex items-center gap-3"
         >
           <img
             v-if="selectedClient"
@@ -151,34 +166,36 @@
               `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedClient.name)}&background=random`
             "
             :alt="selectedClient.name"
-            class="w-12 h-12 rounded-full object-cover"
+            class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
           />
+          <div v-else class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 dark:bg-[#4B4B4B] flex items-center justify-center">
+            <span class="text-lg">💬</span>
+          </div>
           <div>
-            <h2 class="font-semibold dark:text-white text-gray-900">
+            <h2 class="font-semibold dark:text-white text-gray-900 text-sm sm:text-base">
               {{ selectedClient ? selectedClient.name : "Select a client" }}
             </h2>
-            <p class="text-sm dark:text-gray-300 text-gray-500">
-              {{ selectedClient ? selectedClient.email || "Client" : "" }}
+            <p class="text-xs sm:text-sm dark:text-gray-300 text-gray-500">
+              {{ selectedClient ? selectedClient.email || "Client" : "Choose a client to start chatting" }}
             </p>
           </div>
         </div>
 
-        <!-- ✅ messages area fixed height + internal scroll -->
-        <div class="flex-1 flex flex-col">
-          <!-- messages container: flex-1 so it fills available height, scrolls internally -->
+        <!-- Messages Area -->
+        <div class="flex-1 flex flex-col messages-area">
           <div
             ref="messagesContainer"
-            class="messages-container flex-1 overflow-y-auto p-6 space-y-4 dark:bg-[#3b3b3b] bg-gray-50"
+            class="messages-container flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 dark:bg-[#3b3b3b] bg-gray-50"
           >
             <div v-if="!selectedClient" class="flex-1 flex items-center justify-center">
               <div class="text-center dark:text-white text-gray-400">
                 <div
-                  class="w-24 h-24 bg-gray-200 dark:bg-[#3B3B3B] rounded-full mx-auto mb-4 flex items-center justify-center"
+                  class="w-16 h-16 sm:w-24 sm:h-24 bg-gray-200 dark:bg-[#3B3B3B] rounded-full mx-auto mb-4 flex items-center justify-center"
                 >
-                  <span class="text-5xl">💬</span>
+                  <span class="text-3xl sm:text-5xl">💬</span>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Select a client</h3>
-                <p>Choose a client from the sidebar to start messaging</p>
+                <h3 class="text-lg sm:text-xl font-semibold mb-2">Select a client</h3>
+                <p class="text-sm sm:text-base">Choose a client from the sidebar to start messaging</p>
               </div>
             </div>
 
@@ -193,54 +210,53 @@
               >
                 <div class="text-center dark:text-white text-gray-400">
                   <p class="text-lg mb-2">👋</p>
-                  <p>No messages yet. Start the conversation!</p>
+                  <p class="text-sm sm:text-base">No messages yet. Start the conversation!</p>
                 </div>
               </div>
 
-              <div v-else>
+              <div v-else class="messages-content">
                 <div
                   v-for="msg in messages"
                   :key="msg.id"
-                  :class="['flex', msg.senderId === trainerId ? 'justify-end' : 'justify-start']"
+                  :class="['flex message-item', msg.senderId === trainerId ? 'justify-end' : 'justify-start']"
                 >
-                  <div class="flex items-start gap-3 max-w-2xl w-full">
+                  <div class="flex items-start gap-2 sm:gap-3 max-w-2xl w-full">
                     <img
                       v-if="msg.senderId !== trainerId"
                       :src="
                         selectedClient.avatar ||
                         `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedClient.name)}&background=random`
                       "
-                      class="w-10 h-10 rounded-full object-cover flex-shrink-0 mt-1"
+                      class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0 mt-1"
                       alt=""
                     />
                     <div
                       :class="[
-                        'flex flex-col',
+                        'flex flex-col message-bubble',
                         msg.senderId === trainerId ? 'items-end ml-auto' : 'items-start mr-auto',
                       ]"
-                      style="max-width: 70%"
+                      style="max-width: 85%"
                     >
                       <div
                         :class="[
-                          'message-box rounded-2xl px-5 py-3 break-words',
+                          'message-box rounded-2xl px-3 sm:px-5 py-2 sm:py-3 break-words',
                           msg.senderId === trainerId
                             ? 'bg-blue-600 text-white dark:bg-[#090909] dark:text-white rounded-br-sm'
                             : 'bg-white dark:bg-[#1c1c1c] dark:text-white text-gray-900 rounded-bl-sm',
                         ]"
                       >
-                        <p class="text-sm whitespace-pre-wrap">{{ msg.text }}</p>
+                        <p class="text-xs sm:text-sm whitespace-pre-wrap">{{ msg.text }}</p>
                       </div>
-
-                      <p class="text-xs text-gray-500 mt-2">{{ formatTime(msg.timestamp) }}</p>
+                      <p class="text-xs text-gray-500 mt-1 sm:mt-2">{{ formatTime(msg.timestamp) }}</p>
                     </div>
                     <img
                       v-if="msg.senderId === trainerId"
                       :src="
                         auth && auth.currentUser && auth.currentUser.photoURL
                           ? auth.currentUser.photoURL
-                          : null
+                          : 'https://ui-avatars.com/api/?name=Trainer&background=random'
                       "
-                      class="w-10 h-10 rounded-full object-cover flex-shrink-0 mt-1"
+                      class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0 mt-1"
                       alt=""
                     />
                   </div>
@@ -250,23 +266,23 @@
           </div>
         </div>
 
-        <!-- input -->
-        <div v-if="selectedClient" class="bg-white dark:bg-[#3B3B3B] border-t border-gray-200 p-4">
-          <div class="flex items-center gap-3">
+        <!-- Input Area -->
+        <div v-if="selectedClient" class="input-area bg-white dark:bg-[#3B3B3B] border-t border-gray-200 p-3 sm:p-4">
+          <div class="flex items-center gap-2 sm:gap-3">
             <input
               type="text"
               v-model="messageInput"
               @keyup.enter="sendMessage"
               placeholder="Type your message here..."
               :disabled="sending"
-              class="flex-1 px-4 py-3 border dark:text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              class="flex-1 px-3 sm:px-4 py-2 sm:py-3 border dark:text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 dark:bg-[#4B4B4B] text-sm sm:text-base"
             />
             <button
               @click="sendMessage"
               :disabled="!messageInput.trim() || sending"
-              class="bg-blue-600 dark:bg-black text-black dark:text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+              class="bg-blue-600 dark:bg-black text-white dark:text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer text-sm sm:text-base send-button"
             >
-              <span class="text-xl">✈️</span>
+              <span class="text-lg">✈️</span>
               <span class="hidden sm:inline">{{ sending ? "Sending..." : "Send" }}</span>
             </button>
           </div>
@@ -633,13 +649,21 @@ export default {
 
 /* MAIN BOX */
 .inbox-wrapper {
-  background: #eef6ff; /* الأزرق الفاتح */
+  background: #eef6ff;
   border-radius: 18px;
   box-shadow: 0 12px 40px rgba(2, 6, 23, 0.08);
-  height: 100vh; /* ثابت على طول الشاشة */
+  height: 90vh;
+  max-height: 800px;
   display: flex;
   flex-direction: row;
-  overflow: hidden; /* يمنع أي تمدد غريب */
+  overflow: hidden;
+}
+
+/* Mobile Layout */
+.inbox-wrapper.mobile-layout {
+  height: 95vh;
+  max-height: none;
+  border-radius: 16px;
 }
 
 /* Sidebar + chat layout flex children can shrink */
@@ -662,16 +686,14 @@ section .flex-1 {
 .message-box {
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
   border-radius: 14px;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
 }
 
 /* root page adjustments */
 .page-root {
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 /* Responsive tuning */
@@ -690,54 +712,117 @@ section .flex-1 {
   .inbox-wrapper {
     border-radius: 18px;
   }
-  .message-box {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
 }
 
+/* Mobile Styles */
 @media (max-width: 767px) {
-  .inbox-wrapper {
-    flex-direction: column;
-    border-radius: 14px;
-    height: 100vh; /* ثابت حتى على الموبايل */
-  }
-  .clients-column {
-    border-right: none;
-    border-bottom: 1px solid #eef2f7;
-  }
-  .mobile-top {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-  }
-  .message-box {
-    padding-left: 0.9rem;
-    padding-right: 0.9rem;
-    border-radius: 12px;
-  }
   .page-root {
     padding-left: 8px;
     padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .inbox-wrapper {
+    flex-direction: column;
+    border-radius: 14px;
+    height: 95vh;
+    margin: 0;
+  }
+
+  .inbox-wrapper.mobile-layout {
+    height: 97vh;
+  }
+
+  /* Mobile sidebar */
+  .clients-column.mobile-sidebar {
+    display: flex;
+    flex-direction: column;
+    border-right: none;
+    border-bottom: 1px solid #eef2f7;
+  }
+
+  /* Mobile chat */
+  section.mobile-chat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Hidden on mobile when not active */
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  .mobile-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .back-button {
+    min-width: 40px;
+  }
+
+  .client-item {
+    padding: 12px;
+  }
+
+  .message-box {
+    border-radius: 12px;
+    max-width: 85%;
+  }
+
+  .messages-container {
+    padding: 12px;
+  }
+
+  .input-area {
+    padding: 12px;
   }
 }
 
-@media (max-width: 420px) {
+/* Small mobile optimization */
+@media (max-width: 380px) {
+  .page-root {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
   .inbox-wrapper {
-    margin: 8px;
+    border-radius: 12px;
   }
-  .clients-column .p-6 {
-    padding: 12px;
+
+  .client-item {
+    padding: 10px;
   }
-  input::placeholder {
-    opacity: 0.9;
+
+  .messages-container {
+    padding: 10px;
+  }
+
+  .input-area {
+    padding: 10px;
+  }
+
+  .message-box {
+    max-width: 90%;
+  }
+}
+
+/* Desktop specific */
+@media (min-width: 768px) {
+  .desktop-chat {
+    display: flex !important;
+    flex-direction: column;
   }
 }
 
 /* small blue dot for unread indicator */
 .unread-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #2563eb;
   display: inline-block;
@@ -757,5 +842,18 @@ section .flex-1 {
 }
 .messages-container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Dark mode scrollbar */
+@media (prefers-color-scheme: dark) {
+  .messages-container::-webkit-scrollbar-track {
+    background: #4B4B4B;
+  }
+  .messages-container::-webkit-scrollbar-thumb {
+    background: #666;
+  }
+  .messages-container::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  }
 }
 </style>

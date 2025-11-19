@@ -698,7 +698,9 @@ export default {
           // Create a message with trainer cards
           const trainerMessage = {
             role: "assistant",
-            content: t('foundTrainers', { count: trainers.length, plural: trainers.length > 1 ? 's' : '' }),
+           content: trainers.length === 1
+              ? t('foundOneTrainer')
+              : `${t('foundMultipleTrainersPrefix')} ${trainers.length} ${t('foundMultipleTrainersSuffix')}`,
             trainers: trainers, // Store trainers data for rendering
             timestamp: new Date().toISOString(),
           };

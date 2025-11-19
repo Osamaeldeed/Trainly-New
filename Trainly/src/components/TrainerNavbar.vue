@@ -19,7 +19,7 @@
 
     <!-- 🔹 أيقونة المستخدم مع Dropdown -->
     <div class="hidden md:block relative">
-       <img
+      <img
         class="w-8 h-8 rounded-full cursor-pointer"
         :src="TraineeImage || 'https://media1.tenor.com/m/IfbOs_yh89AAAAAC/loading-buffering.gif'"
         alt="user photo"
@@ -37,10 +37,13 @@
       >
         <div
           v-if="showUserMenu"
-          class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 cursor-pointer dark:bg-[#2c2c2c]"
+          class="dropdown-menu absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 cursor-pointer dark:bg-[#2c2c2c]"
         >
           <button
-            @click="$router.push('/trainer/home'); showUserMenu = false"
+            @click="
+              $router.push('/trainer/home');
+              showUserMenu = false;
+            "
             class="w-full text-left px-4 py-2 hover:bg-gray-100 text-black dark:text-white dark:hover:bg-gray-700 transition cursor-pointer"
           >
             My Dashboard
@@ -56,78 +59,64 @@
       </transition>
     </div>
 
-    <!-- 🔹 أيقونة الموبايل -->
-    <div
-      class="flex md:hidden flex-col justify-center items-center cursor-pointer space-y-1"
-      @click="isOpen = !isOpen"
-    >
-      <span
-        class="block w-6 h-[3px] bg-gray-800 rounded transition-all duration-300"
-        :class="{ 'rotate-45 translate-y-[8px]': isOpen }"
-      ></span>
-      <span
-        class="block w-6 h-[3px] bg-gray-800 rounded transition-all duration-300"
-        :class="{ 'opacity-0': isOpen }"
-      ></span>
-      <span
-        class="block w-6 h-[3px] bg-gray-800 rounded transition-all duration-300"
-        :class="{ '-rotate-45 -translate-y-[8px]': isOpen }"
-      ></span>
+    <!-- 🔹 أيقونة الموبايل مع زرار الدارك مود -->
+    <div class="flex md:hidden items-center gap-4">
+      <!-- 🌙 زرار الـ Dark Mode للموبايل -->
+      <button
+        @click="toggleDarkMode"
+        class="p-2 text-2xl transition hover:scale-110 cursor-pointer"
+        :title="isDark ? 'Light Mode' : 'Dark Mode'"
+      >
+        {{ isDark ? "☀️" : "🌙" }}
+      </button>
+
+      <!-- أيقونة الهمبرجر -->
+      <div
+        class="flex flex-col justify-center items-center cursor-pointer space-y-1"
+        @click="isOpen = !isOpen"
+      >
+        <span
+          class="block w-6 h-[3px] bg-gray-800 dark:bg-white rounded transition-all duration-300"
+          :class="{ 'rotate-45 translate-y-[8px]': isOpen }"
+        ></span>
+        <span
+          class="block w-6 h-[3px] bg-gray-800 dark:bg-white rounded transition-all duration-300"
+          :class="{ 'opacity-0': isOpen }"
+        ></span>
+        <span
+          class="block w-6 h-[3px] bg-gray-800 dark:bg-white rounded transition-all duration-300"
+          :class="{ '-rotate-45 -translate-y-[8px]': isOpen }"
+        ></span>
+      </div>
     </div>
 
     <!-- 🔹 القائمة المنسدلة للموبايل -->
     <transition name="fade">
       <div
         v-if="isOpen"
-        class="absolute top-[80px] left-0 w-full bg-white shadow-md flex flex-col items-center space-y-6 py-6 z-50 md:hidden"
+        class="absolute top-[80px] left-0 w-full bg-white dark:bg-gray-800 shadow-md flex flex-col items-center space-y-6 py-6 z-50 md:hidden"
       >
-        <router-link to="/" class="nav-link" @click="isOpen = false">{{ $t("home") }}</router-link>
-        <router-link to="/sports" class="nav-link" @click="isOpen = false">{{
-          $t("sports")
-        }}</router-link>
-        <router-link to="/aboutus" class="nav-link" @click="isOpen = false">{{
-          $t("about")
-        }}</router-link>
-        <router-link to="/contactus" class="nav-link" @click="isOpen = false">{{
-          $t("contact")
-        }}</router-link>
-
         <!-- Mobile Dropdown -->
         <div class="flex flex-col gap-2 w-[80%] items-center">
+          <!-- ✅ My Dashboard Button -->
           <button
-            @click="showUserMenu = !showUserMenu"
-            class="w-full rounded-2xl border-2 border-primary text-primary hover:bg-primary hover:text-white transition h-11 text-[17px] cursor-pointer"
+            @click="
+              $router.push('/trainer/home');
+              isOpen = false;
+            "
+            class="w-full rounded-2xl border-2 border-[#00C853] bg-white dark:bg-gray-800 text-[#00C853] dark:text-[#00C853] hover:bg-[#00C853] hover:text-white dark:hover:bg-[#00C853] dark:hover:text-white transition-all duration-300 h-11 text-[17px] font-medium cursor-pointer"
           >
-            Profile
+            {{ $t("myDashboard") }}
           </button>
 
-          <transition
-            enter-active-class="transition ease-out duration-200 transform"
-            enter-from-class="opacity-0 -translate-y-2"
-            enter-to-class="opacity-100 translate-y-0"
-            leave-active-class="transition ease-in duration-150 transform"
-            leave-from-class="opacity-100 translate-y-0"
-            leave-to-class="opacity-0 -translate-y-2"
+          <!-- ✅ Logout Button -->
+          <button
+            @click="handleLogout"
+            class="flex items-center justify-center w-full p-2 text-red-600 rounded-2xl border-2 border-red-600 bg-white dark:bg-gray-800 hover:bg-red-600 hover:text-white dark:hover:bg-red-600 dark:hover:text-white transition-all duration-300 h-11 text-[17px] font-medium cursor-pointer"
           >
-            <div v-if="showUserMenu" class="flex flex-col w-full bg-white rounded-lg shadow-md">
-              <!-- ✅ Dashboard Button -->
-              <button
-                @click="$router.push('/trainee/dashboard'); isOpen = false; showUserMenu = false"
-                class="px-4 py-2 hover:bg-gray-100 w-full text-left rounded-t-lg"
-              >
-                Dashboard
-              </button>
-
-              <!-- ✅ Logout Button (منفصل تماماً) -->
-              <button
-                @click="handleLogout"
-                class="flex items-center p-2 text-red-600 rounded-b-lg hover:bg-blue-200 w-full transition duration-300 cursor-pointer"
-              >
-                <img src="@/assets/images/logout.png" alt="logout icon" class="w-5 h-5" />
-                <span class="ms-3 font-medium">Log out</span>
-              </button>
-            </div>
-          </transition>
+            <img src="@/assets/images/logout.png" alt="logout icon" class="w-5 h-5 mr-2" />
+            {{ $t("logOut") }}
+          </button>
         </div>
       </div>
     </transition>
@@ -153,7 +142,6 @@ import logoLight from "@/assets/images/Project LOGO.png";
 import logoDark from "@/assets/images/LOGO for (Dark mode).png";
 import { useI18n } from "vue-i18n";
 
-
 export default {
   name: "TraineeNavbar",
   data() {
@@ -166,6 +154,22 @@ export default {
     toggleUserMenu() {
       this.showUserMenu = !this.showUserMenu;
     },
+    closeUserMenu() {
+      this.showUserMenu = false;
+    },
+    handleClickOutside(event) {
+      const dropdown = this.$el.querySelector('.dropdown-menu');
+      const userImg = this.$el.querySelector('img[alt="user photo"]');
+      if (dropdown && !dropdown.contains(event.target) && !userImg.contains(event.target)) {
+        this.closeUserMenu();
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   },
   components: {
     ConfirmLogoutModal,
@@ -178,8 +182,7 @@ export default {
     const router = useRouter();
     const isDark = ref(false);
     const logoSrc = computed(() => (isDark.value ? logoDark : logoLight));
-        const { locale } = useI18n();
-
+    const { locale } = useI18n();
 
     const saveDark = (val) => {
       localStorage.setItem("darkMode", val);
@@ -242,7 +245,8 @@ export default {
         } else {
           console.log("No user signed in.");
         }
-      });const savedLang = localStorage.getItem("lang");
+      });
+      const savedLang = localStorage.getItem("lang");
       if (savedLang) {
         locale.value = savedLang;
         document.dir = savedLang === "ar" ? "rtl" : "ltr";
@@ -250,7 +254,7 @@ export default {
         document.body.style.fontFamily =
           savedLang === "ar" ? "'Tajawal', sans-serif" : "'Poppins', sans-serif";
       }
-          const savedDark = localStorage.getItem("darkMode") === "true";
+      const savedDark = localStorage.getItem("darkMode") === "true";
       isDark.value = savedDark;
       saveDark(savedDark);
     });
@@ -264,7 +268,7 @@ export default {
       isDark,
       logoSrc,
       toggleDarkMode,
-      switchLang
+      switchLang,
     };
   },
 };
