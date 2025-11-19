@@ -31,12 +31,12 @@
 
           <!-- Title -->
           <h3 class="text-2xl font-bold dark:text-white text-gray-800 text-center mb-2">
-            Log Out
+            {{ $t('confirmLogout') }}
           </h3>
 
           <!-- Message -->
           <p class="text-gray-600 dark:text-white text-center mb-6">
-            Are you sure you want to log out?
+            {{ $t('confirmLogoutMessage') }}
           </p>
 
           <!-- Buttons -->
@@ -45,13 +45,13 @@
               @click="cancel"
               class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-lg"
             >
-              Cancel
+              {{ $t('cancel') }}
             </button>
             <button
               @click="confirm"
               class="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg cursor-pointer"
             >
-              Confirm
+              {{ $t('confirm') }}
             </button>
           </div>
         </div>
@@ -62,6 +62,7 @@
 
 <script>
 import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "ConfirmLogoutModal",
@@ -73,6 +74,7 @@ export default {
   },
   emits: ["update:modelValue", "confirm", "cancel"],
   setup(props, { emit }) {
+    const { t } = useI18n();
     const isOpen = ref(props.modelValue);
 
     watch(
@@ -101,6 +103,7 @@ export default {
       isOpen,
       confirm,
       cancel,
+      t,
     };
   },
 };

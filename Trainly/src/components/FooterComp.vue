@@ -24,9 +24,9 @@
             <li class="mb-2">
               <span>{{ $t("email") }} : </span>
               <a
-                href="https://github.com/themesberg/flowbite"
+                href="mailto:Admin@trainly.com"
                 class="hover:underline cursor-pointer"
-                >info@trainly.com</a
+                >Admin@trainly.com</a
               >
             </li>
             <li class="text-[12px] md:text-[15px]">

@@ -108,7 +108,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                   <span class="text-gray-600 dark:text-gray-300">Price:</span>
-                  <span class="font-bold text-green-600 dark:text-gray-300 text-lg">{{ formatPrice(plan.price) }}</span>
+                  <span class="font-bold text-green-600 dark:text-gray-300 text-lg">${{ formatPrice(plan.price) }}</span>
                 </div>
               </div>
               <button v-if="!isAdminView" @click="bookPlan(plan, $event)" :disabled="bookingPlanId === plan.id || isAlreadyBooked(plan.id)" class="w-full py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold transition-all transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2">
@@ -182,14 +182,19 @@
           </svg>
           <p class="text-gray-500 dark:text-gray-300 text-lg">No reviews yet. Be the first to review!</p>
         </div>
-        <div v-else class="space-y-4">
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div v-for="rev in reviews" :key="rev.id" class="bg-white dark:bg-[#3B3B3B] p-6 rounded-xl shadow-md border hover:shadow-lg transition-shadow">
             <div class="flex items-start gap-4">
               <img :src="rev.traineeProfilePic || rev.reviewerPhoto || placeholder" alt="reviewer" class="w-12 h-12 rounded-full object-cover border-2 border-gray-200" @error="handleImageError" />
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
                   <div>
-                    <div class="font-semibold text-gray-900 dark:text-gray-300">{{ rev.traineeName || rev.reviewerName || "Anonymous" }}</div>
+                    <div class="flex items-center gap-3">
+                      <div class="font-semibold text-gray-900 dark:text-gray-300">{{ rev.traineeName || rev.reviewerName || "Anonymous" }}</div>
+                      <div v-if="rev.sessionType" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium text-xs">
+                        {{ capitalize(rev.sessionType) }}
+                      </div>
+                    </div>
                     <div class="flex items-center gap-2 mt-1">
                       <div class="flex text-yellow-400">
                         <span v-for="n in 5" :key="n" class="text-lg">{{ n <= Math.round(rev.rating || 0) ? "★" : "☆" }}</span>
@@ -200,9 +205,6 @@
                   <div class="text-xs text-gray-400 dark:text-gray-300">{{ formatDate(rev.createdAt) }}</div>
                 </div>
                 <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">{{ rev.comment }}</p>
-                <div v-if="rev.status || rev.sessionType" class="flex flex-wrap gap-3 text-xs">
-                  <span v-if="rev.sessionType" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">{{ capitalize(rev.sessionType) }}</span>
-                </div>
               </div>
             </div>
           </div>

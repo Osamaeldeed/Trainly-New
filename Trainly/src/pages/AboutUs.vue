@@ -3,9 +3,9 @@
     <!-- Hero Section - About Trainly -->
     <section class="max-w-6xl mx-auto py-11">
       <div
-        class="grid md:grid-cols-2 gap-5 items-center border-2 border-[#0D8BF2] rounded-3xl p-6 bg-white dark:bg-[#3B3B3B]"
+        class="grid md:grid-cols-2 gap-0 items-center border-2 border-[#0D8BF2] rounded-3xl overflow-hidden bg-white dark:bg-[#3B3B3B]"
       >
-        <div>
+        <div class="p-6">
           <h1 class="text-4xl text-black dark:text-white font-bold mb-4">
             {{ $t("about1") }}
             <span
@@ -26,11 +26,11 @@
             {{ $t("aboutus3") }}
           </p>
         </div>
-        <div class="flex justify-start sm:justify-end">
+        <div class="md:h-full">
           <img
             src="@/assets/images/about1.png"
             alt="Fitness trainer"
-            class="max-w-xs sm:max-w-sm w-full"
+            class="w-full h-full object-cover"
           />
         </div>
       </div>
@@ -39,16 +39,16 @@
     <!-- Vision Section -->
     <section class="max-w-6xl mx-auto py-16">
       <div
-        class="grid md:grid-cols-2 gap-8 items-center border-2 border-[#00C853F2] rounded-3xl p-8 bg-white dark:bg-[#3B3B3B]"
+        class="grid md:grid-cols-2 gap-0 items-center border-2 border-[#00C853F2] rounded-3xl overflow-hidden bg-white dark:bg-[#3B3B3B]"
       >
-        <div class="rounded-2xl overflow-hidden">
+        <div class="md:h-full">
           <img
             src="@/assets/images/about2.png"
             alt="Tennis players"
             class="w-full h-full object-cover"
           />
         </div>
-        <div>
+        <div class="p-8">
           <h2 class="text-4xl text-black dark:text-white font-bold mb-6">{{ $t("ourvision") }}</h2>
           <p class="text-black dark:text-white mb-4 text-lg">
             {{ $t("aboutus5") }}
@@ -168,12 +168,12 @@
         <div
           v-for="member in teamMembers"
           :key="member.name"
-          class="bg-white dark:bg-[#3B3B3B] rounded-2xl p-4 text-center border border-gray-200 shadow-sm w-[200px]"
+          class="bg-white dark:bg-[#3B3B3B] rounded-2xl p-4 border border-gray-200 shadow-sm w-[200px] text-center"
         >
           <img
             :src="getImageUrl(member.img)"
             :alt="member.name"
-            class="w-24 h-24 rounded-full mx-auto object-cover mb-3"
+            class="w-24 h-24 rounded-full mx-auto mb-4"
           />
           <h3 class="text-lg font-semibold text-black dark:text-white">{{ member.name }}</h3>
         </div>

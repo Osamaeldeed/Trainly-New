@@ -23,7 +23,10 @@
         >
           <div
             v-if="isOpen"
-            class="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-[calc(100%-2rem)] sm:w-[400px] md:w-[420px] lg:w-[450px] h-[calc(100vh-8rem)] sm:h-[600px] md:h-[650px] max-h-[85vh] bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col border border-gray-200 dark:border-gray-700"
+          :class="[
+            'fixed w-[calc(100%-2rem)] sm:w-[400px] md:w-[420px] lg:w-[450px] h-[calc(100vh-8rem)] sm:h-[600px] md:h-[650px] max-h-[85vh] bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col border border-gray-200 dark:border-gray-700',
+            $i18n.locale === 'ar' ? 'bottom-4 left-4 md:bottom-6 md:left-6' : 'bottom-4 right-4 md:bottom-6 md:right-6'
+          ]"
           >
             <!-- Header -->
             <div class="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-[#00C853] to-[#00B0FF] text-white rounded-t-lg">
@@ -42,7 +45,7 @@
                     d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
                   />
                 </svg>
-                <h3 class="text-base sm:text-lg font-semibold">AI Assistant</h3>
+                <h3 class="text-base sm:text-lg font-semibold">{{ $t('Ai Assistant') }}</h3>
               </div>
               <div class="flex items-center gap-2">
                 <!-- Clear Chat Button -->
@@ -56,7 +59,7 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
+                    class="h-5 w-5 cursor-pointer"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -77,7 +80,7 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
+                    class="h-6 w-6 cursor-pointer"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -114,12 +117,12 @@
                     d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
                   />
                 </svg>
-                <p class="text-lg font-medium mb-2">Hi There! 👋</p>
-                <p class="text-sm">I am your AI Assistant in Trainly. I can help you with:</p>
+                <p class="text-lg font-medium mb-2">{{ $t('hiThere') }}</p>
+                <p class="text-sm">{{ $t('assistantIntro') }}</p>
                 <ul class="text-sm mt-3 space-y-1 text-right">
-                  <li>💪Sports and nutrition tips</li>
-                  <li>🔍Searching for suitable trainers</li>
-                  <li>📝Healthy food recipes</li>
+                  <li>{{ $t('sportsTips') }}</li>
+                  <li>{{ $t('searchTrainers') }}</li>
+                  <li>{{ $t('foodRecipes') }}</li>
                 </ul>
               </div>
 
@@ -179,20 +182,20 @@
 
                       <div class="space-y-1 text-xs sm:text-sm mb-2 sm:mb-3">
                         <p>
-                          <span class="font-medium">الرياضة:</span>
+                          <span class="font-medium">{{ $t('sport') }}</span>
                           {{ trainer.sports?.join(", ") || "غير محدد" }}
                         </p>
                         <p>
-                          <span class="font-medium">التقييم:</span>
+                          <span class="font-medium">{{ $t('rating') }}</span>
                           <span class="text-yellow-500">★</span>
                           {{ trainer.averageRating ? trainer.averageRating.toFixed(1) : "N/A" }}
                         </p>
                         <p v-if="trainer.plans && trainer.plans.length > 0">
-                          <span class="font-medium">السعر:</span>
-                          من ${{ Math.min(...trainer.plans.map((p) => p.price || 0)) }}
+                          <span class="font-medium">{{ $t('price') }}</span>
+                          {{ $t('from') }} ${{ Math.min(...trainer.plans.map((p) => p.price || 0)) }}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                          <span class="font-medium">Match Score:</span>
+                          <span class="font-medium">{{ $t('matchScore') }}</span>
                           {{ trainer.matchScore || 0 }}%
                         </p>
                       </div>
@@ -201,7 +204,7 @@
                         @click="goToTrainerProfile(trainer.id)"
                         class="w-full mt-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors text-xs sm:text-sm font-medium cursor-pointer"
                       >
-                        View Trainer Profile
+                        {{ $t('viewTrainerProfile') }}
                       </button>
                     </div>
                   </div>
@@ -240,7 +243,7 @@
                   v-model="inputMessage"
                   @keyup.enter="sendMessage"
                   type="text"
-                  placeholder="Ask a question..."
+                  :placeholder="$t('askQuestion')"
                   class="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
                   :disabled="isLoading"
                 />
@@ -318,26 +321,26 @@
               </div>
 
               <h3 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 text-center mb-2">
-                Confirm Deletion
+                {{ $t('confirmDeletion') }}
               </h3>
 
               <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 text-center mb-6">
-                Are you sure you want to delete all messages? This action cannot be undone.
+                {{ $t('deleteAllMessages') }}
               </p>
 
               <div class="flex gap-3 sm:gap-4">
-                <button
-                  @click="cancelClearChat"
-                  class="flex-1 px-4 py-2.5 sm:py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors text-sm sm:text-base font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  @click="confirmClearChat"
-                  class="flex-1 px-4 py-2.5 sm:py-3 bg-gradient-to-r from-[#00C853] to-[#00B0FF] hover:opacity-90 text-white rounded-lg transition-all text-sm sm:text-base font-medium shadow-lg"
-                >
-                  Delete
-                </button>
+                  <button
+                    @click="cancelClearChat"
+                    class="flex-1 px-4 py-2.5 sm:py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors text-sm sm:text-base font-medium cursor-pointer"
+                  >
+                    {{ $t('cancel') }}
+                  </button>
+                  <button
+                    @click="confirmClearChat"
+                    class="flex-1 px-4 py-2.5 sm:py-3 bg-gradient-to-r from-[#00C853] to-[#00B0FF] hover:opacity-90 text-white rounded-lg transition-all text-sm sm:text-base font-medium shadow-lg cursor-pointer"
+                  >
+                    {{ $t('delete') }}
+                  </button>
               </div>
             </div>
           </Transition>
@@ -354,6 +357,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
 import { API_URL } from "@/config/api";
 import { toast } from "vue3-toastify";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "AiChatWidget",
@@ -365,6 +369,7 @@ export default {
   },
   emits: ["close"],
   setup(props, { emit }) {
+    const { locale, t } = useI18n();
     const messages = ref([]);
     const messageInput = ref(null);
     const inputMessage = ref("");
@@ -542,7 +547,8 @@ export default {
     const formatTime = (timestamp) => {
       if (!timestamp) return "";
       const date = new Date(timestamp);
-      return date.toLocaleTimeString("ar-EG", {
+      const localeCode = locale.value === 'ar' ? 'ar-EG' : 'en-US';
+      return date.toLocaleTimeString(localeCode, {
         hour: "2-digit",
         minute: "2-digit",
       });
@@ -608,10 +614,10 @@ export default {
          }
       } catch (err) {
         console.error("Error sending message:", err);
-        error.value = "sorry, an error occurred. Please try again.";
+        error.value = t('errorOccurred');
         messages.value.push({
           role: "assistant",
-          content: "sorry, an error occurred. Please try again.",
+          content: t('errorOccurred'),
           timestamp: new Date().toISOString(),
         });
       } finally {
@@ -685,14 +691,14 @@ export default {
         if (trainers.length === 0) {
           messages.value.push({
             role: "assistant",
-            content: "لم أجد مدربين متوافقين مع متطلباتك. جرب تغيير المعايير.",
+            content: t('noTrainersFound'),
             timestamp: new Date().toISOString(),
           });
         } else {
           // Create a message with trainer cards
           const trainerMessage = {
             role: "assistant",
-            content: `وجدت ${trainers.length} مدرب${trainers.length > 1 ? "ين" : ""} مناسب${trainers.length > 1 ? "ين" : ""}:\n\n`,
+            content: t('foundTrainers', { count: trainers.length, plural: trainers.length > 1 ? 's' : '' }),
             trainers: trainers, // Store trainers data for rendering
             timestamp: new Date().toISOString(),
           };
@@ -941,6 +947,7 @@ export default {
       showConfirmModal,
       saveChatToFirestore,
       loadChatFromFirestore,
+      t,
     };
   },
 };

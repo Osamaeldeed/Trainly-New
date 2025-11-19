@@ -320,7 +320,7 @@
           <p class="text-gray-500 text-lg">No reviews yet.</p>
         </div>
 
-        <div v-else class="space-y-4">
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div
             v-for="rev in reviews"
             :key="rev.id"
@@ -337,8 +337,13 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
                   <div>
-                    <div class="font-semibold dark:text-white text-gray-900">
-                      {{ rev.traineeName || rev.reviewerName || "Anonymous" }}
+                    <div class="flex items-center gap-3">
+                      <div class="font-semibold dark:text-white text-gray-900">
+                        {{ rev.traineeName || rev.reviewerName || "Anonymous" }}
+                      </div>
+                      <div v-if="rev.sessionType" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium text-xs">
+                        {{ capitalize(rev.sessionType) }}
+                      </div>
                     </div>
                     <div class="flex items-center gap-2 mt-1">
                       <div class="flex text-yellow-400">
@@ -359,15 +364,6 @@
                 <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
                   {{ rev.comment }}
                 </p>
-
-                <div v-if="rev.status || rev.sessionType" class="flex flex-wrap gap-3 text-xs">
-                  <span
-                    v-if="rev.sessionType"
-                    class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
-                  >
-                    {{ capitalize(rev.sessionType) }}
-                  </span>
-                </div>
               </div>
             </div>
           </div>

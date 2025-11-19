@@ -1,16 +1,16 @@
 <template>
   <div>
-    <div v-if="isTrainee && !isExcludedRoute" class="fixed bottom-6 right-6 z-50">
+    <div v-if="isTrainee && !isExcludedRoute" :class="['fixed bottom-6 z-50', $i18n.locale === 'ar' ? 'left-6' : 'right-6']">
       <button
         @click="toggleChat"
-        class="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#00C853] to-[#00B0FF] hover:opacity-90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110"
+        class="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#00C853] to-[#00B0FF] hover:opacity-90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 cursor-pointer"
         :class="{ 'ring-4 ring-[#00C853]/30': isChatOpen }"
         aria-label="AI Assistant"
       >
         <svg
           v-if="!isChatOpen"
           xmlns="http://www.w3.org/2000/svg"
-          class="h-8 w-8"
+          class="h-8 w-8 cursor-pointer"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -40,7 +40,10 @@
       </button>
       <!-- AI Assistant Label -->
       <div
-        class="absolute -top-1 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity pointer-events-none"
+        :class="[
+          'absolute -top-1 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity pointer-events-none',
+          $i18n.locale === 'ar' ? 'left-0' : 'right-0'
+        ]"
       >
         AI Assistant
       </div>

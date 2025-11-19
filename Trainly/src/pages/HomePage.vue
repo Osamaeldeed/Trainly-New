@@ -1,8 +1,8 @@
 <template>
   <div class="bg-white dark:bg-black">
-    <section class="w-[90%] md:w-[85%] mx-auto mt-10 mb-12 relative">
+    <section class="w-full mx-auto mt-10 mb-12 relative">
       <div
-        class="relative flex flex-col justify-center items-center text-center text-white h-[200px] md:h-[377px] border-4 border-black rounded-3xl overflow-hidden shadow-lg"
+        class="relative flex flex-col justify-center items-center text-center text-white h-[200px] md:h-[377px] overflow-hidden shadow-lg"
         :style="{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',
@@ -23,18 +23,21 @@
 
           <!-- Search Bar -->
           <div
-            class="relative mx-auto flex items-center bg-white dark:bg-[#3B3B3B] rounded-xl border-2 border-black shadow-md overflow-hidden w-[90%] md:w-[80%]"
+            class="relative mx-auto flex items-center bg-white dark:bg-[#3B3B3B] rounded-xl shadow-md overflow-hidden w-[90%] md:w-[80%]"
+            :class="{ 'flex-row-reverse': $i18n.locale === 'ar' }"
           >
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Search here..."
+              placeholder="Search by Coach name, Sport..."
               class="flex-1 px-5 py-3 text-gray-800 dark:text-white placeholder-gray-400 outline-none"
+              :class="{ 'text-right': $i18n.locale === 'ar' }"
               @keyup.enter="goToSearch"
             />
             <button
               @click="goToSearch"
-              class="absolute right-2 hover:bg-gray-100 p-2 rounded-full transition-colors cursor-pointer"
+              class="absolute hover:bg-gray-100 p-2 rounded-full transition-colors cursor-pointer"
+              :class="{ 'right-2': $i18n.locale !== 'ar', 'left-2': $i18n.locale === 'ar' }"
             >
               <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -72,7 +75,8 @@
           <!-- Left Arrow (circular, vertically centered) -->
           <button
             @click="scrollLeft(sport)"
-            class="absolute left-3 md:-left-10 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-gray-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-20 transition-transform hover:scale-105 cursor-pointer"
+            class="absolute top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-gray-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-20 transition-transform hover:scale-105 cursor-pointer"
+            :class="{ 'left-3 md:-left-10': $i18n.locale !== 'ar', 'right-3 md:-right-10': $i18n.locale === 'ar' }"
             aria-label="Scroll left"
           >
             <img src="@/assets/images/left arrow.png" alt="left" class="w-4 h-4" />
@@ -81,7 +85,8 @@
           <!-- Cards container (scrollable) -->
           <div
             :ref="(el) => (scrollRefs[sport] = el)"
-            class="flex overflow-x-auto scrollbar-hide space-x-8 scroll-smooth px-12 py-6"
+            class="flex overflow-x-auto scrollbar-hide scroll-smooth px-12 py-6"
+            :class="{ 'space-x-8': $i18n.locale !== 'ar', 'space-x-reverse': $i18n.locale === 'ar' }"
           >
             <div
               v-for="trainer in group"
@@ -96,43 +101,58 @@
               />
 
               <!-- Trainer Info -->
-              <div class="flex-1 p-5 text-left">
-                <h3 class="text-[20px] font-semibold text-gray-800 dark:text-white mb-1">
+              <div class="flex-1 p-5">
+                <h3 class="text-[20px] font-semibold text-gray-800 dark:text-white mb-1" :class="{ 'text-right': $i18n.locale === 'ar' }">
                   {{ trainer.firstName }} {{ trainer.lastName }}
                 </h3>
-                <p class="text-[#00B0FF] dark:text-gray-200 text-md font-medium mb-2 capitalize">
+                <p class="text-[#00B0FF] dark:text-gray-200 text-md font-medium mb-2 capitalize" :class="{ 'text-right': $i18n.locale === 'ar' }">
                   {{ trainer.sport }}
                 </p>
 
-                <p class="text-gray-500 dark:text-gray-200 text-sm mb-2 flex items-center">
-                  <img
-                    src="@/assets/images/mi_location.png"
-                    alt="location"
-                    class="inline w-4 h-4 mr-2"
-                  />
-                  {{ trainer.city }}, {{ trainer.country }}
-                </p>
+                <div class="flex items-center text-sm text-gray-700 mb-2" v-if="trainer.city">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 mr-2 dark:text-gray-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <span class="capitalize dark:text-gray-200"
+                    >{{ trainer.city }}{{ trainer.country ? `, ${trainer.country}` : "" }}</span
+                  >
+                </div>
 
-                <p class="text-gray-600 text-sm flex items-center">
-                  <img
-                    src="@/assets/images/line-md_star-filled.png"
-                    alt="star"
-                    class="inline w-4 h-4 mr-2"
-                  />
-                  <span class="font-semibold text-[#00B0FF]">
-                    {{ trainer.avgRating ? trainer.avgRating.toFixed(1) : "N/A" }}
-                  </span>
-                </p>
-              </div>
+                <div class="flex items-center justify-between mt-3" :class="{ 'flex-row-reverse': $i18n.locale === 'ar' }">
+                  <div class="flex items-center gap-2 text-sm" :class="{ 'flex-row-reverse': $i18n.locale === 'ar' }">
+                    <span class="text-yellow-500">★</span>
+                    <span class="font-semibold text-[#00B0FF]">
+                      {{ trainer.avgRating !== null ? trainer.avgRating.toFixed(1) : "N/A" }}
+                    </span>
+                    <span class="text-gray-500 dark:text-gray-300 text-xs"
+                      >({{ trainer.reviewsCount || 0 }})</span
+                    >
+                  </div>
 
-              <!-- View Profile Button at bottom-right -->
-              <div class="absolute bottom-4 right-4">
-                <router-link
-                  :to="{ path: '/viewtrainerprofile', query: { uid: trainer.uid } }"
-                  class="bg-[#00B0FF] dark:bg-[#1e1e1e] hover:bg-blue-600 text-white dark:text-gray-300 font-medium py-2 px-4 rounded-[15px] transition cursor-pointer"
-                >
-                  View Profile
-                </router-link>
+                  <router-link
+                    :to="{ path: '/viewtrainerprofile', query: { uid: trainer.uid } }"
+                    class="bg-[#00B0FF] dark:bg-[#1e1e1e] hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-[12px] text-sm transition"
+                  >
+                    View Profile
+                  </router-link>
+                </div>
               </div>
             </div>
           </div>
@@ -140,7 +160,8 @@
           <!-- Right Arrow (circular, vertically centered) -->
           <button
             @click="scrollRight(sport)"
-            class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer bg-white/80 hover:bg-white text-gray-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-20 transition-transform hover:scale-105"
+            class="absolute top-1/2 -translate-y-1/2 cursor-pointer bg-white/80 hover:bg-white text-gray-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-20 transition-transform hover:scale-105"
+            :class="{ 'right-3': $i18n.locale !== 'ar', 'left-3': $i18n.locale === 'ar' }"
             aria-label="Scroll right"
           >
             <img src="@/assets/images/right arrow.png" alt="right" class="w-4 h-4" />
@@ -155,19 +176,27 @@
 import { ref, onMounted } from "vue";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
+import { useI18n } from "vue-i18n";
 
+const { locale } = useI18n();
 const bgImage = new URL("@/assets/images/homepage.png", import.meta.url).href;
 const scrollRefs = ref({});
 const trainers = ref({ bodybuilding: [], tennis: [], padel: [] });
 
 const scrollLeft = (sport) => {
   const el = scrollRefs.value[sport];
-  if (el) el.scrollBy({ left: -350, behavior: "smooth" });
+  if (el) {
+    const direction = locale.value === 'ar' ? 350 : -350;
+    el.scrollBy({ left: direction, behavior: "smooth" });
+  }
 };
 
 const scrollRight = (sport) => {
   const el = scrollRefs.value[sport];
-  if (el) el.scrollBy({ left: 350, behavior: "smooth" });
+  if (el) {
+    const direction = locale.value === 'ar' ? -350 : 350;
+    el.scrollBy({ left: direction, behavior: "smooth" });
+  }
 };
 
 const formatTitle = (key) => {
@@ -218,6 +247,7 @@ const fetchTrainers = async () => {
       });
 
       trainer.avgRating = count > 0 ? total / count : null;
+      trainer.reviewsCount = count;
 
       // Add trainer to proper category
       const sport = trainer.sport?.toLowerCase();
