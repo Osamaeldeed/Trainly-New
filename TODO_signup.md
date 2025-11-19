@@ -1,0 +1,4 @@
+- [x] Modify handleCertificationsUpload in SignUp.vue to append files instead of replacing, add duplicate check by name, limit to 10 files total
+- [x] Update UI note to mention max 10 files
+- [x] Add success toast notification
+- [ ] Test the upload functionality
