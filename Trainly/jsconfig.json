@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "exclude": ["node_modules", "dist", "**/NotificationPermission.vue"]
+  
 }
-

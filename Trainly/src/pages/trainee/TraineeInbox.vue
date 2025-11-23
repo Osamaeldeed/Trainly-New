@@ -743,4 +743,45 @@ section .flex-1 {
 .messages-container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+/* ============ DESKTOP (default) ============ */
+/* الشغل اللي عندك هو اللي هيشتغل هنا */
+
+/* ============ TABLET ============ */
+@media (max-width: 1024px) {
+  .inbox-wrapper {
+    max-width: 100%;
+  }
+
+  .clients-column {
+    width: 260px !important;
+  }
+}
+
+/* ============ MOBILE ============ */
+@media (max-width: 768px) {
+  .page-root {
+    padding: 0;
+  }
+
+  .inbox-wrapper {
+    flex-direction: column;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .clients-column {
+    width: 100% !important;
+    height: 100%;
+  }
+
+  .messages-container {
+    height: calc(100vh - 140px);
+  }
+
+  section.flex-1 {
+    width: 100% !important;
+    height: 100%;
+  }
+}
+
 </style>
