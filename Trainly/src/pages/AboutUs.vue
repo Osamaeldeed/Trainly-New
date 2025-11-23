@@ -173,7 +173,7 @@
           <img
             :src="getImageUrl(member.img)"
             :alt="member.name"
-            class="w-24 h-24 rounded-full mx-auto mb-4"
+            class="w-30 h-30 rounded-full mx-auto mb-4"
           />
           <h3 class="text-lg font-semibold text-black dark:text-white">{{ member.name }}</h3>
         </div>
