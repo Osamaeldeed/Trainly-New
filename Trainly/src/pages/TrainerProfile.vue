@@ -1,67 +1,124 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-black">
+  <div class="min-h-screen bg-gray-50 dark:bg-black pb-10">
     <!-- Loading State -->
-    <div v-if="loading" class="max-w-7xl mx-auto px-4 py-10">
+    <div v-if="loading" class="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-10">
       <div class="text-center py-20">
-        <div class="inline-block animate-pulse text-gray-500 text-lg">
-          Loading trainer profile...
-        </div>
+        <div class="inline-block animate-pulse text-gray-500 text-lg">Loading your profile...</div>
       </div>
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="max-w-7xl mx-auto px-4 py-10">
+    <div v-else-if="error" class="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-10">
       <div class="text-center py-20">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-16 w-16 mx-auto mb-4 text-red-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
         <p class="text-red-500 text-lg font-medium">{{ error }}</p>
-        <button @click="loadData" class="mt-4 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-dark dark:text-white rounded-lg transition">
+        <button
+          @click="retryLoad"
+          class="mt-4 px-6 py-2 bg-blue-500 dark:bg-[#3b3b3b] hover:bg-blue-600 text-white rounded-lg transition cursor-pointer"
+        >
           Retry
         </button>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div v-else class="max-w-7xl mx-auto px-4 py-10">
+    <div v-else class="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-10">
       <!-- HERO -->
-      <div class="relative mb-10 transition-colors duration-500">
-        <div class="border border-sky-200 dark:border-gray-700 rounded-2xl p-6 pl-36 pr-6 flex items-center shadow-sm bg-linear-to-r from-sky-50 to-blue-50 dark:bg-[#3B3B3B] dark:bg-none">
-          <img :src="trainer.profilePicture || placeholder" alt="trainer profile" class="absolute -top-6 left-6 w-40 h-40 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl" @error="handleImageError" />
-          <div class="ml-28 w-full flex items-center justify-between flex-wrap gap-4">
-            <div class="flex-1 min-w-0">
-              <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+      <div class="relative mb-10">
+        <div
+          class="bg-linear-to-r from-sky-50 to-blue-50 dark:from-[#3b3b3b] dark:to-[#1e1e1e] rounded-2xl p-4 sm:p-6 sm:pl-36 sm:pr-6 shadow-md dark:shadow-gray-900/50"
+        >
+          <!-- Profile Image -->
+          <img
+            :src="trainer.profilePicture || placeholder"
+            alt="trainer profile"
+            class="relative sm:absolute sm:-top-6 sm:left-6 w-24 h-24 sm:w-40 sm:h-40 mx-auto sm:mx-0 mb-4 sm:mb-0 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl"
+            @error="handleImageError"
+          />
+
+          <div class="sm:ml-28 w-full flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4">
+            <!-- Left side: Profile info -->
+            <div class="flex-1 text-center sm:text-left">
+              <h1 class="text-2xl sm:text-3xl font-bold dark:text-white text-gray-900 mb-1">
                 {{ trainer.firstName }} {{ trainer.lastName }}
               </h1>
-              <p class="text-sky-600 dark:text-gray-300 font-medium text-lg mb-4">
+              <p class="text-sky-600 dark:text-gray-300 font-medium text-base sm:text-lg mb-3 sm:mb-4">
                 {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
               </p>
-              <div class="flex flex-wrap items-center gap-6 text-sm text-gray-700 dark:text-gray-200">
+
+              <div class="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-6 text-sm text-gray-700 dark:text-gray-200">
                 <div class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 dark:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 dark:text-white text-gray-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
                   </svg>
-                  <span class="font-semibold">Username:</span>
-                  <span class="text-gray-600 dark:text-gray-200">@{{ trainer.username || trainer.userName || "N/A" }}</span>
+                  <span class="dark:text-white font-semibold">Username:</span>
+                  <span class="dark:text-gray-400 text-gray-600"
+                    >@{{ trainer.username || trainer.userName || "N/A" }}</span
+                  >
                 </div>
+
                 <div class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 dark:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 dark:text-white text-gray-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                    />
                   </svg>
-                  <span class="font-semibold">Experience:</span>
-                  <span class="text-gray-600 dark:text-gray-200">{{ getExperience() }} years</span>
+                  <span class="dark:text-white font-semibold">Experience:</span>
+                  <span class="text-gray-600 dark:text-gray-400">{{ getExperience() }} years</span>
                 </div>
+
                 <div class="flex items-center gap-2 text-gray-600 dark:text-gray-200">
-                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"></path>
+                  <svg
+                    class="w-4 h-4 dark:text-white text-gray-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                    ></path>
                     <circle cx="12" cy="9" r="2.5"></circle>
                   </svg>
-                  <span class="capitalize dark:text-gray-200">{{ getLocation() }}</span>
+                  <span class="capitalize dark:text-white">{{ getLocation() }}</span>
                 </div>
               </div>
             </div>
             <div v-if="hasBookedWithTrainer" class="flex items-center gap-3">
-              <button @click="goToChat" :disabled="checkingBooking || creatingConversation" class="px-6 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:scale-105 cursor-pointer bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 disabled:from-gray-400 disabled:to-gray-500 text-white disabled:cursor-not-allowed disabled:scale-100">
+              <button @click="goToChat" :disabled="checkingBooking || creatingConversation" class="mr-40 px-6 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:scale-105 cursor-pointer bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 disabled:from-gray-400 disabled:to-gray-500 text-white disabled:cursor-not-allowed disabled:scale-100">
                 <svg v-if="creatingConversation" class="animate-spin h-5 w-5 inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -83,14 +140,14 @@
           <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-300">Training Plans</h2>
           <span class="text-sm text-gray-500 dark:text-gray-300">{{ plans.length }} plan(s) available</span>
         </div>
-        <div v-if="plans.length === 0" class="text-center py-12 bg-white rounded-xl border">
+        <div v-if="plans.length === 0" class="text-center py-12 bg-white dark:bg-[#3B3B3B] rounded-xl shadow-md dark:shadow-gray-900/50">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 dark:text-gray-300 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <p class="text-gray-500 dark:text-gray-300">No training plans available yet.</p>
         </div>
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div v-for="plan in plans" :key="plan.id" class="bg-white dark:bg-[#3B3B3B] rounded-xl overflow-hidden shadow-md border hover:shadow-xl transition-all">
+          <div v-for="plan in plans" :key="plan.id" class="bg-white dark:bg-[#3B3B3B] rounded-xl overflow-hidden shadow-md dark:shadow-gray-900/50 hover:shadow-xl dark:hover:shadow-gray-900/70 transition-all">
             <div class="h-48 overflow-hidden bg-gray-100">
               <img :src="plan.image || placeholder" alt="plan image" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" @error="handleImageError" />
             </div>
@@ -108,7 +165,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                   <span class="text-gray-600 dark:text-gray-300">Price:</span>
-                  <span class="font-bold text-green-600 dark:text-gray-300 text-lg">{{ formatPrice(plan.price) }}</span>
+                  <span class="font-bold text-green-600 dark:text-gray-300 text-lg">${{ formatPrice(plan.price) }}</span>
                 </div>
               </div>
               <button v-if="!isAdminView" @click="bookPlan(plan, $event)" :disabled="bookingPlanId === plan.id || isAlreadyBooked(plan.id)" class="w-full py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold transition-all transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2">
@@ -130,36 +187,70 @@
 
       <!-- Certificates -->
       <section class="mb-12">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-300">Certificates & Qualifications</h2>
-          <span class="text-sm text-gray-500 dark:text-gray-300">{{ (trainer.certifications || []).length }} certificate(s)</span>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-2">
+          <h2 class="text-xl sm:text-2xl font-bold dark:text-white text-gray-900">
+            Certificates & Qualifications
+          </h2>
+          <span class="text-sm dark:text-white text-gray-500"
+            >{{ (trainer.certifications || []).length }} certificate(s)</span
+          >
         </div>
-        <div v-if="!(trainer.certifications && trainer.certifications.length)" class="text-center py-12 bg-white rounded-xl border">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+        <div
+          v-if="!(trainer.certifications && trainer.certifications.length)"
+          class="text-center py-12 bg-white dark:bg-[#3B3B3B] rounded-xl shadow-md dark:shadow-gray-900/50"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-16 w-16 mx-auto mb-4 text-gray-300 dark:text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
-          <p class="text-gray-500 dark:text-gray-300">No certificates uploaded yet.</p>
+          <p class="dark:text-white text-gray-500">No certificates uploaded yet.</p>
         </div>
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div v-for="(cert, idx) in trainer.certifications" :key="idx" class="border rounded-xl overflow-hidden bg-white hover:shadow-lg transition-shadow cursor-pointer" @click="viewCertificate(cert)">
-            <img :src="cert" alt="certificate" class="w-full h-56 object-contain bg-gray-50 dark:bg-[#3B3B3B] p-2" @error="handleImageError" />
+
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+          <div
+            v-for="(cert, idx) in trainer.certifications"
+            :key="idx"
+            class="rounded-xl overflow-hidden bg-white dark:bg-[#3B3B3B] hover:shadow-lg dark:hover:shadow-gray-900/50 shadow-md dark:shadow-gray-900/30 transition-shadow cursor-pointer"
+            @click="viewCertificate(cert)"
+          >
+            <img
+              :src="cert"
+              alt="certificate"
+              class="w-full h-48 sm:h-56 dark:bg-[#3b3b3b] object-contain bg-gray-50 p-2"
+              @error="handleImageError"
+            />
           </div>
         </div>
       </section>
 
       <!-- Reviews -->
       <section class="mb-20">
-        <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3 sm:gap-4">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-300 mb-2">Reviews & Ratings</h2>
+            <h2 class="text-xl sm:text-2xl font-bold dark:text-white text-gray-900 mb-2">Reviews & Ratings</h2>
             <div class="flex items-center gap-3">
               <div class="flex items-center gap-2">
-                <span class="text-3xl font-bold text-sky-600">{{ avgRatingDisplay }}</span>
-                <div class="flex text-yellow-400 text-xl">
-                  <span v-for="n in 5" :key="n">{{ n <= Math.round(avgRating || 0) ? "★" : "☆" }}</span>
+                <span class="text-2xl sm:text-3xl font-bold text-sky-600">{{ avgRatingDisplay }}</span>
+                <div class="flex text-yellow-400 text-lg sm:text-xl">
+                  <span v-for="n in 5" :key="n">{{
+                    n <= Math.round(avgRating || 0) ? "★" : "☆"
+                  }}</span>
                 </div>
               </div>
-              <span class="text-gray-500 dark:text-gray-300 text-sm">({{ reviewsCount }} review{{ reviewsCount !== 1 ? "s" : "" }})</span>
+              <span class="dark:text-white text-gray-500 text-sm"
+                >({{ reviewsCount }} review{{ reviewsCount !== 1 ? "s" : "" }})</span
+              >
             </div>
           </div>
           <button v-if="hasBookedWithTrainer" @click="openAddReview" :disabled="checkingBooking" class="bg-sky-500 hover:bg-sky-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 cursor-pointer">
@@ -176,33 +267,69 @@
             <span>You need to book a plan with this trainer to leave a review</span>
           </div>
         </div>
-        <div v-if="reviews.length === 0" class="text-center py-12 bg-white dark:bg-[#3B3B3B] rounded-xl border">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+
+        <div v-if="reviews.length === 0" class="text-center py-12 bg-white dark:bg-[#3B3B3B] rounded-xl shadow-md dark:shadow-gray-900/50">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-16 w-16 mx-auto mb-4 text-gray-300 dark:text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+            />
           </svg>
-          <p class="text-gray-500 dark:text-gray-300 text-lg">No reviews yet. Be the first to review!</p>
+          <p class="text-gray-500 dark:text-gray-300 text-lg">No reviews yet.</p>
         </div>
-        <div v-else class="space-y-4">
-          <div v-for="rev in reviews" :key="rev.id" class="bg-white dark:bg-[#3B3B3B] p-6 rounded-xl shadow-md border hover:shadow-lg transition-shadow">
-            <div class="flex items-start gap-4">
-              <img :src="rev.traineeProfilePic || rev.reviewerPhoto || placeholder" alt="reviewer" class="w-12 h-12 rounded-full object-cover border-2 border-gray-200" @error="handleImageError" />
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div
+            v-for="rev in reviews"
+            :key="rev.id"
+            class="bg-white dark:bg-[#3B3B3B] p-4 sm:p-6 rounded-xl shadow-md dark:shadow-gray-900/50 hover:shadow-lg dark:hover:shadow-gray-900/70 transition-shadow"
+          >
+            <div class="flex items-start gap-3 sm:gap-4">
+              <img
+                :src="rev.traineeProfilePic || rev.reviewerPhoto || placeholder"
+                alt="reviewer"
+                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 shrink-0"
+                @error="handleImageError"
+              />
+
               <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
-                  <div>
-                    <div class="font-semibold text-gray-900 dark:text-gray-300">{{ rev.traineeName || rev.reviewerName || "Anonymous" }}</div>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2">
+                  <div class="w-full sm:w-auto">
+                    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                      <div class="font-semibold dark:text-white text-gray-900 text-sm sm:text-base">
+                        {{ rev.traineeName || rev.reviewerName || "Anonymous" }}
+                      </div>
+                      <div v-if="rev.sessionType" class="px-2 sm:px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-full font-medium text-xs">
+                        {{ capitalize(rev.sessionType) }}
+                      </div>
+                    </div>
                     <div class="flex items-center gap-2 mt-1">
                       <div class="flex text-yellow-400">
-                        <span v-for="n in 5" :key="n" class="text-lg">{{ n <= Math.round(rev.rating || 0) ? "★" : "☆" }}</span>
+                        <span v-for="n in 5" :key="n" class="text-base sm:text-lg">
+                          {{ n <= Math.round(rev.rating || 0) ? "★" : "☆" }}
+                        </span>
                       </div>
-                      <span class="text-sm text-gray-500 dark:text-gray-300">({{ rev.rating || 0 }}/5)</span>
+                      <span class="text-xs sm:text-sm dark:text-gray-200 text-gray-500"
+                        >({{ rev.rating || 0 }}/5)</span
+                      >
                     </div>
                   </div>
-                  <div class="text-xs text-gray-400 dark:text-gray-300">{{ formatDate(rev.createdAt) }}</div>
+                  <div class="text-xs dark:text-gray-400 text-gray-400 sm:shrink-0">
+                    {{ formatDate(rev.createdAt) }}
+                  </div>
                 </div>
-                <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">{{ rev.comment }}</p>
-                <div v-if="rev.status || rev.sessionType" class="flex flex-wrap gap-3 text-xs">
-                  <span v-if="rev.sessionType" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">{{ capitalize(rev.sessionType) }}</span>
-                </div>
+
+                <p class="text-sm sm:text-base text-gray-700 dark:text-gray-200 leading-relaxed">
+                  {{ rev.comment }}
+                </p>
               </div>
             </div>
           </div>
@@ -212,16 +339,24 @@
     <!-- Admin action bar (centered bottom) -->
     <div v-if="isAdminView" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[10000]">
       <div class="bg-white dark:bg-[#1f1f1f] px-4 py-3 rounded-xl shadow-xl flex items-center gap-3">
-        <button @click="openModal('activate')" :disabled="trainer.status === 'active'" :class="[
+        <button v-if="trainer.status !== 'active'" @click="activateAccount" :disabled="activating" :class="[
             'px-4 py-2 rounded-lg text-white font-medium',
-            trainer.status === 'active' ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+            activating ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 cursor-pointer'
           ]">
-          Activate Account
+          <span v-if="activating">Activating...</span>
+          <span v-else>Activate Account</span>
         </button>
-        <button @click="openModal('delete')" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium">Delete Account</button>
+        <button v-if="trainer.status === 'active'" @click="openModal('suspend')" :disabled="suspending" :class="[
+            'px-4 py-2 rounded-lg text-white font-medium',
+            suspending ? 'bg-gray-400 cursor-not-allowed' : 'bg-yellow-600 hover:bg-yellow-700 cursor-pointer'
+          ]">
+          <span v-if="suspending">Suspending...</span>
+          <span v-else>Suspend Account</span>
+        </button>
+        <button @click="openModal('delete')" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium cursor-pointer">Delete Account</button>
       </div>
     </div>
-    <!-- Admin Confirm Modal (activate / delete) -->
+    <!-- Admin Confirm Modal (activate / delete / suspend) -->
     <div v-if="showModal" class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[9999]">
       <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md shadow-2xl text-center">
         <!-- ✅ Activate Modal -->
@@ -239,6 +374,21 @@
           <h2 class="text-xl font-semibold mb-4 text-gray-800">Delete Trainer Account</h2>
           <p class="text-gray-600 mb-4">Please provide a reason for deleting {{ trainer.firstName }}’s account.</p>
           <textarea v-model="deleteReason" placeholder="Type reason..." class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-red-400 text-black" rows="3"></textarea>
+          <div class="flex justify-center gap-3">
+            <button @click="confirmAction" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white hover:cursor-pointer">Send & Delete</button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">Cancel</button>
+          </div>
+        </div>
+
+        <!-- ✅ Suspend Modal -->
+        <div v-else-if="modalType === 'suspend'">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">Suspend Trainer Account</h2>
+          <p class="text-gray-600 mb-4">Please provide a reason for suspending {{ trainer.firstName }}’s account.</p>
+          <textarea v-model="suspendReason" placeholder="Type reason..." class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-black" rows="3"></textarea>
+          <div class="flex justify-center gap-3">
+            <button @click="confirmAction" class="px-4 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white hover:cursor-pointer">Confirm</button>
+            <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 hover:cursor-pointer">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -311,8 +461,9 @@ import { useRoute, useRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, collection, getDocs, query, where, addDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
+import { toast } from "vue3-toastify";
 
-const API_URL = "https://elenora-unexampled-carmon.ngrok-free.dev";
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 const route = useRoute();
 const router = useRouter();
@@ -339,6 +490,8 @@ const checkingBooking = ref(false);
 const addingReview = ref(false);
 const creatingConversation = ref(false);
 const newReview = ref({ reviewerName: "", rating: 5, comment: "", phone: "", sessionType: "" });
+const activating = ref(false);
+const suspending = ref(false);
 
 const avgRatingDisplay = computed(() => avgRating.value !== null ? avgRating.value.toFixed(1) : "N/A");
 const canSubmitReview = computed(() => newReview.value.reviewerName.trim() && newReview.value.comment.trim());
@@ -784,8 +937,9 @@ const submitReview = async () => {
 
 // 🔹 Reactive state
 const showModal = ref(false);
-const modalType = ref(""); // 'activate' or 'delete'
+const modalType = ref(""); // 'activate', 'delete', or 'suspend'
 const deleteReason = ref("");
+const suspendReason = ref("");
 
 // 🔹 Modal controls
 const openModal = (type) => {
@@ -795,12 +949,13 @@ const openModal = (type) => {
 const closeModal = () => {
   showModal.value = false;
   deleteReason.value = "";
+  suspendReason.value = "";
 };
 
 // 🔹 Email helper (uses backend absolute URL and returns/throws errors so callers can react)
 const sendEmail = async (to, subject, message) => {
   try {
-    const res = await fetch("http://localhost:3000/api/send-email", {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/api/send-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ to, subject, message }),
@@ -849,32 +1004,109 @@ const confirmAction = async () => {
         `Hello ${trainer.value.firstName},\n\nYour trainer account has been successfully activated and you can now log in and use your account.\n\nBest regards,\nAdmin Team`
       );
 
-      alert("✅ Trainer activated and email sent!");
+      toast.success("Trainer activated and email sent!", { position: "top-center", autoClose: 2000 });
     }
 
-    if (modalType.value === "delete") {
-      if (!deleteReason.value.trim()) return alert("Please provide a reason before deleting.");
+if (modalType.value === "delete") {
+  if (!deleteReason.value.trim()) return toast.error("Please provide a reason for deletion.", { position: "top-center", autoClose: 2000 });
 
-      // 1️⃣ Send email first
+  // 1️⃣ Send email first
+  await sendEmail(
+    trainer.value.email,
+    "Your Trainer Account Has Been Deleted",
+    `Hello ${trainer.value.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
+  );
+
+  // 2️⃣ Delete from Firestore
+  await deleteDoc(trainerRef);
+
+  // 3️⃣ Delete from usernames collection
+  try {
+    await deleteDoc(doc(db, "usernames", trainer.value.id));
+    console.log("✅ Trainer deleted from usernames collection");
+  } catch (usernamesError) {
+    console.error("❌ Error deleting from usernames collection:", usernamesError);
+  }
+
+  // 4️⃣ Delete from Firebase Auth
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/delete-user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: trainer.value.id,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete user from Auth");
+    }
+
+    console.log("✅ Trainer deleted from Firebase Auth");
+  } catch (authError) {
+    console.error("❌ Error deleting from Firebase Auth:", authError);
+  }
+
+  // 5️⃣ Show success message and redirect
+  toast.success("Account deleted successfully.", { position: "top-center", autoClose: 1500 });
+
+  // Close modal and redirect after short delay
+  closeModal();
+  setTimeout(() => {
+    router.push("/admin/managetrainers"); // ✅ المسار الصحيح
+  }, 1500);
+
+  return; // Exit early to prevent closing modal twice
+}
+
+    if (modalType.value === "suspend") {
+      if (!suspendReason.value.trim()) return alert("Please provide a reason before suspending.");
+
+      // 1️⃣ Update Firestore
+      await updateDoc(trainerRef, { status: "suspended" });
+
+      // 2️⃣ Send email
       await sendEmail(
         trainer.value.email,
-        "Your Trainer Account Has Been Deleted",
-        `Hello ${trainer.value.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
+        "Your Trainer Account Has Been Suspended",
+        `Hello ${trainer.value.firstName},\n\nYour trainer account has been suspended for the following reason:\n\n"${suspendReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nAdmin Team`
       );
 
-      // 2️⃣ Delete from Firestore
-      await deleteDoc(trainerRef);
-
-      alert("✅ Trainer deleted and email sent!");
-      router.push("/admin/trainers");
+      trainer.value.status = "suspended";
+      toast.success("Trainer suspended and email sent!", { position: "top-center", autoClose: 2000 });
     }
 
     closeModal();
   } catch (err) {
     console.error("❌ confirmAction error:", err);
-    alert("An error occurred. Check console for details.");
+    toast.error("An error occurred. Check console for details.", { position: "top-center", autoClose: 2000 });
+  } finally {
+    closeModal();
   }
 };
+
+const activateAccount = async () => {
+  if (activating.value) return;
+  activating.value = true;
+  try {
+    const trainerRef = doc(db, "users", trainer.value.id);
+    await updateDoc(trainerRef, { status: "active" });
+    await sendEmail(
+      trainer.value.email,
+      "Your Trainer Account Has Been Activated",
+      `Hello ${trainer.value.firstName},\n\nYour trainer account has been successfully activated and you can now log in and use your account.\n\nBest regards,\nAdmin Team`
+    );
+    trainer.value.status = "active";
+    toast.success("Trainer activated and email sent!", { position: "top-center", autoClose: 2000 });
+  } catch (err) {
+    console.error("❌ activateAccount error:", err);
+    toast.error("An error occurred. Check console for details.", { position: "top-center", autoClose: 2000 });
+  } finally {
+    activating.value = false;
+  }
+};
+
+
 
 /* Admin modal for activate/delete (kept separate so buttons are in bottom bar)
    This was moved from inline controls into a centralized modal shown when showModal is true. */

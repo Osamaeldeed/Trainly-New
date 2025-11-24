@@ -252,11 +252,7 @@
                   @click="togglePasswordVisibility"
                 >
                   <img
-                    :src="
-                      passwordVisible
-                        ? '/src/assets/images/eye off.png'
-                        : '/src/assets/images/Eye.png'
-                    "
+                    :src="passwordVisible ? eyeOffIcon : eyeIcon"
                     alt="Show/Hide"
                     class="w-full h-auto"
                   />
@@ -288,11 +284,7 @@
                   @click="toggleConfirmPasswordVisibility"
                 >
                   <img
-                    :src="
-                      confirmPasswordVisible
-                        ? '/src/assets/images/eye off.png'
-                        : '/src/assets/images/Eye.png'
-                    "
+                    :src="confirmPasswordVisible ? eyeOffIcon : eyeIcon"
                     alt="Show/Hide"
                     class="w-full h-auto"
                   />
@@ -471,7 +463,7 @@
                     </button>
                   </div>
                   <p class="text-xs text-gray-600 dark:text-gray-300 mt-2">
-                    *You can upload files only with (PDF, JPG, PNG, JPEG).
+                    *You can upload files only with (PDF, JPG, PNG, JPEG). Maximum 10 files.
                   </p>
                 </div>
               </div>
@@ -507,15 +499,21 @@
                   @click="$refs.profilePicture.click()"
                 >
                   <div
-                    v-if="!profilePicturePreview"
+                    v-if="!profilePicturePreview && !initialsPreview"
                     class="w-full h-full flex flex-col items-center justify-center bg-gray-100 text-gray-500"
                   >
                     <span class="text-5xl">👤</span>
                   </div>
                   <img
-                    v-else
+                    v-else-if="profilePicturePreview"
                     :src="profilePicturePreview"
                     alt="Profile Preview"
+                    class="w-full h-full object-cover"
+                  />
+                  <img
+                    v-else-if="initialsPreview"
+                    :src="initialsPreview"
+                    alt="Initials Preview"
                     class="w-full h-full object-cover"
                   />
                 </div>
@@ -691,6 +689,8 @@ import {
 } from "firebase/firestore";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import bgSignup from "../assets/images/signup.png";
+import eyeIcon from "../assets/images/Eye.png";
+import eyeOffIcon from "../assets/images/eye off.png";
 
 export default {
   name: "RegistrationForm",
@@ -723,6 +723,7 @@ export default {
       errors: {},
       profilePicture: null,
       profilePicturePreview: null,
+      initialsPreview: null,
       certifications: [],
       certificationsError: "",
       usernameStatus: "",
@@ -730,6 +731,8 @@ export default {
       usernameTimeout: null,
       bgSignup,
       terms: "",
+      eyeIcon,
+      eyeOffIcon,
     };
   },
   computed: {
@@ -754,6 +757,10 @@ export default {
 
       if (this.currentStep < this.totalSteps) {
         this.currentStep++;
+        // Generate initials preview on step 3
+        if (this.currentStep === 3 && !this.profilePicturePreview) {
+          this.initialsPreview = this.generateInitialsImage(this.formData.firstName, this.formData.lastName);
+        }
       }
     },
     prevStep() {
@@ -894,6 +901,7 @@ export default {
           event.target.value = "";
           this.profilePicture = null;
           this.profilePicturePreview = null;
+          this.initialsPreview = null;
           return;
         }
         if (file.size > 5 * 1024 * 1024) {
@@ -901,14 +909,38 @@ export default {
           event.target.value = "";
           this.profilePicture = null;
           this.profilePicturePreview = null;
+          this.initialsPreview = null;
           return;
         }
         this.profilePicture = file;
         this.errors.profilePicture = "";
+        this.initialsPreview = null; // Clear initials when user uploads image
         const reader = new FileReader();
         reader.onload = (e) => (this.profilePicturePreview = e.target.result);
         reader.readAsDataURL(file);
       }
+    },
+    generateInitialsImage(firstName, lastName) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 128;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+
+      // Background color (random or fixed)
+      const colors = ['#00C853', '#00B0FF', '#FF9800', '#E91E63', '#9C27B0'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 128, 128);
+
+      // Text
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 48px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+      ctx.fillText(initials, 64, 64);
+
+      return canvas.toDataURL('image/png');
     },
     handleCertificationsUpload(event) {
       const files = Array.from(event.target.files);
@@ -921,11 +953,28 @@ export default {
           event.target.value = "";
           return;
         }
+        // Check for duplicates by name
+        const isDuplicate = this.certifications.some(existing => existing.name === file.name);
+        if (isDuplicate) {
+          this.certificationsError = `File ${file.name} is already selected`;
+          event.target.value = "";
+          return;
+        }
         validFiles.push(file);
       }
 
-      this.certifications = validFiles;
+      // Check total limit (max 10 files)
+      if (this.certifications.length + validFiles.length > 10) {
+        this.certificationsError = `You can upload a maximum of 10 files. Currently ${this.certifications.length} selected.`;
+        event.target.value = "";
+        return;
+      }
+
+      // Append new files to existing array
+      this.certifications = [...this.certifications, ...validFiles];
       this.certificationsError = "";
+      // Show success toast
+      this.$toast.success("Certificate(s) added successfully!");
     },
     removeCertification(index) {
       this.certifications.splice(index, 1);
@@ -1011,7 +1060,7 @@ export default {
         );
         authUser = userCredential.user;
 
-        // Upload profile picture
+        // Upload profile picture or generate initials
         let profilePicUrl = null;
         if (this.profilePicture) {
           const picRef = storageRef(
@@ -1020,6 +1069,19 @@ export default {
           );
           await uploadBytes(picRef, this.profilePicture, {
             contentType: this.profilePicture.type,
+          });
+          profilePicUrl = await getDownloadURL(picRef);
+        } else {
+          // Generate initials image
+          const initialsDataUrl = this.generateInitialsImage(this.formData.firstName, this.formData.lastName);
+          const response = await fetch(initialsDataUrl);
+          const blob = await response.blob();
+          const picRef = storageRef(
+            storage,
+            `profilePictures/${authUser.uid}/initials_${Date.now()}.png`,
+          );
+          await uploadBytes(picRef, blob, {
+            contentType: 'image/png',
           });
           profilePicUrl = await getDownloadURL(picRef);
         }
@@ -1097,7 +1159,7 @@ export default {
               hour12: true,
             });
 
-            await fetch("http://localhost:3000/send-trainer-registration-email", {
+            await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/send-trainer-registration-email`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

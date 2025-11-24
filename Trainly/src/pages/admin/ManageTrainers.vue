@@ -26,7 +26,7 @@
         >
           <option value="">All Status</option>
           <option value="active">Active</option>
-          <option value="pending">Pending</option>
+          <option value="suspended">Suspended</option>
         </select>
       </div>
     </div>
@@ -106,10 +106,14 @@
 
               <!-- Dropdown -->
               <teleport to="body">
-                <div v-if="openMenuId === trainer.id" :style="dropdownStyle" class="fixed w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
+                <div v-if="openMenuId === trainer.id" :style="dropdownStyle" :class="[
+                  'fixed w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999] transition-all duration-200',
+                  menuDirection === 'up' ? 'animate-slide-up' : 'animate-slide-down'
+                ]">
                   <button @click="goToTrainer(trainer)" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">View Account</button>
                   <button v-if="trainer.status === 'pending'" @click="openModal('accept', trainer)" class="block w-full text-left px-4 py-2 cursor-pointer text-green-600 hover:bg-gray-100">Accept</button>
                   <button v-if="trainer.status === 'active'" @click="openModal('suspend', trainer)" class="block w-full text-left px-4 py-2 text-yellow-600 hover:bg-gray-100 cursor-pointer">Suspend</button>
+                  <button v-if="trainer.status === 'suspended'" @click="openModal('activate', trainer)" class="block w-full text-left px-4 py-2 text-green-600 hover:bg-gray-100 cursor-pointer">Activate</button>
                   <button @click="openModal('delete', trainer)" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer">Delete</button>
                 </div>
               </teleport>
@@ -152,7 +156,7 @@
         </template>
 
         <!-- Activate -->
-        <template v-else-if="modalType === 'accept' && modalState === 'confirm'">
+        <template v-else-if="(modalType === 'accept' || modalType === 'activate') && modalState === 'confirm'">
           <h2 class="text-xl font-semibold mb-4 text-gray-800">Activate Trainer</h2>
           <p class="text-gray-600 mb-6">Are you sure you want to activate {{ selectedTrainer.firstName }}'s account?</p>
         </template>
@@ -174,20 +178,20 @@
     </div>
 
     <!-- Fixed bottom action bar for confirm-type modals (inside root) -->
-    <div v-if="showModal && modalState === 'confirm' && (modalType === 'delete' || modalType === 'accept' || modalType === 'suspend')" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[10000]">
+    <div v-if="showModal && modalState === 'confirm' && (modalType === 'delete' || modalType === 'accept' || modalType === 'activate' || modalType === 'suspend')" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[10000]">
       <div class="bg-white dark:bg-[#1f1f1f] px-4 py-3 rounded-xl shadow-xl flex items-center gap-3">
         <button @click="confirmAction" :class="[
               'px-4 py-2 rounded-lg text-white font-medium',
-              modalType === 'accept'
-                ? 'bg-green-600 hover:bg-green-700'
+              (modalType === 'accept' || modalType === 'activate')
+                ? 'bg-green-600 hover:bg-green-700 cursor-pointer'
                 : modalType === 'suspend'
-                ? 'bg-yellow-600 hover:bg-yellow-700'
-                : 'bg-red-600 hover:bg-red-700',
+                ? 'bg-yellow-600 hover:bg-yellow-700 cursor-pointer'
+                : 'bg-red-600 hover:bg-red-700 cursor-pointer',
             ]">
-          {{ modalType === 'delete' ? 'Send & Delete' : modalType === 'accept' ? 'Confirm' : 'Send & Suspend' }}
+          {{ modalType === 'delete' ? 'Send & Delete' : (modalType === 'accept' || modalType === 'activate') ? 'Confirm' : 'Send & Suspend' }}
         </button>
 
-        <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-black dark:text-white">Cancel</button>
+        <button @click="closeModal" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-black dark:text-white cursor-pointer">Cancel</button>
       </div>
     </div>
   </div>
@@ -198,12 +202,14 @@ import { ref, computed, onMounted } from "vue";
 import { db } from "@/Firebase/firebaseConfig.js";
 import { collection, getDocs, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
 
 const trainers = ref([]);
 const searchQuery = ref("");
 const filterStatus = ref("");
 const openMenuId = ref(null);
 const dropdownStyle = ref({});
+const menuDirection = ref('down');
 
 const showModal = ref(false);
 const modalType = ref("");
@@ -269,7 +275,19 @@ const toggleMenu = (id, event) => {
     return;
   }
   const rect = event.target.getBoundingClientRect();
-  dropdownStyle.value = { top: `${rect.bottom + 6}px`, left: `${rect.right - 160}px` };
+  const menuHeight = 100; // Approximate height of the menu
+  const spaceBelow = window.innerHeight - rect.bottom;
+  const spaceAbove = rect.top;
+
+  if (spaceBelow < menuHeight && spaceAbove > menuHeight) {
+    // Open upward
+    menuDirection.value = 'up';
+    dropdownStyle.value = { top: `${rect.top - menuHeight - 6}px`, left: `${rect.right - 160}px` };
+  } else {
+    // Open downward
+    menuDirection.value = 'down';
+    dropdownStyle.value = { top: `${rect.bottom + 6}px`, left: `${rect.right - 160}px` };
+  }
   openMenuId.value = id;
 };
 
@@ -287,7 +305,7 @@ const openModal = (type, trainer) => {
   if (type === "delete") {
     modalMessageTitle.value = "Confirm Deletion";
     modalMessageText.value = `Are you sure you want to delete ${trainer.firstName}'s account? This action cannot be undone.`;
-  } else if (type === "accept") {
+  } else if (type === "accept" || type === "activate") {
     modalMessageTitle.value = "Activate Trainer";
     modalMessageText.value = `Are you sure you want to activate ${trainer.firstName}'s account?`;
   } else if (type === "suspend") {
@@ -308,7 +326,7 @@ const closeModal = () => {
 
 const sendEmail = async (to, subject, message) => {
   try {
-    const res = await fetch("http://localhost:3000/api/send-email", {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/api/send-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ to, subject, message }),
@@ -347,17 +365,48 @@ const confirmAction = async () => {
       await sendEmail(trainer.email, "Your Trainer Account Has Been Deleted", `Hello ${trainer.firstName},\n\nYour trainer account has been deleted for the following reason:\n\n"${deleteReason.value}"\n\nIf you believe this is a mistake, please contact support.\n\nBest regards,\nTrainly Team`);
       await deleteDoc(trainerRef);
       trainers.value = trainers.value.filter((t) => t.id !== trainer.id);
+
+      // Delete from Firestore usernames collection
+      try {
+        await deleteDoc(doc(db, "usernames", trainer.id));
+        console.log("✅ Trainer deleted from usernames collection");
+      } catch (usernamesError) {
+        console.error("❌ Error deleting from usernames collection:", usernamesError);
+        // Continue with the deletion even if usernames delete fails
+      }
+
+      // Delete from Firebase Auth
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://magnificent-optimism-production-4cdd.up.railway.app"}/delete-user`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: trainer.id,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to delete user from Auth");
+        }
+
+        console.log("✅ Trainer deleted from Firebase Auth");
+      } catch (authError) {
+        console.error("❌ Error deleting from Firebase Auth:", authError);
+        // Continue with the deletion even if Auth delete fails
+      }
+
       modalMessageTitle.value = "Trainer Deleted";
       modalMessageText.value = `${trainer.firstName}'s account has been deleted and an email has been sent.`;
 
-    } else if (modalType.value === "accept") {
+    } else if (modalType.value === "accept" || modalType.value === "activate") {
       await updateDoc(trainerRef, { status: "active" });
       const idx = trainers.value.findIndex((t) => t.id === trainer.id);
       if (idx !== -1) trainers.value[idx].status = "active";
       trainer.status = "active";
-  await sendEmail(trainer.email, "Your Trainer Account Has Been Activated", `Hello ${trainer.firstName},\n\nYour trainer account has been successfully activated and you can now log in and use your account.\n\nBest regards,\nTrainly Team`);
+      await sendEmail(trainer.email, "Your Trainer Account Has Been Activated", `Hello ${trainer.firstName},\n\nYour trainer account has been successfully activated and you can now log in and use your account.\n\nBest regards,\nTrainly Team`);
       modalMessageTitle.value = "Trainer Activated";
       modalMessageText.value = `${trainer.firstName}'s account is now active and an email has been sent.`;
+      toast.success("Account activated successfully.", { position: "top-center", autoClose: 2000 });
 
     } else if (modalType.value === "suspend") {
       if (!suspendReason.value.trim()) return alert("Please provide a reason");
@@ -368,6 +417,7 @@ const confirmAction = async () => {
       trainer.status = "suspended";
       modalMessageTitle.value = "Trainer Suspended";
       modalMessageText.value = `${trainer.firstName}'s account has been suspended and an email has been sent.`;
+      toast.success("Account suspended successfully.", { position: "top-center", autoClose: 2000 });
     }
 
     modalState.value = "message";
@@ -377,7 +427,7 @@ const confirmAction = async () => {
     }, 2000);
   } catch (err) {
     console.error(err);
-    alert("An error occurred. Check console for details.");
+    toast.error("An error occurred. Check console for details.", { position: "top-center", autoClose: 2000 });
   }
 };
 
@@ -420,5 +470,35 @@ onMounted(async () => {
 <style scoped>
 .backdrop-blur-md {
   backdrop-filter: blur(12px);
+}
+
+.animate-slide-down {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

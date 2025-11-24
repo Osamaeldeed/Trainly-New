@@ -1,6 +1,9 @@
 <template>
   <nav
-    class="flex justify-between items-center px-[50px] md:px-[70px] h-20 bg-white dark:bg-[#3B3B3B] shadow-sm relative"
+    :class="[
+      'flex justify-between items-center h-20 bg-white dark:bg-[#3B3B3B] shadow-sm relative',
+      locale === 'ar' ? 'px-[50px] md:px-[70px]' : 'px-[50px] md:px-[70px]',
+    ]"
   >
     <!-- 🔹 اللوجو -->
     <img :src="logoSrc" alt="Logo" class="w-[140px] h-auto" />
@@ -50,23 +53,30 @@
         >
           <div
             v-if="showUserMenu"
-            class="absolute right-0 mt-2 w-40 bg-white dark:bg-black shadow-lg rounded-lg py-2 z-50 cursor-pointer"
+            :class="[
+              'absolute mt-2 w-48 bg-white dark:bg-black shadow-lg rounded-lg py-2 z-50 cursor-pointer',
+              locale === 'ar' ? 'left-0' : 'right-0',
+            ]"
+            style="min-width: 200px"
           >
             <button
               @click="
                 $router.push('/trainee/mytrainers');
                 showUserMenu = false;
               "
-              class="w-full text-left px-4 py-2 text-[#333] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-300 transition cursor-pointer"
+              :class="[
+                'w-full px-4 py-2 text-[#333] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-300 transition cursor-pointer',
+                locale === 'ar' ? 'text-right' : 'text-left',
+              ]"
             >
-              My Dashboard
+              {{ $t("myDashboard") }}
             </button>
             <button
               @click="handleLogout"
               class="flex items-center p-2 text-red-600 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-300 w-full transition duration-300 cursor-pointer"
             >
               <img src="@/assets/images/logout.png" alt="logout icon" class="w-5 h-5" />
-              <span class="ms-3 font-medium">Log out</span>
+              <span class="ms-3 font-medium">{{ $t("logOut") }}</span>
             </button>
           </div>
         </transition>
@@ -136,47 +146,25 @@
 
         <!-- Mobile Dropdown -->
         <div class="flex flex-col gap-2 w-[80%] items-center">
+          <!-- ✅ My Dashboard Button -->
           <button
-            @click="showUserMenu = !showUserMenu"
-            class="w-full rounded-2xl border-2 border-primary text-[#333] dark:text-white text-primary hover:bg-primary hover:text-white transition h-11 text-[17px] cursor-pointer"
+            @click="
+              $router.push('/trainee/mytrainers');
+              isOpen = false;
+            "
+            class="w-full rounded-2xl border-2 border-[#00C853] bg-white dark:bg-gray-800 text-[#00C853] dark:text-[#00C853] hover:bg-[#00C853] hover:text-white dark:hover:bg-[#00C853] dark:hover:text-white transition-all duration-300 h-11 text-[17px] font-medium cursor-pointer"
           >
-            Profile
+            {{ $t("myDashboard") }}
           </button>
 
-          <transition
-            enter-active-class="transition ease-out duration-200 transform"
-            enter-from-class="opacity-0 -translate-y-2"
-            enter-to-class="opacity-100 translate-y-0"
-            leave-active-class="transition ease-in duration-150 transform"
-            leave-from-class="opacity-100 translate-y-0"
-            leave-to-class="opacity-0 -translate-y-2"
+          <!-- ✅ Logout Button -->
+          <button
+            @click="handleLogout"
+            class="flex items-center justify-center w-full p-2 text-red-600 rounded-2xl border-2 border-red-600 bg-white dark:bg-gray-800 hover:bg-red-600 hover:text-white dark:hover:bg-red-600 dark:hover:text-white transition-all duration-300 h-11 text-[17px] font-medium cursor-pointer"
           >
-            <div
-              v-if="showUserMenu"
-              class="flex flex-col w-full bg-white dark:bg-black rounded-lg shadow-md"
-            >
-              <!-- ✅ Dashboard Button -->
-              <button
-                @click="
-                  $router.push('/trainee/dashboard');
-                  isOpen = false;
-                  showUserMenu = false;
-                "
-                class="px-4 py-2 hover:bg-gray-100 w-full text-[#333] dark:text-white text-left rounded-t-lg"
-              >
-                Dashboard
-              </button>
-
-              <!-- ✅ Logout Button (منفصل تماماً) -->
-              <button
-                @click="handleLogout"
-                class="flex items-center p-2 text-red-600 rounded-b-lg hover:bg-blue-200 w-full transition duration-300 cursor-pointer"
-              >
-                <img src="@/assets/images/logout.png" alt="logout icon" class="w-5 h-5" />
-                <span class="ms-3 font-medium">Log out</span>
-              </button>
-            </div>
-          </transition>
+            <img src="@/assets/images/logout.png" alt="logout icon" class="w-5 h-5 mr-2" />
+            {{ $t("logOut") }}
+          </button>
         </div>
       </div>
     </transition>
@@ -193,10 +181,19 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { onMounted, ref, watch } from "vue";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import ConfirmLogoutModal from "../components/ConfirmLogoutModal.vue";
 import logoLight from "@/assets/images/Project LOGO.png";
 import logoDark from "@/assets/images/LOGO for (Dark mode).png";
@@ -217,6 +214,16 @@ export default {
   methods: {
     toggleUserMenu() {
       this.showUserMenu = !this.showUserMenu;
+    },
+    closeUserMenu() {
+      this.showUserMenu = false;
+    },
+    handleClickOutside(event) {
+      const dropdown = this.$el.querySelector('.dropdown-menu');
+      const userImg = this.$el.querySelector('img[alt="user photo"]');
+      if (dropdown && !dropdown.contains(event.target) && !userImg.contains(event.target)) {
+        this.closeUserMenu();
+      }
     },
     switchLang() {
       const newLocale = this.$i18n.locale === "en" ? "ar" : "en";
@@ -245,13 +252,22 @@ export default {
     const saved = localStorage.getItem("darkMode") === "true";
     this.isDark = saved;
     this.saveDark(saved);
+
+    // Add click outside listener
+    document.addEventListener("click", this.handleClickOutside);
+  },
+  beforeUnmount() {
+    // Remove click outside listener
+    document.removeEventListener("click", this.handleClickOutside);
   },
   components: {
     ConfirmLogoutModal,
   },
   setup() {
+    const { locale } = useI18n();
     const TraineeImage = ref("");
     const showLogoutModal = ref(false);
+    const unreadCount = ref(0);
     const db = getFirestore();
     const auth = getAuth();
     const router = useRouter();
@@ -268,6 +284,23 @@ export default {
       } catch (error) {
         console.error("Error fetching trainee data:", error);
       }
+    };
+
+    const setupUnreadCountListener = (uid) => {
+      // Listen to conversations where the trainee is a participant
+      const conversationsRef = collection(db, "conversations");
+      const q = query(conversationsRef, where("participants", "array-contains", uid));
+
+      onSnapshot(q, (querySnapshot) => {
+        let totalUnread = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.unreadCount && data.unreadCount[uid]) {
+            totalUnread += data.unreadCount[uid];
+          }
+        });
+        unreadCount.value = totalUnread;
+      });
     };
 
     const handleLogout = () => {
@@ -291,18 +324,26 @@ export default {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           fetchTraineeImage(user.uid);
+          setupUnreadCountListener(user.uid);
         } else {
           console.log("No user signed in.");
         }
       });
     });
 
+    // Watch for unread count changes and update data property
+    watch(unreadCount, (newCount) => {
+      this.unreadCount = newCount;
+    });
+
     return {
+      locale,
       TraineeImage,
       handleLogout,
       showLogoutModal,
       confirmLogout,
       cancelLogout,
+      unreadCount,
     };
   },
 };

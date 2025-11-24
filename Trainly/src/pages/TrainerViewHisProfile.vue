@@ -35,7 +35,7 @@
     </div>
 
     <!-- Main Content -->
-    <div v-else class="max-w-7xl mx-auto px-4 py-10">
+    <div v-else class="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-10">
       <!-- Info Banner -->
       <div
         class="mb-6 bg-blue-50 border dark:bg-[#3b3b3b] border-blue-200 rounded-xl p-4 flex items-start gap-3"
@@ -78,79 +78,82 @@
       <!-- HERO -->
       <div class="relative mb-10">
         <div
-          class="bg-linear-to-r from-sky-50 to-blue-50 border dark:from-[#3b3b3b] dark:to-[#1e1e1e] border-sky-200 rounded-2xl p-6 pl-36 pr-6 flex items-center shadow-sm"
+          class="bg-linear-to-r from-sky-50 to-blue-50 dark:from-[#3b3b3b] dark:to-[#1e1e1e] rounded-2xl p-4 sm:p-6 sm:pl-36 sm:pr-6 shadow-md dark:shadow-gray-900/50"
         >
           <!-- Profile Image -->
           <img
             :src="trainer.profilePicture || placeholder"
             alt="trainer profile"
-            class="absolute -top-6 left-6 w-40 h-40 object-cover rounded-xl border-4 border-white shadow-xl"
+            class="relative sm:absolute sm:-top-6 sm:left-6 w-24 h-24 sm:w-40 sm:h-40 mx-auto sm:mx-0 mb-4 sm:mb-0 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl"
             @error="handleImageError"
           />
 
-          <div class="ml-28 w-full">
-            <h1 class="text-3xl font-bold dark:text-white text-gray-900 mb-1">
-              {{ trainer.firstName }} {{ trainer.lastName }}
-            </h1>
-            <p class="text-sky-600 font-medium text-lg mb-4">
-              {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
-            </p>
+          <div class="sm:ml-28 w-full flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4">
+            <!-- Left side: Profile info -->
+            <div class="flex-1 text-center sm:text-left">
+              <h1 class="text-2xl sm:text-3xl font-bold dark:text-white text-gray-900 mb-1">
+                {{ trainer.firstName }} {{ trainer.lastName }}
+              </h1>
+              <p class="text-sky-600 dark:text-gray-300 font-medium text-base sm:text-lg mb-3 sm:mb-4">
+                {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
+              </p>
 
-            <div class="flex flex-wrap items-center gap-6 text-sm text-gray-700">
-              <div class="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-4 h-4 dark:text-white text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+              <div class="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-6 text-sm text-gray-700 dark:text-gray-200">
+                <div class="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 dark:text-white text-gray-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  <span class="dark:text-white font-semibold">Username:</span>
+                  <span class="dark:text-gray-400 text-gray-600"
+                    >@{{ trainer.username || trainer.userName || "N/A" }}</span
+                  >
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 dark:text-white text-gray-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                    />
+                  </svg>
+                  <span class="dark:text-white font-semibold">Experience:</span>
+                  <span class="text-gray-600 dark:text-gray-400">{{ getExperience() }} years</span>
+                </div>
+
+                <div class="flex items-center gap-2 text-gray-600 dark:text-gray-200">
+                  <svg
+                    class="w-4 h-4 dark:text-white text-gray-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
                     stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <span class="dark:text-white font-semibold">Username:</span>
-                <span class="dark:text-gray-400 text-gray-600"
-                  >@{{ trainer.username || trainer.userName || "N/A" }}</span
-                >
-              </div>
-
-              <div class="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-4 h-4 dark:text-white text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                  />
-                </svg>
-                <span class="dark:text-white font-semibold">Experience:</span>
-                <span class="text-gray-600 dark:text-gray-400">{{ getExperience() }} years</span>
-              </div>
-
-              <div class="flex items-center gap-2 text-gray-600">
-                <svg
-                  class="w-4 h-4 dark:text-white text-gray-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                  ></path>
-                  <circle cx="12" cy="9" r="2.5"></circle>
-                </svg>
-                <span class="capitalize dark:text-white">{{ getLocation() }}</span>
+                  >
+                    <path
+                      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                    ></path>
+                    <circle cx="12" cy="9" r="2.5"></circle>
+                  </svg>
+                  <span class="capitalize dark:text-white">{{ getLocation() }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -159,17 +162,17 @@
 
       <!-- Plans -->
       <section class="mb-12">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold dark:text-white text-gray-900">Your Training Plans</h2>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-2">
+          <h2 class="text-xl sm:text-2xl font-bold dark:text-white text-gray-900">Your Training Plans</h2>
           <span class="text-sm dark:text-white text-gray-500">
             {{ plans.length }} plan(s) available</span
           >
         </div>
 
-        <div v-if="plans.length === 0" class="text-center py-12 bg-white rounded-xl border">
+        <div v-if="plans.length === 0" class="text-center py-12 bg-white dark:bg-[#3B3B3B] rounded-xl shadow-md dark:shadow-gray-900/50">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-16 w-16 mx-auto mb-4 text-gray-300"
+            class="h-16 w-16 mx-auto mb-4 text-gray-300 dark:text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -184,13 +187,13 @@
           <p class="text-gray-500 dark:text-white">No training plans created yet.</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div
             v-for="plan in plans"
             :key="plan.id"
-            class="bg-white rounded-xl overflow-hidden shadow-md border hover:shadow-xl transition-all"
+            class="bg-white dark:bg-[#3B3B3B] rounded-xl overflow-hidden shadow-md dark:shadow-gray-900/50 hover:shadow-xl dark:hover:shadow-gray-900/70 transition-all"
           >
-            <div class="h-48 overflow-hidden dark:bg-[#3b3b3b] bg-gray-100">
+            <div class="h-40 sm:h-48 overflow-hidden dark:bg-[#3b3b3b] bg-gray-100">
               <img
                 :src="plan.image || placeholder"
                 alt="plan image"
@@ -199,15 +202,15 @@
               />
             </div>
 
-            <div class="p-5 dark:bg-[#3b3b3b]">
-              <h3 class="font-bold text-lg mb-2 dark:text-white text-gray-900">
+            <div class="p-4 sm:p-5 dark:bg-[#3b3b3b]">
+              <h3 class="font-bold text-base sm:text-lg mb-2 dark:text-white text-gray-900">
                 {{ plan.title || "Untitled Plan" }}
               </h3>
               <p class="text-sm dark:text-gray-200 text-gray-600 mb-4 line-clamp-2">
                 {{ plan.description || "No description available." }}
               </p>
 
-              <div class="space-y-2 text-sm">
+              <div class="space-y-1 sm:space-y-2 text-sm">
                 <div class="flex items-center justify-between">
                   <span class="text-gray-600 dark:text-gray-200">Duration:</span>
                   <span class="font-semibold dark:text-gray-300 text-gray-900">{{
@@ -222,7 +225,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                   <span class="text-gray-600 dark:text-gray-200">Price:</span>
-                  <span class="font-bold text-green-600 text-lg">{{
+                  <span class="font-bold text-green-600 text-base sm:text-lg">{{
                     formatPrice(plan.price)
                   }}</span>
                 </div>
@@ -234,8 +237,8 @@
 
       <!-- Certificates -->
       <section class="mb-12">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold dark:text-white text-gray-900">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-2">
+          <h2 class="text-xl sm:text-2xl font-bold dark:text-white text-gray-900">
             Your Certificates & Qualifications
           </h2>
           <span class="text-sm dark:text-white text-gray-500"
@@ -245,11 +248,11 @@
 
         <div
           v-if="!(trainer.certifications && trainer.certifications.length)"
-          class="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border"
+          class="text-center py-12 bg-white dark:bg-[#3B3B3B] rounded-xl shadow-md dark:shadow-gray-900/50"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-16 w-16 mx-auto mb-4 text-gray-300"
+            class="h-16 w-16 mx-auto mb-4 text-gray-300 dark:text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -264,17 +267,17 @@
           <p class="dark:text-white text-gray-500">No certificates uploaded yet.</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           <div
             v-for="(cert, idx) in trainer.certifications"
             :key="idx"
-            class="border rounded-xl overflow-hidden bg-white hover:shadow-lg transition-shadow cursor-pointer"
+            class="rounded-xl overflow-hidden bg-white dark:bg-[#3B3B3B] hover:shadow-lg dark:hover:shadow-gray-900/50 shadow-md dark:shadow-gray-900/30 transition-shadow cursor-pointer"
             @click="viewCertificate(cert)"
           >
             <img
               :src="cert"
               alt="certificate"
-              class="w-full h-56 dark:bg-[#3b3b3b] object-contain bg-gray-50 p-2"
+              class="w-full h-48 sm:h-56 dark:bg-[#3b3b3b] object-contain bg-gray-50 p-2"
               @error="handleImageError"
             />
           </div>
@@ -283,13 +286,13 @@
 
       <!-- Reviews -->
       <section class="mb-20">
-        <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3 sm:gap-4">
           <div>
-            <h2 class="text-2xl font-bold dark:text-white text-gray-900 mb-2">Reviews & Ratings</h2>
+            <h2 class="text-xl sm:text-2xl font-bold dark:text-white text-gray-900 mb-2">Reviews & Ratings</h2>
             <div class="flex items-center gap-3">
               <div class="flex items-center gap-2">
-                <span class="text-3xl font-bold text-sky-600">{{ avgRatingDisplay }}</span>
-                <div class="flex text-yellow-400 text-xl">
+                <span class="text-2xl sm:text-3xl font-bold text-sky-600">{{ avgRatingDisplay }}</span>
+                <div class="flex text-yellow-400 text-lg sm:text-xl">
                   <span v-for="n in 5" :key="n">{{
                     n <= Math.round(avgRating || 0) ? "★" : "☆"
                   }}</span>
@@ -302,10 +305,10 @@
           </div>
         </div>
 
-        <div v-if="reviews.length === 0" class="text-center py-12 bg-white rounded-xl border">
+        <div v-if="reviews.length === 0" class="text-center py-12 bg-white dark:bg-[#3B3B3B] rounded-xl shadow-md dark:shadow-gray-900/50">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-16 w-16 mx-auto mb-4 text-gray-300"
+            class="h-16 w-16 mx-auto mb-4 text-gray-300 dark:text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -317,57 +320,53 @@
               d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
             />
           </svg>
-          <p class="text-gray-500 text-lg">No reviews yet.</p>
+          <p class="text-gray-500 dark:text-gray-300 text-lg">No reviews yet.</p>
         </div>
 
-        <div v-else class="space-y-4">
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div
             v-for="rev in reviews"
             :key="rev.id"
-            class="bg-white p-6 rounded-xl dark:bg-[#3b3b3b] shadow-md border hover:shadow-lg transition-shadow"
+            class="bg-white dark:bg-[#3B3B3B] p-4 sm:p-6 rounded-xl shadow-md dark:shadow-gray-900/50 hover:shadow-lg dark:hover:shadow-gray-900/70 transition-shadow"
           >
-            <div class="flex items-start gap-4">
+            <div class="flex items-start gap-3 sm:gap-4">
               <img
                 :src="rev.traineeProfilePic || rev.reviewerPhoto || placeholder"
                 alt="reviewer"
-                class="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 shrink-0"
                 @error="handleImageError"
               />
 
               <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
-                  <div>
-                    <div class="font-semibold dark:text-white text-gray-900">
-                      {{ rev.traineeName || rev.reviewerName || "Anonymous" }}
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2">
+                  <div class="w-full sm:w-auto">
+                    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                      <div class="font-semibold dark:text-white text-gray-900 text-sm sm:text-base">
+                        {{ rev.traineeName || rev.reviewerName || "Anonymous" }}
+                      </div>
+                      <div v-if="rev.sessionType" class="px-2 sm:px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-full font-medium text-xs">
+                        {{ capitalize(rev.sessionType) }}
+                      </div>
                     </div>
                     <div class="flex items-center gap-2 mt-1">
                       <div class="flex text-yellow-400">
-                        <span v-for="n in 5" :key="n" class="text-lg">
+                        <span v-for="n in 5" :key="n" class="text-base sm:text-lg">
                           {{ n <= Math.round(rev.rating || 0) ? "★" : "☆" }}
                         </span>
                       </div>
-                      <span class="text-sm dark:text-gray-200 text-gray-500"
+                      <span class="text-xs sm:text-sm dark:text-gray-200 text-gray-500"
                         >({{ rev.rating || 0 }}/5)</span
                       >
                     </div>
                   </div>
-                  <div class="text-xs dark:text-white text-gray-400">
+                  <div class="text-xs dark:text-gray-400 text-gray-400 sm:shrink-0">
                     {{ formatDate(rev.createdAt) }}
                   </div>
                 </div>
 
-                <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
+                <p class="text-sm sm:text-base text-gray-700 dark:text-gray-200 leading-relaxed">
                   {{ rev.comment }}
                 </p>
-
-                <div v-if="rev.status || rev.sessionType" class="flex flex-wrap gap-3 text-xs">
-                  <span
-                    v-if="rev.sessionType"
-                    class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
-                  >
-                    {{ capitalize(rev.sessionType) }}
-                  </span>
-                </div>
               </div>
             </div>
           </div>

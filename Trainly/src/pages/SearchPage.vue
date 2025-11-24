@@ -35,7 +35,8 @@
       @click="showMobileFilters = false"
     >
       <div
-        class="absolute left-0 top-0 bottom-0 w-80 max-w-[85%] bg-white dark:bg-black p-6 overflow-y-auto"
+        class="absolute top-0 bottom-0 w-80 max-w-[85%] bg-white dark:bg-black p-6 overflow-y-auto"
+        :class="{ 'left-0': $i18n.locale !== 'ar', 'right-0': $i18n.locale === 'ar' }"
         @click.stop
       >
         <div class="flex items-center justify-between mb-6">
@@ -169,6 +170,7 @@
     <!-- Desktop Sidebar Filters -->
     <aside
       class="hidden md:block w-64 bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-xl m-4 p-6 border-[#0D8BF2] border-2 h-fit sticky top-4"
+      :class="{ 'ml-4 mr-4': $i18n.locale !== 'ar', 'mr-4 ml-4': $i18n.locale === 'ar' }"
       v-if="userRole === 'trainee'"
     >
       <h2 class="font-semibold dark:text-gray-200 text-lg mb-4">Filter By</h2>
@@ -291,17 +293,17 @@
         </div>
 
         <div class="mb-4 text-center" v-if="displayQuery">
-          <h2 class="font-semibold text-lg">
+          <h2 class="font-semibold text-lg" :class="{ 'text-right': $i18n.locale === 'ar' }">
             Search Results for "<span class="text-blue-600">{{ displayQuery }}</span
             >"
           </h2>
-          <p class="text-sm text-gray-500 dark:text-gray-300 mt-1">
+          <p class="text-sm text-gray-500 dark:text-gray-300 mt-1" :class="{ 'text-right': $i18n.locale === 'ar' }">
             {{ filteredTrainers.length }} trainer(s) found
           </p>
         </div>
 
         <div v-if="loading" class="text-center py-12">
-          <div class="inline-block animate-pulse text-gray-500 dark:text-gray-300">
+          <div class="inline-block animate-pulse text-gray-500 dark:text-gray-300" :class="{ 'text-right': $i18n.locale === 'ar' }">
             Loading trainers...
           </div>
         </div>
@@ -349,10 +351,10 @@
                 @error="handleImageError"
               />
               <div class="p-4">
-                <h3 class="font-semibold text-lg truncate dark:text-white">
+                <h3 class="font-semibold text-lg truncate dark:text-white" :class="{ 'text-right': $i18n.locale === 'ar' }">
                   {{ trainer.firstName }} {{ trainer.lastName }}
                 </h3>
-                <p class="text-[#00B0FF] dark:text-gray-200 text-sm font-medium mb-2 capitalize">
+                <p class="text-[#00B0FF] dark:text-gray-200 text-sm font-medium mb-2 capitalize" :class="{ 'text-right': $i18n.locale === 'ar' }">
                   {{ trainer.sport || "N/A" }}
                 </p>
 
@@ -382,8 +384,8 @@
                   >
                 </div>
 
-                <div class="flex items-center justify-between mt-3">
-                  <div class="flex items-center gap-2 text-sm">
+                <div class="flex items-center justify-between mt-3" :class="{ 'flex-row-reverse': $i18n.locale === 'ar' }">
+                  <div class="flex items-center gap-2 text-sm" :class="{ 'flex-row-reverse': $i18n.locale === 'ar' }">
                     <span class="text-yellow-500">★</span>
                     <span class="font-semibold text-[#00B0FF]">
                       {{ trainer.avgRating !== null ? trainer.avgRating.toFixed(1) : "N/A" }}
@@ -415,6 +417,7 @@ import { useRoute, useRouter } from "vue-router";
 import { collection, getDocs, query, where, doc, getDoc } from "firebase/firestore";
 import { db } from "@/Firebase/firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 const route = useRoute();
 const router = useRouter();

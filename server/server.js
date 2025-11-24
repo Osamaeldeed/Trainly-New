@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const admin = require("firebase-admin");
-const nodemailer = require("nodemailer");
+const axios = require("axios");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { nutritionPlans, greetings, findMatchingResponse } = require("./nutritionData");
 
@@ -13,20 +13,129 @@ const { nutritionPlans, greetings, findMatchingResponse } = require("./nutrition
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Initialize Firebase Admin
-const serviceAccount = require("./serviceAccountKey.json");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+let serviceAccountKey;
+
+try {
+  // Try to use individual env vars first
+  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+    serviceAccountKey = {
+      type: "service_account",
+      project_id: process.env.FIREBASE_PROJECT_ID,
+      private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      client_email: process.env.FIREBASE_CLIENT_EMAIL,
+    };
+    console.log('✅ Using Firebase credentials from environment variables');
+  } 
+  // Fallback: try JSON string
+  else if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    serviceAccountKey = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    console.log('✅ Using Firebase credentials from JSON string');
+  }
+  // Last resort: throw error
+  else {
+    throw new Error('Firebase credentials not found in environment variables');
+  }
+
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccountKey),
+  });
+  
+  console.log('✅ Firebase Admin initialized successfully');
+} catch (error) {
+  console.error('❌ Firebase Admin initialization failed:', error.message);
+  process.exit(1);
+}
+
 const db = admin.firestore();
 
-// Configure email transporter (Gmail)
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// ---------- Brevo (Sendinblue) Email Helper ----------
+// Ensure these ENV vars exist:
+// - BREVO_API_KEY
+// - BREVO_SENDER_EMAIL (default to osamaeldeeb728@gmail.com)
+// - BREVO_SENDER_NAME (default to Trainly)
+
+if (!process.env.BREVO_API_KEY) {
+  console.warn("⚠️ BREVO_API_KEY is not configured. Email sending will fail until this is set.");
+}
+
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
+const BREVO_SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || "osamaeldeeb728@gmail.com";
+const BREVO_SENDER_NAME = process.env.BREVO_SENDER_NAME || "Trainly";
+
+/**
+ * sendEmailWithBrevo - unified function to send HTML emails via Brevo API
+ * @param {string} to - recipient email (single)
+ * @param {string} subject - email subject
+ * @param {string} html - HTML content
+ * @param {string} [replyTo] - optional reply-to email
+ */
+async function sendEmailWithBrevo(to, subject, html, replyTo) {
+  try {
+    const payload = {
+      sender: {
+        name: BREVO_SENDER_NAME,
+        email: BREVO_SENDER_EMAIL,
+      },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    };
+
+    if (replyTo) {
+      payload.replyTo = { email: replyTo };
+    }
+
+    const res = await axios.post(BREVO_API_URL, payload, {
+      headers: {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "api-key": process.env.BREVO_API_KEY,
+      },
+      timeout: 15000,
+    });
+
+    // Brevo returns 201 on success for that endpoint normally
+    if (res.status >= 200 && res.status < 300) {
+      console.log(`✅ Email sent via Brevo to ${to} (subject: ${subject}) - status ${res.status}`);
+      return { ok: true, status: res.status, data: res.data };
+    } else {
+      console.warn(`⚠️ Brevo responded with non-2xx status: ${res.status}`, res.data);
+      return { ok: false, status: res.status, data: res.data };
+    }
+  } catch (err) {
+    // Better error logging: Brevo errors usually in err.response.data
+    if (err.response) {
+      console.error("❌ Brevo API error:", err.response.status, err.response.data);
+      throw new Error(`Brevo API error: ${err.response.status} - ${JSON.stringify(err.response.data)}`);
+    } else {
+      console.error("❌ Brevo request failed:", err.message);
+      throw err;
+    }
+  }
+}
+
+/**
+ * createTrainlyEmailTemplate - unified HTML template for all Trainly emails
+ * @param {string} title - email title
+ * @param {string} content - main content HTML
+ * @param {string} [footerText] - optional custom footer text
+ */
+function createTrainlyEmailTemplate(title, content, footerText = "This is an automated notification from Trainly") {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h1 style="color: #2563eb; margin-bottom: 20px; text-align: center; font-size: 24px;">${title}</h1>
+        ${content}
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 14px;">
+          <p style="margin: 0;">${footerText}</p>
+          <p style="margin: 10px 0 0 0; font-weight: bold; color: #2563eb;">Trainly</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+console.log('📧 Email configured to use Brevo (Sendinblue) API (Railway compatible)');
 
 const app = express();
 
@@ -37,6 +146,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:3000",
+      process.env.FRONTEND_URL || "https://trainly-110.netlify.app"
     ],
     credentials: true,
   })
@@ -112,99 +222,71 @@ function getSportEmojisFromTitle(title = "") {
 
 // Helper function to send subscription email
 async function sendSubscriptionEmail(subscriptionData) {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: "osamaeldeeb728@gmail.com",
-    subject: "🎉 New Subscription - Training Platform",
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-        <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-          <h1 style="color: #2563eb; margin-bottom: 20px;">🎉 New Subscription!</h1>
-          
-          <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h2 style="color: #1e40af; margin-top: 0;">Trainer Information</h2>
-            <p><strong>Name:</strong> ${
-              subscriptionData.trainerName || "N/A"
-            }</p>
-            <p><strong>Email:</strong> ${
-              subscriptionData.trainerEmail || "N/A"
-            }</p>
-            <p><strong>Trainer ID:</strong> ${subscriptionData.trainerUid}</p>
-          </div>
+  const content = `
+    <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <h2 style="color: #1e40af; margin-top: 0;">👨‍🏫 Trainer Information</h2>
+      <p><strong>Name:</strong> ${subscriptionData.trainerName || "N/A"}</p>
+      <p><strong>Email:</strong> ${subscriptionData.trainerEmail || "N/A"}</p>
+      <p><strong>Trainer ID:</strong> ${subscriptionData.trainerUid}</p>
+    </div>
 
-          <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h2 style="color: #15803d; margin-top: 0;">Subscription Details</h2>
-            <p><strong>Plan Type:</strong> ${subscriptionData.planType}</p>
-            <p><strong>Plan Limit:</strong> ${
-              subscriptionData.planLimit
-            } plans</p>
-            <p><strong>Price:</strong> $${subscriptionData.price}/month</p>
-            <p><strong>Status:</strong> <span style="color: #15803d; font-weight: bold;">ACTIVE</span></p>
-          </div>
+    <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <h2 style="color: #15803d; margin-top: 0;">✅ Subscription Details</h2>
+      <p><strong>Plan Type:</strong> ${subscriptionData.planType}</p>
+      <p><strong>Plan Limit:</strong> ${subscriptionData.planLimit} plans</p>
+      <p><strong>Price:</strong> $${subscriptionData.price}/month</p>
+      <p><strong>Status:</strong> <span style="color: #15803d; font-weight: bold;">ACTIVE 🎉</span></p>
+    </div>
 
-          <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px;">
-            <h2 style="color: #92400e; margin-top: 0;">Payment Information</h2>
-            <p><strong>Stripe Session ID:</strong> ${
-              subscriptionData.stripeSessionId || "N/A"
-            }</p>
-            <p><strong>Stripe Subscription ID:</strong> ${
-              subscriptionData.stripeSubscriptionId || "N/A"
-            }</p>
-            <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-          </div>
+    <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px;">
+      <h2 style="color: #92400e; margin-top: 0;">💳 Payment Information</h2>
+      <p><strong>Stripe Session ID:</strong> ${subscriptionData.stripeSessionId || "N/A"}</p>
+      <p><strong>Stripe Subscription ID:</strong> ${subscriptionData.stripeSubscriptionId || "N/A"}</p>
+      <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+    </div>
+  `;
 
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
-            <p>This is an automated notification from your Training Platform</p>
-          </div>
-        </div>
-      </div>
-    `,
-  };
+  const html = createTrainlyEmailTemplate("🎉 New Subscription!", content, "This is an automated notification from your Training Platform");
 
   try {
-    await transporter.sendMail(mailOptions);
+    await sendEmailWithBrevo(
+      "osamaeldeeb728@gmail.com",
+      "🎉 New Subscription - Trainly",
+      html
+    );
     console.log("✅ Subscription email sent successfully");
   } catch (error) {
-    console.error("❌ Error sending email:", error);
+    console.error("❌ Error sending subscription email (Brevo):", error.message || error);
   }
 }
 
 // Helper function to send new trainer registration email
 async function sendNewTrainerEmail(trainerData) {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: "osamaeldeeb728@gmail.com",
-    subject: "👤 New Trainer Registration - Trainly",
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-        <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-          <h1 style="color: #2563eb; margin-bottom: 20px;">👤 New Trainer Registration</h1>
-          
-          <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h2 style="color: #1e40af; margin-top: 0;">Trainer Information</h2>
-            <p><strong>Name:</strong> ${trainerData.trainerName}</p>
-            <p><strong>Registration Date:</strong> ${trainerData.registrationDate}</p>
-            <p><strong>Sport:</strong> ${trainerData.sport}</p>
-          </div>
+  const content = `
+    <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <h2 style="color: #1e40af; margin-top: 0;">👨‍🏫 Trainer Information</h2>
+      <p><strong>Name:</strong> ${trainerData.trainerName}</p>
+      <p><strong>Registration Date:</strong> ${trainerData.registrationDate}</p>
+      <p><strong>Sport:</strong> ${trainerData.sport}</p>
+    </div>
 
-          <div style="margin-top: 30px; padding: 20px; background-color: #fef3c7; border-radius: 8px; text-align: center;">
-            <p style="margin: 0; color: #92400e; font-weight: bold;">A new trainer has signed up on your Trainly platform!</p>
-            <p style="margin: 10px 0 0 0; color: #92400e;">Please review their account to approve it</p>
-          </div>
+    <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; text-align: center;">
+      <p style="margin: 0; color: #92400e; font-weight: bold;">A new trainer has signed up on your Trainly platform! 🎉</p>
+      <p style="margin: 10px 0 0 0; color: #92400e;">Please review their account to approve it</p>
+    </div>
+  `;
 
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
-            <p>This is an automated notification from Trainly</p>
-          </div>
-        </div>
-      </div>
-    `,
-  };
+  const html = createTrainlyEmailTemplate("👤 New Trainer Registration!", content, "This is an automated notification from Trainly");
 
   try {
-    await transporter.sendMail(mailOptions);
+    await sendEmailWithBrevo(
+      "osamaeldeeb728@gmail.com",
+      "👤 New Trainer Registration - Trainly",
+      html
+    );
     console.log("✅ New trainer registration email sent successfully");
   } catch (error) {
-    console.error("❌ Error sending trainer registration email:", error);
+    console.error("❌ Error sending trainer registration email (Brevo):", error.message || error);
   }
 }
 
@@ -417,7 +499,7 @@ app.post(
                       planId: booking.planId,
                       trainerId: booking.trainerId,
                       amount: booking.amount,
-                      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                      createdAt: new Date().toISOString(),
                     }),
                   },
                   { merge: true }
@@ -438,7 +520,7 @@ app.post(
                       traineeId: traineeId,
                       bookingId: bookingRef.id,
                       planId: booking.planId,
-                      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                      createdAt: new Date().toISOString(),
                     }),
                     earnings: admin.firestore.FieldValue.increment(
                       booking.amount
@@ -483,10 +565,9 @@ app.post(
 
                 // Call internal endpoint to send welcome message (includes planLocation)
                 const fetch = (await import("node-fetch")).default;
+                const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
                 await fetch(
-                  `http://localhost:${
-                    process.env.PORT || 3000
-                  }/send-welcome-message`,
+                  `${baseUrl}/send-welcome-message`,
                   {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -584,22 +665,61 @@ app.post("/api/send-email", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields: to, subject, message" });
     }
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to,
-      subject,
-      text: message,
-      html: `<div style="font-family: Arial, sans-serif; padding:20px;">${message
-        .split("\n")
-        .map((p) => `<p>${p}</p>`)
-        .join("")}</div>`,
-    };
+    // Detect email type from subject (case-insensitive)
+    const subjectLower = subject.toLowerCase();
+    let emailType = "general";
+    if (subjectLower.includes("activation") || subjectLower.includes("activate")) {
+      emailType = "activation";
+    } else if (subjectLower.includes("suspend") || subjectLower.includes("suspension")) {
+      emailType = "suspension";
+    } else if (subjectLower.includes("delete") || subjectLower.includes("deletion")) {
+      emailType = "deletion";
+    }
 
-    await transporter.sendMail(mailOptions);
+    // Escape the message for HTML
+    const escapedMessage = message.replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, '&#39;').replace(/\n/g, '<br>');
+
+    // Create styled content based on email type
+    let styledContent = "";
+    switch (emailType) {
+      case "activation":
+        styledContent = `
+          <div style="background-color: #d1fae5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: #065f46; margin-top: 0;">✅ Account Activated</h2>
+            <p style="margin-bottom: 0;">${escapedMessage}</p>
+          </div>
+        `;
+        break;
+      case "suspension":
+        styledContent = `
+          <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: #92400e; margin-top: 0;">⚠️ Account Suspended</h2>
+            <p style="margin-bottom: 0;">${escapedMessage}</p>
+          </div>
+        `;
+        break;
+      case "deletion":
+        styledContent = `
+          <div style="background-color: #fee2e2; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: #991b1b; margin-top: 0;">🚫 Account Deleted</h2>
+            <p style="margin-bottom: 0;">${escapedMessage}</p>
+          </div>
+        `;
+        break;
+      default:
+        // For general emails, use the escaped message directly
+        styledContent = `<div style="font-family: Arial, sans-serif; padding: 20px;">${escapedMessage}</div>`;
+        break;
+    }
+
+    const html = createTrainlyEmailTemplate(subject, styledContent, "This is an automated notification from Trainly");
+
+    await sendEmailWithBrevo(to, subject, html);
+
     console.log(`✅ Email sent to ${to} (subject: ${subject})`);
     res.json({ success: true });
   } catch (error) {
-    console.error("❌ Error in /api/send-email:", error);
+    console.error("❌ Error in /api/send-email:", error.message || error);
     res.status(500).json({ error: error.message || "Failed to send email" });
   }
 });
@@ -924,8 +1044,8 @@ app.post("/create-subscription-checkout", async (req, res) => {
       mode: "subscription",
       success_url:
         success_url ||
-        `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancel_url || `http://localhost:5173/canceled`,
+        `${process.env.FRONTEND_URL || "https://trainly-110.netlify.app"}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancel_url || `${process.env.FRONTEND_URL || "https://trainly-110.netlify.app"}/canceled`,
       customer_email: trainerEmail || undefined,
       metadata: {
         purpose: "trainer_subscription",
@@ -979,8 +1099,8 @@ app.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/failed`,
+      success_url: `${process.env.FRONTEND_URL || "https://trainly-110.netlify.app"}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL || "https://trainly-110.netlify.app"}/failed`,
       metadata: {
         purpose: "plan_booking",
         planId,
@@ -1609,8 +1729,33 @@ app.post("/api/ai/recommend-trainers", async (req, res) => {
 });
 
 /**
- * Root endpoint
+ * Delete User from Firebase Auth
  */
+app.post("/delete-user", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
+
+    // Delete from Firebase Authentication
+    try {
+      await admin.auth().deleteUser(userId);
+      console.log("✅ Deleted user from Firebase Authentication");
+    } catch (error) {
+      console.warn("⚠️ Could not delete from Firebase Auth:", error.message);
+      // Return error if Auth deletion fails, as it's critical
+      return res.status(500).json({ error: `Failed to delete from Firebase Auth: ${error.message}` });
+    }
+
+    res.json({ success: true, message: "User deleted from Firebase Authentication" });
+  } catch (error) {
+    console.error("❌ Error deleting user:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 /**
  * Send Account Deletion Email
  */
@@ -1622,36 +1767,32 @@ app.post("/send-account-deletion-email", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: traineeEmail,
-      subject: "Account Deletion Notice - Trainly",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-          <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <h1 style="color: #2563eb; margin-bottom: 20px;">Account Deletion Notice</h1>
-            
-            <div style="background-color: #fee2e2; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-              <h2 style="color: #991b1b; margin-top: 0;">Important Information</h2>
-              <p><strong>Dear ${traineeName},</strong></p>
-              <p>We regret to inform you that your Trainly account has been deleted by the platform administration.</p>
-              ${reason ? `<p><strong>Reason for Deletion:</strong> ${reason}</p>` : ''}
-            </div>
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+        <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <h1 style="color: #2563eb; margin-bottom: 20px;">Account Deletion Notice</h1>
 
-            <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px;">
-              <p style="margin-top: 0;">If you believe this was done in error or have any questions, please contact our support team.</p>
-              <p>Thank you for your understanding.</p>
-            </div>
+          <div style="background-color: #fee2e2; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: #991b1b; margin-top: 0;">Important Information</h2>
+            <p><strong>Dear ${traineeName},</strong></p>
+            <p>We regret to inform you that your Trainly account has been deleted by the platform administration.</p>
+            ${reason ? `<p><strong>Reason for Deletion:</strong> ${reason}</p>` : ''}
+          </div>
 
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
-              <p>This is an automated notification from Trainly</p>
-            </div>
+          <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px;">
+            <p style="margin-top: 0;">If you believe this was done in error or have any questions, please contact our support team.</p>
+            <p>Thank you for your understanding.</p>
+          </div>
+
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
+            <p>This is an automated notification from Trainly</p>
           </div>
         </div>
-      `,
-    };
+      </div>
+    `;
 
-    await transporter.sendMail(mailOptions);
+    await sendEmailWithBrevo(traineeEmail, "Account Deletion Notice - Trainly", html);
+
     console.log("✅ Account deletion email sent successfully");
     res.json({ success: true, message: "Email sent successfully" });
   } catch (error) {
@@ -1685,7 +1826,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(
-    `📧 Email notifications configured for: osamaeldeeb728@gmail.com`
+    `📧 Email notifications configured for: ${BREVO_SENDER_EMAIL} (via Brevo)`
   );
   console.log(`🤖 AI features enabled with Gemini API`);
 });

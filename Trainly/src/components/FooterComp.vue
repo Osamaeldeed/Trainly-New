@@ -1,6 +1,6 @@
 <template>
   <footer class="relative bg-black dark:bg-[#3B3B3B] text-white mt-10">
-    <div class="mx-auto w-full max-w-screen-xl py-8">
+    <div class="mx-auto w-full max-w-screen-xl py-8 ps-2">
       <div
         class="flex justify-around flex-col md:flex-row gap-5 md:gap-0 pl-5 md:pl-0"
       >
@@ -24,9 +24,9 @@
             <li class="mb-2">
               <span>{{ $t("email") }} : </span>
               <a
-                href="https://github.com/themesberg/flowbite"
+                href="mailto:Admin@trainly.com"
                 class="hover:underline cursor-pointer"
-                >info@trainly.com</a
+                >Admin@trainly.com</a
               >
             </li>
             <li class="text-[12px] md:text-[15px]">
@@ -168,8 +168,7 @@
     </div>
     <div class="text-center pb-5">
       <span class="text-sm text-center"
-        >© 2025 <a href="#" class="hover:underline">Trainly</a>. All Rights
-        Reserved.
+        >© {{ $t("2025") }} <a href="#" class="hover:underline">{{ $t("trainly") }}</a>. {{ $t("rightsReserved") }}
       </span>
     </div>
   </footer>

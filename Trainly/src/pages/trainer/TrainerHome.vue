@@ -46,7 +46,7 @@
           <h3 class="text-[#0D8BF2] text-md font-medium mr-18">Total Income</h3>
           <img src="@/assets/images/Group 147.png" alt="email" class="w-[40px] h-[40px]" />
         </div>
-        <p class="text-2xl font-medium dark:text-white text-gray-800">{{ totalIncome }} EGP</p>
+        <p class="text-2xl font-medium dark:text-white text-gray-800">{{ totalIncome }} $</p>
         <router-link
           to="/trainer/settings"
           class="block text-[#2d8fff] text-sm mt-1 underline text-right cursor-pointer dark:text-[#6ab8ff] dark:hover:text-[#8ed0ff] hover:text-[#0D8BF2]"

@@ -16,7 +16,7 @@
         <div
           class="bg-[#D9EEFF] dark:bg-[#3B3B3B] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
         >
-          <img src="../../assets/images/page-1.png" alt="" class="w-5 h-5" />
+          <img :src="myImg" alt="" class="w-5 h-5" />
         </div>
         <div>
           <h2 class="text-lg font-medium dark:text-white text-gray-900">
@@ -549,7 +549,7 @@
             Subscription
           </h2>
           <p class="text-sm dark:text-gray-300 text-gray-500">
-            Manage your current subscription and plan details here.
+            Manage your current subscription details here.
           </p>
         </div>
       </div>
@@ -561,7 +561,7 @@
           class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100"
         >
           <h3 class="text-lg font-medium mb-3 dark:text-white text-gray-800">
-            Current Plan: {{ sub.planType }}
+            Current subscription: {{ sub.planType }}
           </h3>
 
           <ul class="space-y-3 text-gray-600 dark:text-gray-300 text-sm">
@@ -636,7 +636,7 @@
                       />
                     </svg>
                     <span class="text-yellow-700 text-sm font-medium">
-                      Your plan will change to
+                      Your subscription will change to
                       <strong>{{ sub.nextPlan }}</strong> next month.
                     </span>
                   </div>
@@ -662,8 +662,8 @@
                       />
                     </svg>
                     <span class="text-yellow-700 text-sm font-medium">
-                      Your upcoming plan change has been canceled. It will
-                      remain active until your current plan ends.
+                      Your upcoming subscription change has been canceled. It will
+                      remain active until your current subscription ends.
                     </span>
                   </div>
                 </template>
@@ -698,7 +698,7 @@
             @click="openPlanModal(sub)"
             class="text-white bg-[#00B0FF] hover:bg-[#36ace2] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition cursor-pointer"
           >
-            Change Plan
+            Change subscription
           </button>
 
           <!-- Cancel Subscription -->
@@ -1049,6 +1049,7 @@ import {
   EmailAuthProvider,
 } from "firebase/auth";
 import { toast } from "vue3-toastify";
+import myImg from "@/assets/images/page1.png";
 
 export default {
   name: "TrainerSettings",
@@ -1059,6 +1060,7 @@ export default {
       // ===============================
       // 🧠 General Data
       // ===============================
+      myImg: myImg,
       hasUnsavedChanges: false,
       uploadProgress: 0,
       userId: null,
@@ -1070,6 +1072,7 @@ export default {
         lastName: "",
         email: "",
         gender: "",
+        myImg: myImg,
         city: "",
         country: "",
         birthdate: "",

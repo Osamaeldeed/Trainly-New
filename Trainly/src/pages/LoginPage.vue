@@ -4,7 +4,8 @@
       {{ toastMessage }}
     </div>
     <div
-      class="bg-[url('/src/assets/images/couple-training-together-gym.jpg')] bg-cover bg-no-repeat bg-[position-x:100%] w-full h-screen flex items-center justify-start pl-20 max-[768px]:pl-0 max-[768px]:justify-center"
+      :style="{ backgroundImage: `url(${bgImage})` }"
+      class="bg-cover bg-no-repeat bg-[position-x:100%] w-full h-screen flex items-center justify-start pl-20 max-[768px]:pl-0 max-[768px]:justify-center"
     >
       <div
         class="w-[480px] max-w-[calc(100%-40px)] mx-0 rounded-[10px] bg-white dark:bg-[#3B3B3B]/80 p-3 flex items-start justify-center relative animate-slideUp"
@@ -54,11 +55,7 @@
                 @click="togglePasswordVisibility"
               >
                 <img
-                  :src="
-                    passwordVisible
-                      ? '/src/assets/images/eye off.png'
-                      : '/src/assets/images/Eye.png'
-                  "
+                  :src="passwordVisible ? eyeOffIcon : eyeIcon"
                   alt="Show/Hide"
                   class="w-full h-auto"
                 />
@@ -111,7 +108,7 @@
               @click="handleGoogleLogin"
               class="flex items-center dark:text-white dark:bg-[#555555] justify-center gap-2 border border-gray-300 p-2 cursor-pointer rounded-md bg-white w-full"
             >
-              <img src="/src/assets/images/g-logo.png" alt="google" class="w-5 h-5" />
+              <img :src="googleLogo" alt="google" class="w-5 h-5" />
               Continue with Google
             </button>
 
@@ -142,6 +139,10 @@ import {
   signOut,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import bgImage from "../assets/images/couple-training-together-gym.jpg";
+import eyeIcon from "../assets/images/Eye.png";
+import eyeOffIcon from "../assets/images/eye off.png";
+import googleLogo from "../assets/images/g-logo.png";
 
 export default {
   name: "LoginPage",
@@ -327,6 +328,10 @@ export default {
       passwordFieldType,
       showToast,
       toastMessage,
+      bgImage,
+      eyeIcon,
+      eyeOffIcon,
+      googleLogo,
     };
   },
 };
