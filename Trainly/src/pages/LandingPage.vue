@@ -17,13 +17,13 @@
             {{ $t("findTrainer") }}
           </h2>
 
-          <p class="text-sm text-center md:text-left lg:text-xl mt-4 mb-2">
+          <p class="text-[14px] text-center md:text-left lg:text-xl mt-4 mb-2">
             {{ $t("description1") }}<br />
             {{ $t("description2") }}
           </p>
           <button
             @click="$router.push('/signup')"
-            class="mt-6 px-6 py-1 lg:py-1 cursor-pointer rounded-3xl bg-primary text-white hover:opacity-90 transition text-lg md:text-2xl font-light lg:font-medium md:w-60 md:h-12 w-[40%]"
+            class="mt-6 px-6 py-1 lg:py-1 cursor-pointer rounded-3xl bg-primary text-white hover:opacity-90 transition text-lg md:text-2xl font-light lg:font-medium md:w-60 md:h-12 w-[50%]"
           >
             {{ $t("startJourney") }}
           </button>
@@ -49,7 +49,7 @@
     </section>
 
     <section
-      class="relative max-w-full pb-10 md:pb-0 h-auto md:h-[650px] lg:h-[796px] mx-auto overflow-hidden mt-0 lg:mt-10 bg-sec2-sm md:bg-sec2"
+      class="relative max-w-full md:pb-0 h-auto md:h-[650px] lg:h-[796px] mx-auto overflow-hidden mt-0 lg:mt-10 bg-sec2-sm md:bg-sec2 dark:bg-black"
     >
       <div class="flex h-full dark:bg-black dark:">
         <div class="hidden lg:flex flex-1 relative">
@@ -61,7 +61,7 @@
           />
         </div>
         <div
-          class="flex-1 px-[10px] pt-10 flex flex-col items-center relative z-10 mt-0 lg:mt-10 mx-auto"
+          class="flex-1 px-[10px] py-8 flex flex-col items-center relative z-10 mt-0 lg:mt-10 mx-auto"
         >
           <h1 class="text-3xl md:text-4xl text-black dark:text-white lg:text-5xl font-bold mt-1 md:mt-10">
             {{ $t("whyChoose") }} <span class="text-gradient">{{ $t("trainly") }}</span
@@ -71,10 +71,10 @@
             {{ $t("whyChooseDesc1") }} <br />
             {{ $t("whyChooseDesc2") }}
           </p>
-          <div class="grid grid-cols-2 md:grid-cols-2 gap-5 w-[60%] md:w-[70%] lg:w-[80%]">
+          <div class="grid grid-cols-2 md:grid-cols-2 gap-5 md:w-[70%] lg:w-[80%]">
             <!-- Card 1 -->
             <div
-              class="bg-[#C3F7E3] rounded-2xl p-3 md:p-4 shadow-md flex flex-col md:gap-2 h-[200px]"
+              class="bg-[#C3F7E3] rounded-2xl p-3 p-4 shadow-md flex flex-col gap-2 h-[150px] md:h-[200px]"
             >
               <img
                 src="@/assets/images/octicon_goal-16.png"
@@ -93,7 +93,7 @@
 
             <!-- Card 2 -->
             <div
-              class="bg-[#C3F7E3] rounded-2xl p-3 md:p-4 shadow-md flex flex-col gap-2 h-[200px]"
+              class="bg-[#C3F7E3] rounded-2xl p-3 md:p-4 shadow-md flex flex-col gap-2 h-[150px] md:h-[200px]"
             >
               <img
                 src="@/assets/images/Vector-1.png"
@@ -112,7 +112,7 @@
 
             <!-- Card 3 -->
             <div
-              class="bg-[#C3F7E3] rounded-2xl p-3 md:p-4 shadow-md flex flex-col gap-2 h-[200px]"
+              class="bg-[#C3F7E3] rounded-2xl p-3 md:p-4 shadow-md flex flex-col gap-2 h-[150px] md:h-[200px]"
             >
               <img
                 src="@/assets/images/Vector2.png"
@@ -131,7 +131,7 @@
 
             <!-- Card 4 -->
             <div
-              class="bg-[#C3F7E3] rounded-2xl p-3 md:p-4 shadow-md flex flex-col gap-2 h-[200px]"
+              class="bg-[#C3F7E3] rounded-2xl p-3 md:p-4 shadow-md flex flex-col gap-2 h-[150px] md:h-[200px]"
             >
               <img
                 src="@/assets/images/solar_cup-bold.png"
@@ -155,8 +155,8 @@
       </div>
     </section>
 
-    <section class="relative bg-white dark:bg-black pb-[30px] lg:pb-[100px] pt-20 overflow-hidden">
-      <h2 class="text-3xl font-[600] mb-6 text-center">{{ $t("featureTitle") }}</h2>
+    <section class="relative bg-white dark:bg-black py-[30px] lg:pb-[100px] pt-20 overflow-hidden">
+      <h2 class="text-3xl font-[600] mb-6 text-center dark:text-white">{{ $t("featureTitle") }}</h2>
 
       <div
         class="flex flex-wrap justify-center md:justify-evenly items-center gap-5 text-center mx-auto"
@@ -222,7 +222,7 @@
 
     <!-- How It Works Section -->
     <section
-      class="bg-[#8CDAFE99] w-full h-[570px] md:h-[772px] lg:h-[795px] md:pt-[20px] lg:pt-[100px]"
+      class="bg-[#8CDAFE99] w-full h-auto md:h-[772px] lg:h-[795px] md:pt-[20px] lg:pt-[100px]"
     >
       <h2
         class="text-[30px] dark:text-white lg:text-[45px] font-[600] text-center mb-17 pt-10 md:pt-0"
@@ -232,7 +232,7 @@
 
       <div class="relative flex flex-col items-center w-full mx-auto">
         <div
-          class="absolute top-[-40px] bottom-[-40px] w-[4px] bg-gradient-to-b from-[#00C853F2] to-[#0D8BF2] h-[456px] md:h-[680px] lg:h-[600px]"
+          class="absolute top-[10px] bottom-[0px] w-[4px] bg-gradient-to-b from-[#00C853F2] to-[#0D8BF2] h-auto md:h-[625px] lg:h-[550px]"
         ></div>
 
         <!-- Step 1 -->
@@ -282,7 +282,7 @@
         </div>
 
         <!-- Step 4 -->
-        <div class="relative flex items-center md:mb-17 w-full px-[5%] md:px-[10%]">
+        <div class="relative flex items-center md:mb-17 w-full px-[5%] md:px-[10%] pb-5">
           <div class="w-1/2"></div>
           <div class="img-box">
             <img src="@/assets/images/cup.png" alt="icon" />
@@ -302,7 +302,7 @@
     <!-- Call to Action Section -->
     <section>
       <div class="flex flex-col justify-center items-center mt-20">
-        <h5 class="font-[600] text-black dark:text-white text-[20px] md:text-[30px] mb-3">
+        <h5 class="font-[600] text-black dark:text-white text-[19px] md:text-[30px] mb-3">
           {{ $t("readyTitle") }}
         </h5>
         <p
