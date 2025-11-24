@@ -17,9 +17,7 @@
         }"
       >
         <div class="p-6 border-b border-gray-200">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Chats
-          </h1>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Chats</h1>
           <div class="relative">
             <span
               class="absolute left-3 top-1/2 transform dark:text-white -translate-y-1/2 text-gray-400"
@@ -229,8 +227,8 @@
                         :class="[
                           'message-box dark:bg-black rounded-2xl px-5 py-3 break-words',
                           msg.senderId === this.traineeId
-                            ? 'bg-blue-600 text-black dark:text-white rounded-br-sm'
-                            : 'bg-white dark:bg-[#3B3B3B]  text-gray-900 rounded-bl-sm',
+                            ? 'bg-blue-600 text-white dark:bg-[#090909] dark:text-white rounded-br-sm'
+                            : 'bg-white dark:bg-[#1c1c1c] dark:text-white text-gray-900 rounded-bl-sm',
                         ]"
                       >
                         <p class="text-sm dark:text-white whitespace-pre-wrap">{{ msg.text }}</p>

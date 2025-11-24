@@ -136,7 +136,6 @@ export default {
         <option value="all">All Clients</option>
         <option value="active">Active</option>
         <option value="expired">Expired</option>
-        <option value="unpaid">Unpaid</option>
       </select>
     </div>
 

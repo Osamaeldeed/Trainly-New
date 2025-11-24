@@ -185,7 +185,7 @@
                 id="certificate"
                 type="file"
                 class="hidden"
-                @change="newCertificate = $event.target.files[0]"
+                @change="handleCertificateChange"
               />
               <label
                 for="certificate"
@@ -196,6 +196,27 @@
               <p class="text-xs dark:text-gray-300 text-gray-500 mt-2">
                 PDF, PNG, JPG, JPEG up to 10MB
               </p>
+              <!-- Upload Progress Bar -->
+              <div v-show="uploadProgress > 0" class="mt-4 w-full">
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                  <div
+                    class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                    :style="{ width: `${uploadProgress}%` }"
+                  ></div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {{ uploadProgress < 100 ? `Uploading: ${Math.round(uploadProgress)}%` : 'Upload Complete!' }}
+                </p>
+              </div>
+              <!-- Unsaved Changes Warning -->
+              <div v-if="hasUnsavedChanges" class="mt-4">
+                <p class="text-sm text-yellow-600 dark:text-yellow-400 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  Don't forget to save changes
+                </p>
+              </div>
 
               <!-- Certificate List with Remove Buttons -->
               <div
@@ -205,7 +226,7 @@
                 <div
                   v-for="(cert, index) in formData.certifications"
                   :key="index"
-                  class="flex items-center justify-between dark:bg-gray-300 bg-gray-50 p-3 rounded-lg"
+                  class="flex items-center justify-between dark:bg-gray-700 bg-gray-50 p-3 rounded-lg"
                 >
                   <a
                     :href="cert"
@@ -216,7 +237,7 @@
                   </a>
                   <button
                     type="button"
-                    @click="removeCertificate(index)"
+                    @click="confirmRemoveCertificate(index)"
                     class="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1 transition cursor-pointer"
                   >
                     <svg
@@ -305,7 +326,7 @@
               <svg
                 v-if="!showCurrent"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                class="h-5 w-5 cursor-pointer"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -327,7 +348,7 @@
               <svg
                 v-else
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                class="h-5 w-5 "
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -372,7 +393,7 @@
               <svg
                 v-if="!showNew"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                class="h-5 w-5 cursor-pointer"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -441,7 +462,7 @@
               <svg
                 v-if="!showRepeat"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                class="h-5 w-5 cursor-pointer"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -506,7 +527,7 @@
       </form>
     </div>
 
-    <!-- ========= Subscription Section ========= -->
+     <!-- ========= Subscription Section ========= -->
     <div
       v-for="(sub, index) in subscriptions"
       :key="index"
@@ -675,15 +696,15 @@
           <!-- Upgrade -->
           <button
             @click="openPlanModal(sub)"
-            class="text-white bg-[#00B0FF] hover:bg-[#36ace2] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+            class="text-white bg-[#00B0FF] hover:bg-[#36ace2] focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition cursor-pointer"
           >
-            Upgrade Plan
+            Change Plan
           </button>
 
           <!-- Cancel Subscription -->
           <button
             @click="cancelPlanChange(sub)"
-            class="border border-red-500 text-red-500 hover:bg-red-50 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
+            class="border border-red-500 text-red-500 hover:bg-red-50 font-medium rounded-lg text-sm px-6 py-3 w-full transition cursor-pointer"
           >
             Cancel Subscription
           </button>
@@ -698,7 +719,7 @@
     >
       <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 relative">
         <button
-          class="absolute top-3 right-4 text-gray-500 hover:text-gray-700"
+          class="absolute top-3 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
           @click="closePlanModal"
         >
           ✕
@@ -744,12 +765,10 @@
             <button
               :disabled="plan.type === activeSubscriptionForModal.planType"
               @click="selectPlanForSubscription(plan)"
-              class="w-full py-2 rounded-lg font-medium text-white transition"
-              :class="
-                plan.type === activeSubscriptionForModal.planType
-                  ? 'bg-gray-400'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              "
+              class="w-full py-2 rounded-lg font-medium text-white transition cursor-pointer"
+              :class="plan.type === activeSubscriptionForModal.planType
+                ? 'bg-gray-400'
+                : 'bg-blue-600 hover:bg-blue-700'"
             >
               {{
                 plan.type === activeSubscriptionForModal.planType
@@ -785,7 +804,7 @@
         </p>
         <button
           @click="closePlanSelectedModal"
-          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition cursor-pointer"
         >
           OK
         </button>
@@ -823,7 +842,7 @@
       </div>
     </div>
 
-    <!-- ========= payment Section ========= -->
+    <!-- ========= Payment Section ========= -->
     <div
       class="w-full border border-gray-200 rounded-3xl shadow-xl dark:bg-[#3B3B3B] bg-white p-8"
     >
@@ -848,21 +867,22 @@
         </div>
       </div>
 
-      <!-- Green Income Section (Full Width) -->
+      <!-- Green Income Card -->
       <div
-        class="bg-gradient-to-r from-[#22C55E] to-[#16A34A] dark:from-[#065F46] dark:to-[#064E3B] text-white p-4 rounded-2xl shadow-md mb-10"
+        class="bg-gradient-to-r from-[#22C55E] to-[#16A34A] text-white p-4 rounded-2xl shadow-md mb-10"
       >
         <p class="text-sm opacity-90">Total Income</p>
-        <h3 class="text-3xl font-semibold mt-1 mb-1">$12,450.00</h3>
-        <p class="text-sm opacity-90 dark:text-gray-300">
+        <h3 class="text-3xl font-semibold mt-1 mb-1">
+          ${{ totalIncome.toFixed(2) }}
+        </h3>
+        <p class="text-sm opacity-90">
           This month:
-          <span class="font-medium dark:text-gray-300">+$2,340.00</span>
+          <span class="font-medium">+${{ monthlyIncome.toFixed(2) }}</span>
         </p>
       </div>
 
-      <!-- Content Section -->
       <div class="flex flex-col md:flex-row justify-between gap-10">
-        <!-- Left side: Payment Methods -->
+        <!-- Payment Methods -->
         <div
           class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100"
         >
@@ -870,9 +890,9 @@
             Payment Methods
           </h3>
 
-          <!-- Card Method -->
+          <!-- Card Example -->
           <div
-            class="flex items-center gap-4 bg-white dark:bg-[#242424] border border-gray-200 rounded-xl p-4 mb-4 shadow-sm"
+            class="flex items-center gap-4 bg-white dark:bg-[#242424] border border-gray-200 rounded-xl p-4 mb-6 shadow-sm"
           >
             <img src="../../assets/images/i.png" alt="card" class="w-8 h-8" />
             <div>
@@ -885,43 +905,16 @@
             </div>
           </div>
 
-          <!-- PayPal Method -->
-          <div
-            class="flex items-center gap-4 dark:bg-[#242424] bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm"
+          <!-- Withdraw Button -->
+          <button
+            @click="openWithdrawModal"
+            class="border border-gray-300 text-gray-800 bg-white hover:bg-gray-50 focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
           >
-            <img
-              src="../../assets/images/ip.png"
-              alt="paypal"
-              class="w-8 h-8 opacity-90"
-            />
-            <div class="flex flex-col w-full">
-              <p class="font-medium dark:text-white text-gray-800 mb-1">
-                PayPal Account
-              </p>
-              <input
-                v-model="formData.email"
-                class="text-sm dark:text-gray-300 text-gray-500"
-              />
-            </div>
-          </div>
-
-          <!-- Buttons -->
-          <div class="flex flex-col gap-3">
-            <button
-              class="text-white bg-[#22C55E] hover:bg-[#16A34A] focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
-            >
-              Add Payment Method
-            </button>
-
-            <button
-              class="border border-gray-300 text-gray-800 bg-white hover:bg-gray-50 focus:ring-4 focus:ring-green-200 font-medium rounded-lg text-sm px-6 py-3 w-full transition"
-            >
-              Withdraw Earnings
-            </button>
-          </div>
+            Withdraw Earnings
+          </button>
         </div>
 
-        <!-- Right side: Recent Transactions -->
+        <!-- Recent Transactions -->
         <div
           class="flex-1 bg-[#F9FAFB] dark:bg-[#3B3B3B] p-6 rounded-2xl border border-gray-100"
         >
@@ -929,49 +922,105 @@
             Recent Transactions
           </h3>
 
-          <div class="flex flex-col gap-4">
+          <div
+            v-if="getDisplayedTransactions().length"
+            class="flex flex-col gap-4"
+          >
             <div
+              v-for="(t, i) in getDisplayedTransactions()"
+              :key="i"
               class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
             >
               <div>
                 <p class="font-medium dark:text-white text-gray-800">
-                  Training Session
+                  {{ t.title }}
                 </p>
                 <p class="text-sm dark:text-gray-300 text-gray-500">
-                  Oct 15, 2025
+                  {{ t.date }}
                 </p>
               </div>
-              <p class="text-green-600 font-semibold">+$80.00</p>
-            </div>
-
-            <div
-              class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
-            >
-              <div>
-                <p class="font-medium dark:text-white text-gray-800">
-                  Monthly Membership
-                </p>
-                <p class="text-sm dark:text-gray-300 text-gray-500">
-                  Oct 12, 2025
-                </p>
-              </div>
-              <p class="text-green-600 font-semibold">+$150.00</p>
-            </div>
-
-            <div
-              class="flex justify-between items-center dark:bg-[#242424] bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
-            >
-              <div>
-                <p class="font-medium dark:text-white text-gray-800">
-                  Platform Fee
-                </p>
-                <p class="text-sm dark:text-gray-300 text-gray-500">
-                  Oct 11, 2025
-                </p>
-              </div>
-              <p class="text-red-500 font-semibold">- $15.00</p>
+              <p
+                :class="t.amount > 0 ? 'text-green-600' : 'text-red-500'"
+                class="font-semibold"
+              >
+                {{ t.amount > 0 ? "+" : "" }}${{ t.amount.toFixed(2) }}
+              </p>
             </div>
           </div>
+
+          <p
+            v-else
+            class="text-gray-500 dark:text-gray-400 text-sm text-center mt-4"
+          >
+            No recent transactions yet.
+          </p>
+
+          <!-- ✅ Show All Button -->
+          <div class="text-center mt-4">
+            <button
+              v-if="recentTransactions.length > 3"
+              @click="toggleShowAll"
+              class="text-sm text-blue-600 hover:underline"
+            >
+              {{ showAllTransactions ? "Show Less" : "Show All" }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unsaved Changes Modal -->
+      <div
+        v-if="showUnsavedChangesModal"
+        class="fixed inset-0 flex items-center justify-center z-50 bg-black/40"
+      >
+        <div class="bg-white dark:bg-[#242424] rounded-xl shadow-lg p-8 max-w-sm w-full text-center border border-gray-200">
+          <h3 class="text-lg font-semibold mb-3 dark:text-white text-gray-800">
+            Unsaved Changes
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-300 mb-6">
+            You have unsaved changes. Are you sure you want to leave this page?
+          </p>
+          <div class="flex justify-center gap-4">
+            <button
+              @click="handleNavigationConfirm"
+              class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition"
+            >
+              Leave Page
+            </button>
+            <button
+              @click="handleNavigationCancel"
+              class="border border-gray-300 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-2 rounded-lg transition"
+            >
+              Stay Here
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Withdraw Modal -->
+      <div
+        v-if="withdrawModalOpen"
+        class="fixed inset-0 flex items-center justify-center z-50"
+        style="
+          background-color: rgba(255, 255, 255, 0.4);
+          backdrop-filter: blur(6px);
+        "
+      >
+        <div
+          class="bg-white dark:bg-[#242424] p-6 rounded-2xl shadow-lg w-80 text-center border border-gray-200"
+        >
+          <h3 class="text-lg font-semibold mb-3 dark:text-white text-gray-900">
+            Withdrawal Requested
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
+            Your earnings will be transferred to your account within 24 hours.
+          </p>
+          <button
+            @click="withdrawModalOpen = false"
+            class="bg-[#2e72f0] text-white px-6 py-2 rounded-lg hover:bg-[#7994ec] transition"
+          >
+            OK
+          </button>
         </div>
       </div>
     </div>
@@ -990,7 +1039,7 @@ import {
 } from "firebase/firestore";
 import {
   ref as storageRef,
-  uploadBytes,
+  uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
 import {
@@ -1003,10 +1052,19 @@ import { toast } from "vue3-toastify";
 
 export default {
   name: "TrainerSettings",
+  // component options continue below
 
   data() {
     return {
+      // ===============================
+      // 🧠 General Data
+      // ===============================
+      hasUnsavedChanges: false,
+      uploadProgress: 0,
       userId: null,
+      originalFormData: null, // To track changes
+      showUnsavedChangesModal: false,
+      pendingNavigation: null,
       formData: {
         firstName: "",
         lastName: "",
@@ -1023,11 +1081,16 @@ export default {
         role: "",
         status: "",
         username: "",
+        totalIncome: 0,
+        monthlyIncome: 0,
+        recentTransactions: [],
       },
       newProfilePhoto: null,
       newCertificate: null,
 
-      // password section (unchanged)
+      // ===============================
+      // 🔐 Password Section
+      // ===============================
       form: { current: "", new: "", repeat: "" },
       showCurrent: false,
       showNew: false,
@@ -1057,21 +1120,63 @@ export default {
           limit: 6,
         },
       ],
+      // ========= Payment Data =========
+      totalIncome: 0,
+      monthlyIncome: 0,
+      recentTransactions: [],
+      showAllTransactions: false,
+
+      // ✅ Fix: use unique variable name for withdraw modal
+      withdrawModalOpen: false,
+
+
     };
   },
 
+  beforeRouteLeave(to, from, next) {
+    if (this.hasUnsavedChanges) {
+      this.showUnsavedChangesModal = true;
+      this.pendingNavigation = next;
+      return;
+    }
+    next();
+  },
+
+  // ===============================
+  // ⚙️ Mounted Lifecycle
+  // ===============================
+  watch: {
+    // Watch for changes in form data
+    'formData': {
+      handler(newVal) {
+        if (this.originalFormData) {
+          const hasChanges = Object.keys(newVal).some(key => {
+            // Ignore certifications as they have their own change handling
+            if (key === 'certifications') return false;
+            // Deep compare for objects, simple compare for primitives
+            return JSON.stringify(newVal[key]) !== JSON.stringify(this.originalFormData[key]);
+          });
+
+          if (hasChanges && !this.hasUnsavedChanges) {
+            this.hasUnsavedChanges = true;
+            toast.info("Don't forget to save your changes!");
+          }
+        }
+      },
+      deep: true
+    }
+  },
+
   async mounted() {
-    // get uid automatically since user is already signed in
     const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
       this.userId = user.uid;
       await this.fetchTrainerData();
-
-      // load subscriptions after trainer data is loaded
       await this.fetchSubscriptions();
+      await this.fetchPaymentData(); // ✅ load payment info
 
-      /// ✅ check if there's a saved plan change and show it in UI
+      // check for saved plan change or cancel notice
       const stored = this.checkStoredPlanChange();
       if (stored) {
         this.subscriptions.forEach((sub) => {
@@ -1080,50 +1185,47 @@ export default {
         });
       }
 
-      // ✅ check if there's a saved cancel notice
       const cancelNotice = localStorage.getItem("canceledPlanNotice");
       if (cancelNotice) {
         const parsed = JSON.parse(cancelNotice);
         const now = new Date();
         if (new Date(parsed.expiresAt) > now) {
-          this.subscriptions.forEach((sub) => {
-            sub.cancelNotice = true;
-          });
+          this.subscriptions.forEach((sub) => (sub.cancelNotice = true));
         } else {
           localStorage.removeItem("canceledPlanNotice");
         }
       }
-
-      if (stored) {
-        this.subscriptions.forEach((sub) => {
-          sub.planChangeScheduled = true;
-          sub.nextPlan = stored;
-        });
-      }
     } else {
-      // fallback: if for any reason there's no currentUser, ask to login
       alert("No user found. Please log in again.");
       this.$router.push("/login");
     }
   },
 
   methods: {
-    // fetch trainer data from Firestore
+    // ===============================
+    // 👤 Fetch Trainer Data
+    // ===============================
     async fetchTrainerData() {
       try {
         if (!this.userId) return;
         const docRef = doc(db, "users", this.userId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          this.formData = docSnap.data();
+          const data = docSnap.data();
+          this.formData = data;
+          // Store original data for change detection
+          this.originalFormData = JSON.parse(JSON.stringify(data));
+          this.hasUnsavedChanges = false;
         }
       } catch (error) {
         console.error("Error fetching trainer data:", error);
-        alert("An error occurred while loading your data.");
+        toast.error("An error occurred while loading your data.");
       }
     },
 
-    // fetch subscriptions and keep only those belonging to this trainer
+    // ===============================
+    // 🧾 Fetch Subscriptions
+    // ===============================
     async fetchSubscriptions() {
       try {
         const querySnapshot = await getDocs(collection(db, "subscriptions"));
@@ -1139,11 +1241,81 @@ export default {
       }
     },
 
-    // format Firestore timestamp to readable date
+    // ===============================
+    // 💰 Fetch Payment Data
+    // ===============================
+    async fetchPaymentData() {
+      try {
+        if (!this.userId) return;
+
+        let totalIncome = 0;
+        let monthlyIncome = 0;
+        const transactions = [];
+
+        const now = new Date();
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        // ✅ Trainer income from Bookings
+        const bookingsSnapshot = await getDocs(collection(db, "bookings"));
+        bookingsSnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          if (data.trainerId === this.userId) {
+            const amount = Number(data.amount || 0);
+            totalIncome += amount;
+            if (data.createdAt?.toDate() > monthStart) {
+              monthlyIncome += amount;
+            }
+            transactions.push({
+              title: "Trainee Subscription",
+              date: this.formatDate(data.createdAt),
+              amount: amount,
+              type: "income",
+            });
+          }
+        });
+
+        // 🔴 Platform fees from Subscriptions
+        const subsSnapshot = await getDocs(collection(db, "subscriptions"));
+        subsSnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          if (data.trainerUid === this.userId) {
+            const platformFee = Number(data.price || 0);
+            totalIncome -= platformFee; // خصم النسبة من الإجمالي
+            transactions.push({
+              title: "Platform Fee",
+              date: this.formatDate(data.createdAt),
+              amount: -platformFee,
+              type: "expense",
+            });
+          }
+        });
+
+        this.totalIncome = totalIncome;
+        this.monthlyIncome = monthlyIncome;
+        this.recentTransactions = transactions.sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
+      } catch (error) {
+        console.error("Error fetching payment data:", error);
+      }
+    },
+
+    // ===============================
+    // 💸 Withdraw Modal (✅ مُعدّل)
+    // ===============================
+    openWithdrawModal() {
+      this.withdrawModalOpen = true;
+    },
+    closeWithdrawModal() {
+      this.withdrawModalOpen = false;
+    },
+
+    // ===============================
+    // 🕓 Utility: Date Formatting
+    // ===============================
     formatDate(timestamp) {
       try {
         if (!timestamp) return "";
-        // if a Firestore Timestamp object with toDate()
         if (timestamp && typeof timestamp.toDate === "function") {
           const date = timestamp.toDate();
           return date.toLocaleDateString("en-US", {
@@ -1152,7 +1324,6 @@ export default {
             year: "numeric",
           });
         }
-        // handle ISO string or Date
         const d = new Date(timestamp);
         if (!isNaN(d)) {
           return d.toLocaleDateString("en-US", {
@@ -1162,17 +1333,42 @@ export default {
           });
         }
         return "";
-        // eslint-disable-next-line no-unused-vars
-      } catch (err) {
+      } catch {
         return "";
       }
     },
 
-    // upload file to storage and return download URL
+    // ✅ جديد: عرض آخر 3 فقط + زر "Show All"
+    getDisplayedTransactions() {
+      if (this.showAllTransactions) {
+        return this.recentTransactions;
+      }
+      return this.recentTransactions.slice(0, 3);
+    },
+    toggleShowAll() {
+      this.showAllTransactions = !this.showAllTransactions;
+    },
+
+    // Navigation confirmation handlers
+    handleNavigationConfirm() {
+      this.showUnsavedChangesModal = false;
+      if (this.pendingNavigation) {
+        this.pendingNavigation();
+        this.pendingNavigation = null;
+      }
+    },
+
+    handleNavigationCancel() {
+      this.showUnsavedChangesModal = false;
+      if (this.pendingNavigation) {
+        this.pendingNavigation(false);
+        this.pendingNavigation = null;
+      }
+    },
+
+    // باقي الأكواد القديمة تحت هنا بدون أي تعديل
     async uploadFile(file, type) {
       if (!file) return null;
-
-      // check allowed file types
       const allowedTypes = [
         "application/pdf",
         "image/png",
@@ -1180,33 +1376,169 @@ export default {
         "image/jpeg",
       ];
       if (!allowedTypes.includes(file.type)) {
-        alert("Only PDF, PNG, JPG, and JPEG files are allowed.");
+        toast.error("Only PDF, PNG, JPG, and JPEG files are allowed.");
         return null;
       }
-
       try {
         const fileRef = storageRef(
           storage,
           `users/${this.userId}/${type}-${Date.now()}-${file.name}`
         );
-        await uploadBytes(fileRef, file);
-        return await getDownloadURL(fileRef);
+
+        // Create upload task
+        const uploadTask = uploadBytesResumable(fileRef, file);
+
+        // Return promise that resolves when upload is complete
+        return new Promise((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              // Update progress percentage
+              this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            },
+            (error) => {
+              // Handle errors
+              console.error("Upload failed:", error);
+              toast.error("File upload failed. Please try again.");
+              this.uploadProgress = 0;
+              reject(error);
+            },
+            async () => {
+              // Upload complete
+              try {
+                const url = await getDownloadURL(fileRef);
+                this.uploadProgress = 100;
+                setTimeout(() => { this.uploadProgress = 0 }, 1000); // Reset progress after 1s
+                resolve(url);
+              } catch (error) {
+                reject(error);
+              }
+            }
+          );
+        });
       } catch (error) {
         console.error("File upload failed:", error);
-        alert("File upload failed. Please try again.");
+        toast.error("File upload failed. Please try again.");
+        this.uploadProgress = 0;
         return null;
       }
     },
 
-    // remove certificate from local array and Firestore (doesn't delete file in storage)
+    // Certificate change handler
+    async handleCertificateChange(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const allowedTypes = ["application/pdf", "image/png", "image/jpg", "image/jpeg"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only PDF, PNG, JPG, and JPEG files are allowed.");
+        return;
+      }
+
+      this.uploadProgress = 0; // Reset progress
+
+      try {
+        // Upload file immediately
+        const fileRef = storageRef(
+          storage,
+          `users/${this.userId}/certificate-${Date.now()}-${file.name}`
+        );
+
+        const uploadTask = uploadBytesResumable(fileRef, file);
+
+        // Create promise to handle upload
+        const uploadResult = await new Promise((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              // Update progress
+              this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            },
+            (error) => {
+              reject(error);
+            },
+            async () => {
+              try {
+                const url = await getDownloadURL(fileRef);
+                resolve(url);
+              } catch (err) {
+                reject(err);
+              }
+            }
+          );
+        });
+
+        // After successful upload, update the UI
+        if (!this.formData.certifications) {
+          this.formData.certifications = [];
+        }
+        this.formData.certifications.push(uploadResult);
+
+        // Show save reminder after successful upload
+        this.hasUnsavedChanges = true;
+        toast.info("Certificate uploaded successfully. Don't forget to save your changes!");
+
+        // Reset progress after a short delay
+        setTimeout(() => {
+          this.uploadProgress = 0;
+        }, 1000);
+
+      } catch (error) {
+        console.error("Upload failed:", error);
+        toast.error("Failed to upload certificate. Please try again.");
+        this.uploadProgress = 0;
+      }
+    },    // Confirmation dialog for removing certificate
+    confirmRemoveCertificate(index) {
+      const confirmBox = document.createElement("div");
+      confirmBox.classList.add(
+        "fixed",
+        "inset-0",
+        "flex",
+        "items-center",
+        "justify-center",
+        "z-50"
+      );
+      confirmBox.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+      confirmBox.style.backdropFilter = "blur(3px)";
+
+      confirmBox.innerHTML = `
+        <div class="bg-white dark:bg-[#242424] rounded-2xl shadow-xl p-8 text-center max-w-sm w-full mx-4 border border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Remove Certificate
+          </h2>
+          <p class="text-gray-500 dark:text-gray-300 mb-6 text-sm">
+            Are you sure you want to remove this certificate? This action cannot be undone.
+          </p>
+          <div class="flex justify-center gap-4">
+            <button id="confirmRemove" class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition">
+              Yes, Remove
+            </button>
+            <button id="cancelRemove" class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-white px-5 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition">
+              Cancel
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(confirmBox);
+
+      const confirmBtn = document.getElementById("confirmRemove");
+      const cancelBtn = document.getElementById("cancelRemove");
+
+      cancelBtn.addEventListener("click", () => confirmBox.remove());
+      confirmBtn.addEventListener("click", async () => {
+        await this.removeCertificate(index);
+        confirmBox.remove();
+        this.hasUnsavedChanges = true;
+        toast.success("Certificate removed. Don't forget to save changes.");
+      });
+    },
+
     async removeCertificate(index) {
       try {
         if (!this.userId || !this.formData.certifications) return;
-
-        // remove locally
         this.formData.certifications.splice(index, 1);
-
-        // update firestore
         const userRef = doc(db, "users", this.userId);
         await updateDoc(userRef, {
           certifications: this.formData.certifications,
@@ -1217,17 +1549,13 @@ export default {
       }
     },
 
-    // main update function for profile (no toasts here)
     async updateTrainer() {
       try {
         if (!this.userId) {
-          alert("No user found!");
+          toast.error("No user found!");
           return;
         }
-
         const updateData = {};
-
-        // handle new profile photo
         if (this.newProfilePhoto) {
           const photoUrl = await this.uploadFile(
             this.newProfilePhoto,
@@ -1239,53 +1567,25 @@ export default {
           }
         }
 
-        // handle new certificate
-        if (this.newCertificate) {
-          const certUrl = await this.uploadFile(
-            this.newCertificate,
-            "certificate"
-          );
-          if (certUrl) {
-            if (!this.formData.certifications)
-              this.formData.certifications = [];
-            this.formData.certifications.push(certUrl);
-            updateData.certifications = this.formData.certifications;
-          }
+        // No need to upload certificate here as it's already uploaded
+        if (this.formData.certifications && this.formData.certifications.length) {
+          updateData.certifications = this.formData.certifications;
         }
-
-        // add/edit textual fields
-        Object.assign(updateData, {
-          firstName: this.formData.firstName,
-          lastName: this.formData.lastName,
-          email: this.formData.email,
-          gender: this.formData.gender,
-          city: this.formData.city,
-          country: this.formData.country,
-          birthdate: this.formData.birthdate,
-          experience: this.formData.experience,
-          phone: this.formData.phone,
-          sport: this.formData.sport,
-          role: this.formData.role,
-          status: this.formData.status,
-          username: this.formData.username,
-        });
-
+        Object.assign(updateData, this.formData);
         const docRef = doc(db, "users", this.userId);
         await updateDoc(docRef, updateData);
-
-        // reset file inputs
         this.newProfilePhoto = null;
         this.newCertificate = null;
-
-        // show success modal (same style as delete confirm)
-        this.showSuccessModal();
+        this.hasUnsavedChanges = false;
+        // Update original data after successful save
+        this.originalFormData = JSON.parse(JSON.stringify(this.formData));
+        toast.success("Changes saved successfully!");
       } catch (error) {
         console.error("Error updating trainer data:", error);
-        alert("An error occurred. Please try again.");
+        toast.error("An error occurred. Please try again.");
       }
     },
 
-    // success modal (same structure as confirmBox but single OK button)
     showSuccessModal() {
       const modal = document.createElement("div");
       modal.classList.add(
@@ -1298,7 +1598,6 @@ export default {
       );
       modal.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
       modal.style.backdropFilter = "blur(3px)";
-
       modal.innerHTML = `
         <div class="bg-white rounded-2xl shadow-xl p-8 text-center max-w-sm w-full mx-4 border border-gray-200">
           <h2 class="text-lg font-semibold text-gray-800 mb-4">
@@ -1314,14 +1613,13 @@ export default {
           </div>
         </div>
       `;
-
       document.body.appendChild(modal);
-
-      const closeBtn = document.getElementById("closeSuccessModal");
-      closeBtn.addEventListener("click", () => modal.remove());
+      document
+        .getElementById("closeSuccessModal")
+        .addEventListener("click", () => modal.remove());
     },
 
-    // delete account (keeps original behavior but uses alert for errors)
+    // 🗑️ Delete Account
     async deleteAccount() {
       const confirmBox = document.createElement("div");
       confirmBox.classList.add(
@@ -1334,7 +1632,6 @@ export default {
       );
       confirmBox.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
       confirmBox.style.backdropFilter = "blur(3px)";
-
       confirmBox.innerHTML = `
         <div class="bg-white rounded-2xl shadow-xl p-8 text-center max-w-sm w-full mx-4 border border-gray-200">
           <h2 class="text-lg font-semibold text-gray-800 mb-4">
@@ -1353,29 +1650,22 @@ export default {
           </div>
         </div>
       `;
-
       document.body.appendChild(confirmBox);
-
       const confirmBtn = document.getElementById("confirmDelete");
       const cancelBtn = document.getElementById("cancelDelete");
-
       cancelBtn.addEventListener("click", () => confirmBox.remove());
-
       confirmBtn.addEventListener("click", async () => {
         try {
           const auth = getAuth();
           const user = auth.currentUser;
-
           if (!user) {
             confirmBox.remove();
             alert("No user found!");
             return;
           }
-
           const userRef = doc(db, "users", user.uid);
           await deleteDoc(userRef);
           await user.delete();
-
           confirmBox.remove();
           this.$router.push("/");
         } catch (error) {
@@ -1386,32 +1676,26 @@ export default {
       });
     },
 
-    // -----------------------
-    // PASSWORD SECTION (unchanged, still uses toast)
-    // -----------------------
-
-    // show/hide password fields
+    // ===============================
+    // 🛠️ Miscellaneous (Passwords, Plans)
+    // ===============================
     toggle(field) {
       if (field === "current") this.showCurrent = !this.showCurrent;
       else if (field === "new") this.showNew = !this.showNew;
       else if (field === "repeat") this.showRepeat = !this.showRepeat;
     },
 
-    // update password (keeps toast notifications)
     async onSubmit() {
       if (this.form.new !== this.form.repeat) {
         toast.error("New password and confirmation do not match!");
         return;
       }
-
       const auth = getAuth();
       const user = auth.currentUser;
-
       if (!user) {
         toast.error("No user is signed in!");
         return;
       }
-
       try {
         const credential = EmailAuthProvider.credential(
           user.email,
@@ -1419,7 +1703,6 @@ export default {
         );
         await reauthenticateWithCredential(user, credential);
         await updatePassword(user, this.form.new);
-
         toast.success("Password updated successfully");
         this.form.current = this.form.new = this.form.repeat = "";
       } catch (error) {
@@ -1427,6 +1710,7 @@ export default {
         toast.error(error.message);
       }
     },
+
 
     // ===========================
     // Plan modal helpers (UI only + localStorage persistence)
@@ -1557,6 +1841,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* small fade effect could be added if needed */

@@ -42,6 +42,7 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
         ].includes($route.name)
       "
     />
@@ -84,6 +85,8 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
+
         ].includes($route.name)
       "
     />
@@ -126,6 +129,8 @@
           'adminpayments',
           'adminreviews',
           'admintrainerprofile',
+          'terms'
+
         ].includes($route.name)
       "
     />
@@ -168,6 +173,8 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
+
         ].includes($route.name)
       "
     />
@@ -216,6 +223,8 @@
           'mytrainers',
           'TrainerProfile',
           'admintrainerprofile',
+          'terms'
+
         ].includes($route.name)
       "
     />
@@ -237,6 +246,8 @@
 
     <!-- عرض الصفحات -->
     <router-view />
+    <!-- AI Assistant Button (only for trainees) -->
+    <AiAssistantButton />
     <!-- Footer -->
     <FooterComp
       v-if="
@@ -282,6 +293,7 @@ import SideBarTrainee from "./components/SideBarTrainee.vue";
 import TraineeNavbar from "./components/TraineeNavbar.vue";
 import TrainerNavbar from "./components/TrainerNavbar.vue";
 import SideBarAdmin from "./components/SideBarAdmin.vue";
+import AiAssistantButton from "./components/AiAssistantButton.vue";
 export default {
   name: "App",
   components: {
@@ -292,6 +304,7 @@ export default {
     TraineeNavbar,
     TrainerNavbar,
     SideBarAdmin,
+    AiAssistantButton,
   },
 };
 </script>

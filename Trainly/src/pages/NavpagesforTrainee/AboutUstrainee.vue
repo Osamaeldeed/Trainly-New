@@ -159,6 +159,27 @@
       </div>
     </section>
 
+    <!-- Meet Our Team -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+      <h2 class="text-4xl text-black dark:text-white font-bold text-center mb-4">{{ $t("meetourteam") }}</h2>
+      <p class="text-center text-gray-600 dark:text-gray-300 mb-8">{{ $t("meetourteamdesc") }}</p>
+
+      <div class="flex flex-wrap justify-center gap-4">
+        <div
+          v-for="member in teamMembers"
+          :key="member.name"
+          class="bg-white dark:bg-[#3B3B3B] rounded-2xl p-4 text-center border border-gray-200 shadow-sm w-[200px]"
+        >
+          <img
+            :src="getImageUrl(member.img)"
+            :alt="member.name"
+            class="w-24 h-24 rounded-full mx-auto object-cover mb-3"
+          />
+          <h3 class="text-lg font-semibold text-black dark:text-white">{{ member.name }}</h3>
+        </div>
+      </div>
+    </section>
+
     <!-- For Trainees & Trainers -->
     <section class="max-w-7xl mx-auto px-6 py-16">
       <div class="grid md:grid-cols-2 gap-8">
@@ -217,6 +238,31 @@
 <script>
 export default {
   name: "TrainlyAbout",
+  data() {
+    return {
+      teamMembers: [
+        // Developers: name + image filename. Replace img with your file in src/assets/images/
+        { name: "Osama Eldeeb", img: "osama.jpg" },
+        { name: "Ganna Ayman", img: "ganna.png" },
+        { name: "Bassam Khaled", img: "user.png" },
+        { name: "Arwa Rabie", img: "user.png" },
+        { name: "Maryam Hassan", img: "user.png" },
+      ],
+    };
+  },
+  methods: {
+    getImageUrl(filename) {
+      // Direct import
+      const imagePath = `/src/assets/images/${filename}`;
+      try {
+        // First try to return the direct path
+        return imagePath;
+      } catch {
+        console.warn(`Image not found: ${imagePath}`);
+        return "https://via.placeholder.com/150";
+      }
+    },
+  },
 };
 </script>
 

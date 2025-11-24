@@ -9,20 +9,20 @@
     <ul
       class="hidden md:flex items-center justify-center md:space-x-10 lg:space-x-16 font-[500] md:text-[85%] lg:text-[100%]"
     >
-       <router-link
+      <router-link
         to="/"
         class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
         >{{ $t("home") }}</router-link
       >
       <router-link
-        to="/aboutus"
-        class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
-        >{{ $t("about") }}</router-link
-      >
-      <router-link
         to="/sports"
         class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
         >{{ $t("sports") }}</router-link
+      >
+      <router-link
+        to="/aboutus"
+        class="nav-link text-[#333] dark:text-white hover:text-(--primary) dark:hover:text-white"
+        >{{ $t("about") }}</router-link
       >
       <router-link
         to="/contactus"
@@ -34,12 +34,12 @@
     <!-- 🔹 الأزرار وتبديل اللغة -->
     <div class="hidden md:flex items-center gap-3">
       <!-- ✅ زرار Login بستايل منفصل -->
-        <button
-          @click="$router.push('/login')"
-          class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl border-1 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-[var(--third)] transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
-        >
-          {{ $t("login") }}
-        </button>
+      <button
+        @click="$router.push('/login')"
+        class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl border-1 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-[var(--third)] transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
+      >
+        {{ $t("login") }}
+      </button>
       <!-- ✅ زرار Get Started -->
       <button
         @click="$router.push('/signup')"
@@ -57,7 +57,6 @@
         @click="switchLang"
       />
     </div>
-
 
     <!-- 🔹 أيقونة الموبايل -->
     <div
@@ -82,8 +81,9 @@
     <transition name="fade">
       <div
         v-if="isOpen"
-        class="absolute top-[80px] left-0 w-full bg-white dark:bg-black shadow-md flex flex-col items-center space-y-6 py-6 z-50 md:hidden"      >
-       <div class="w-full px-6 flex items-center justify-between">
+        class="absolute top-[80px] left-0 w-full bg-white dark:bg-black shadow-md flex flex-col items-center space-y-6 py-6 z-50 md:hidden"
+      >
+        <div class="w-full px-6 flex items-center justify-between">
           <button @click="toggleDarkMode" class="py-2 px-3 rounded-md text-xl cursor-pointer">
             {{ isDark ? "☀️" : "🌙" }}
           </button>
@@ -94,7 +94,7 @@
             @click="switchLang"
           />
         </div>
-         <router-link to="/" class="nav-link text-[#333] dark:text-white" @click="isOpen = false">{{
+        <router-link to="/" class="nav-link text-[#333] dark:text-white" @click="isOpen = false">{{
           $t("home")
         }}</router-link>
         <router-link
@@ -118,9 +118,12 @@
 
         <div class="flex flex-col gap-4 w-[80%] items-center">
           <button
-            @click="$router.push('/login'); isOpen = false"
-             class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl border-1 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-[var(--third)] transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
-        >
+            @click="
+              $router.push('/login');
+              isOpen = false;
+            "
+            class="min-w-[130px] lg:min-w-[150px] px-4 rounded-3xl border-1 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-[var(--third)] transition h-10 lg:h-11 text-[14px] lg:text-[17px] cursor-pointer"
+          >
             {{ $t("login") }}
           </button>
         </div>
@@ -137,7 +140,7 @@ export default {
   data() {
     return {
       isOpen: false,
-            isDark: false,
+      isDark: false,
     };
   },
   computed: {
@@ -155,7 +158,7 @@ export default {
       document.body.style.fontFamily =
         newLocale === "ar" ? "'Tajawal', sans-serif" : "'Poppins', sans-serif";
     },
-  saveDark(val) {
+    saveDark(val) {
       localStorage.setItem("darkMode", val);
       if (val) {
         document.documentElement.classList.add("dark");
@@ -164,11 +167,11 @@ export default {
       }
     },
     toggleDarkMode() {
-        const newValue = !this.isDark;
+      const newValue = !this.isDark;
 
       this.isDark = !this.isDark;
       this.saveDark(this.isDark);
-       window.dispatchEvent(new CustomEvent("darkModeChanged", { detail: newValue }));
+      window.dispatchEvent(new CustomEvent("darkModeChanged", { detail: newValue }));
     },
   },
   mounted() {
