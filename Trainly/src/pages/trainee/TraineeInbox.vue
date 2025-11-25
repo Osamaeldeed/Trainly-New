@@ -784,4 +784,33 @@ section .flex-1 {
   }
 }
 
+/* Small mobile optimization */
+@media (max-width: 360px) {
+  .page-root {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .inbox-wrapper {
+    border-radius: 12px;
+  }
+
+  .client-item {
+    padding: 10px;
+  }
+
+  .messages-container {
+    padding: 10px;
+  }
+
+  .input-area {
+    padding: 10px;
+  }
+
+  .message-box {
+    max-width: 80%;
+  }
+}
+
+
 </style>
