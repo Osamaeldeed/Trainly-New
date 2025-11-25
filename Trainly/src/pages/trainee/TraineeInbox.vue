@@ -680,7 +680,7 @@ section .flex-1 {
     max-width: 360px;
   }
 }
-@media (min-width: 768px) and (max-width: 1279px) {
+@media  (max-width: 1279px) {
   .clients-column {
     min-width: 280px;
     max-width: 320px;
@@ -693,42 +693,7 @@ section .flex-1 {
     padding-right: 1rem;
   }
 }
-@media (max-width: 767px) {
-  .inbox-wrapper {
-    flex-direction: column;
-    border-radius: 14px;
-    height: 100vh;
-  }
-  .clients-column {
-    border-right: none;
-    border-bottom: 1px solid #eef2f7;
-  }
-  .mobile-top {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-  }
-  .message-box {
-    padding-left: 0.9rem;
-    padding-right: 0.9rem;
-    border-radius: 12px;
-  }
-  .page-root {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-}
-@media (max-width: 420px) {
-  .inbox-wrapper {
-    margin: 8px;
-  }
-  .clients-column .p-6 {
-    padding: 12px;
-  }
-  input::placeholder {
-    opacity: 0.9;
-  }
-}
+
 
 .messages-container::-webkit-scrollbar {
   width: 6px;
@@ -760,6 +725,7 @@ section .flex-1 {
 /* ============ MOBILE ============ */
 @media (max-width: 768px) {
   .page-root {
+    
     padding: 0;
   }
 
@@ -785,38 +751,56 @@ section .flex-1 {
 }
 
 /* Small mobile optimization */
-@media (max-width: 360px) {
+@media (max-width: 640px) {
   .page-root {
-    max-width: 84%;
-    
-    padding-left: 6px;
-    padding-right: 6px;
+    width: 100%;
+    padding: 0;
   }
 
   .inbox-wrapper {
-
-    border-radius: 12px;
-  }
-
-  .client-item {
-    padding: 10px;
+    
+    border-radius: 0;
+    margin: 0;
   }
 
   .messages-container {
-    max-width: 98%;
+    width: 87%;
     padding: 10px;
   }
 
-  .input-area {
-  display: flex;
-  width: 100% !important;
-}
-
-
   .message-box {
     max-width: 100%;
+    font-size: 14px;
   }
-  
+
+  /* Fix input area */
+  .bg-white.border-t {
+    width: 84%;
+    padding: 2px;
+  }
+
+  /* Ensure send button is visible */
+  input[type="text"] {
+    font-size: 14px;
+    padding: 10px 10px;
+  }
+
+  button.bg-blue-600 {
+    width: 25%;
+    padding: 10px 16px;
+    flex-shrink: 0;
+  }
+
+  /* Fix avatar sizes */
+  img.w-10 {
+    width: 30px;
+    height: 32px;
+  }
+
+  img.w-12 {
+    width: 35px;
+    height: 40px;
+  }
 }
 
 
