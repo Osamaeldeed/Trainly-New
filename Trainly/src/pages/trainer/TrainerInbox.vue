@@ -1,12 +1,11 @@
 <template>
-  <div
-    class="page-root flex items-start justify-center min-h-screen rounded-2xl dark:bg-[#535353] bg-blue-100 py-6"
-  >
-    <!-- البوكس الكبير -->
+<div class="page-root flex items-start justify-center min-h-screen py-6">
+  <div class="inbox-wrapper-container w-full max-w-7xl">
     <div
-      class="inbox-wrapper w-full max-w-7xl bg-light-blue dark:bg-[#3B3B3B] rounded-2xl shadow-strong overflow-hidden flex"
+      class="inbox-wrapper bg-light-blue dark:bg-[#3B3B3B] rounded-2xl shadow-strong overflow-hidden flex"
       :class="{ 'flex-col mobile-layout': isStacked }"
     >
+
       <!-- Clients Sidebar -->
       <aside
         class="clients-column bg-white dark:bg-[#3B3B3B] border-r border-gray-200 flex flex-col"
@@ -290,6 +289,7 @@
       </section>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -640,30 +640,20 @@ export default {
   },
 };
 </script>
-
 <style scoped>
-/* colours and box style */
+/* ==== Colors and basic style ==== */
 .bg-light-blue {
   background: #eef6ff;
 }
 
-/* MAIN BOX */
 .inbox-wrapper {
   background: #eef6ff;
   border-radius: 18px;
   box-shadow: 0 12px 40px rgba(2, 6, 23, 0.08);
   height: 90vh;
-  max-height: 800px;
   display: flex;
   flex-direction: row;
   overflow: hidden;
-}
-
-/* Mobile Layout */
-.inbox-wrapper.mobile-layout {
-  height: 95vh;
-  max-height: none;
-  border-radius: 16px;
 }
 
 /* Sidebar + chat layout flex children can shrink */
@@ -674,7 +664,7 @@ section .flex-1 {
   min-height: 0;
 }
 
-/* الرسائل نفسها هي اللي Scroll ONLY */
+/* Messages container scroll */
 .messages-container {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -682,151 +672,30 @@ section .flex-1 {
   flex-direction: column;
 }
 
-/* message box style */
+/* Message bubble */
 .message-box {
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
   border-radius: 14px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
 }
 
-/* root page adjustments */
-.page-root {
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-/* Responsive tuning */
-@media (min-width: 1280px) {
-  .clients-column {
-    min-width: 320px;
-    max-width: 360px;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1279px) {
-  .clients-column {
-    min-width: 280px;
-    max-width: 320px;
-  }
-  .inbox-wrapper {
-    border-radius: 18px;
-  }
-}
-
-/* Mobile Styles */
-@media (max-width: 767px) {
-  .page-root {
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-
-  .inbox-wrapper {
-    flex-direction: column;
-    border-radius: 14px;
-    height: 95vh;
-    margin: 0;
-  }
-
-  .inbox-wrapper.mobile-layout {
-    height: 97vh;
-  }
-
-  /* Mobile sidebar */
-  .clients-column.mobile-sidebar {
-    display: flex;
-    flex-direction: column;
-    border-right: none;
-    border-bottom: 1px solid #eef2f7;
-  }
-
-  /* Mobile chat */
-  section.mobile-chat {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Hidden on mobile when not active */
-  .mobile-hidden {
-    display: none !important;
-  }
-
-  .mobile-header {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .back-button {
-    min-width: 40px;
-  }
-
-  .client-item {
-    padding: 12px;
-  }
-
-  .message-box {
-    border-radius: 12px;
-    max-width: 85%;
-  }
-
-  .messages-container {
-    padding: 12px;
-  }
-
-  .input-area {
-    padding: 12px;
-  }
-}
-
-/* Small mobile optimization */
-@media (max-width: 380px) {
-  .page-root {
-    padding-left: 6px;
-    padding-right: 6px;
-  }
-
-  .inbox-wrapper {
-    border-radius: 12px;
-  }
-
-  .client-item {
-    padding: 10px;
-  }
-
-  .messages-container {
-    padding: 10px;
-  }
-
-  .input-area {
-    padding: 10px;
-  }
-
-  .message-box {
-    max-width: 90%;
-  }
-}
-
-/* Desktop specific */
-@media (min-width: 768px) {
-  .desktop-chat {
-    display: flex !important;
-    flex-direction: column;
-  }
-}
-
-/* small blue dot for unread indicator */
+/* Unread indicator */
 .unread-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #2563eb;
   display: inline-block;
   vertical-align: middle;
+}
+
+/* Root page adjustments */
+.page-root {
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 /* Scrollbar design */
@@ -854,6 +723,78 @@ section .flex-1 {
   }
   .messages-container::-webkit-scrollbar-thumb:hover {
     background: #888;
+  }
+}
+
+/* ==== Desktop / Tablet ==== */
+@media (min-width: 1280px) {
+  .clients-column {
+    min-width: 320px;
+    max-width: 360px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .clients-column {
+    min-width: 280px;
+    max-width: 320px;
+  }
+  .inbox-wrapper {
+    border-radius: 18px;
+  }
+}
+
+/* ==== Mobile adjustments ==== */
+@media (max-width: 768px) {
+  /* Outer wrapper: narrower and centered */
+  .inbox-wrapper {
+    width: 90%;           /* smaller than full screen */
+    max-width: 400px;     /* optional max width */
+    margin: 0 auto;       /* center horizontally */
+    border-radius: 16px;
+    flex-direction: column;
+    height: auto;         /* adapt to content height */
+  }
+
+  /* Sidebar / clients column */
+  .clients-column {
+    width: 100%;          /* fit wrapper width */
+    border-right: none;
+    border-bottom: 1px solid #eef2f7;
+  }
+
+  /* Messages panel */
+  .messages-panel {
+    width: 100%;
+  }
+
+  /* Search input inside sidebar */
+  .clients-column input[type="text"] {
+    width: calc(100% - 16px);
+    max-width: 100%;
+  }
+
+  /* Page padding */
+  .page-root {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  /* Message bubble adjustments */
+  .message-box {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+    border-radius: 12px;
+  }
+
+  /* Messages container height */
+  .messages-container {
+    height: calc(100vh - 140px);
+  }
+
+  section.flex-1 {
+    width: 100% !important;
+    height: 100%;
   }
 }
 </style>
