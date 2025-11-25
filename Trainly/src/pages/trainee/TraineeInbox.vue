@@ -787,7 +787,7 @@ section .flex-1 {
 /* Small mobile optimization */
 @media (max-width: 360px) {
   .page-root {
-    max-width: 84%;
+    max-width: 60%;
     
     padding-left: 6px;
     padding-right: 6px;
@@ -803,18 +803,18 @@ section .flex-1 {
   }
 
   .messages-container {
-    max-width: 98%;
+    max-width: 60%;
     padding: 10px;
   }
 
   .input-area {
   display: flex;
-  width: 100% !important;
+  width: 60% !important;
 }
 
 
   .message-box {
-    max-width: 100%;
+    max-width: 60%;
   }
   
 }
