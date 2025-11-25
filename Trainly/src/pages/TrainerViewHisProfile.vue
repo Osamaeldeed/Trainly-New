@@ -77,87 +77,87 @@
 
       <!-- HERO -->
       <div class="relative mb-10">
-        <div
-          class="bg-linear-to-r from-sky-50 to-blue-50 dark:from-[#3b3b3b] dark:to-[#1e1e1e] rounded-2xl p-4 sm:p-6 sm:pl-36 sm:pr-6 shadow-md dark:shadow-gray-900/50"
-        >
-          <!-- Profile Image -->
-          <img
-            :src="trainer.profilePicture || placeholder"
-            alt="trainer profile"
-            class="relative sm:absolute sm:-top-6 sm:left-6 w-24 h-24 sm:w-40 sm:h-40 mx-auto sm:mx-0 mb-4 sm:mb-0 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl"
-            @error="handleImageError"
-          />
+       <div
+  class="bg-linear-to-r from-sky-50 to-blue-50 dark:from-[#3b3b3b] dark:to-[#1e1e1e] rounded-2xl p-4 sm:p-6 sm:pl-36 sm:pr-6 rtl:sm:pr-36 rtl:sm:pl-6 shadow-md dark:shadow-gray-900/50"
+>
+  <!-- Profile Image -->
+  <img
+    :src="trainer.profilePicture || placeholder"
+    alt="trainer profile"
+    class="relative sm:absolute sm:-top-6 sm:left-6 rtl:sm:left-auto rtl:sm:right-6 w-24 h-24 sm:w-40 sm:h-40 mx-auto sm:mx-0 mb-4 sm:mb-0 object-cover rounded-xl border-4 border-white dark:border-gray-700 shadow-xl"
+    @error="handleImageError"
+  />
 
-          <div class="sm:ml-28 w-full flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4">
-            <!-- Left side: Profile info -->
-            <div class="flex-1 text-center sm:text-left">
-              <h1 class="text-2xl sm:text-3xl font-bold dark:text-white text-gray-900 mb-1">
-                {{ trainer.firstName }} {{ trainer.lastName }}
-              </h1>
-              <p class="text-sky-600 dark:text-gray-300 font-medium text-base sm:text-lg mb-3 sm:mb-4">
-                {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
-              </p>
+  <div class="w-full flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 sm:pl-12 rtl:sm:pl-0 rtl:sm:pr-12">
+    <!-- Left side: Profile info -->
+    <div class="flex-1 text-center sm:text-left rtl:sm:text-right">
+      <h1 class="text-2xl sm:text-3xl font-bold dark:text-white text-gray-900 mb-1">
+        {{ trainer.firstName }} {{ trainer.lastName }}
+      </h1>
+      <p class="text-sky-600 dark:text-gray-300 font-medium text-base sm:text-lg mb-3 sm:mb-4">
+        {{ trainer.sport ? capitalize(trainer.sport) + " Coach" : "Fitness Coach" }}
+      </p>
 
-              <div class="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-6 text-sm text-gray-700 dark:text-gray-200">
-                <div class="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 dark:text-white text-gray-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <span class="dark:text-white font-semibold">Username:</span>
-                  <span class="dark:text-gray-400 text-gray-600"
-                    >@{{ trainer.username || trainer.userName || "N/A" }}</span
-                  >
-                </div>
-
-                <div class="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 dark:text-white text-gray-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                    />
-                  </svg>
-                  <span class="dark:text-white font-semibold">Experience:</span>
-                  <span class="text-gray-600 dark:text-gray-400">{{ getExperience() }} years</span>
-                </div>
-
-                <div class="flex items-center gap-2 text-gray-600 dark:text-gray-200">
-                  <svg
-                    class="w-4 h-4 dark:text-white text-gray-500"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path
-                      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                    ></path>
-                    <circle cx="12" cy="9" r="2.5"></circle>
-                  </svg>
-                  <span class="capitalize dark:text-white">{{ getLocation() }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center sm:justify-start rtl:sm:justify-end gap-3 sm:gap-6 text-sm text-gray-700 dark:text-gray-200">
+        <div class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 dark:text-white text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+          <span class="dark:text-white font-semibold">Username:</span>
+          <span class="dark:text-gray-400 text-gray-600"
+            >@{{ trainer.username || trainer.userName || "N/A" }}</span
+          >
         </div>
+
+        <div class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 dark:text-white text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+            />
+          </svg>
+          <span class="dark:text-white font-semibold">Experience:</span>
+          <span class="text-gray-600 dark:text-gray-400">{{ getExperience() }} years</span>
+        </div>
+
+        <div class="flex items-center gap-2 text-gray-600 dark:text-gray-200">
+          <svg
+            class="w-4 h-4 dark:text-white text-gray-500"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+            ></path>
+            <circle cx="12" cy="9" r="2.5"></circle>
+          </svg>
+          <span class="capitalize dark:text-white">{{ getLocation() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
       </div>
 
       <!-- Plans -->
