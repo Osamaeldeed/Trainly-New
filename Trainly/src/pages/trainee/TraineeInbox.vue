@@ -787,7 +787,8 @@ section .flex-1 {
 /* Small mobile optimization */
 @media (max-width: 360px) {
   .page-root {
-    max-width: 85%;
+    max-width: 84%;
+    
     padding-left: 6px;
     padding-right: 6px;
   }
