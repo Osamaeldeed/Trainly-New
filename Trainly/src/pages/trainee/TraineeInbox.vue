@@ -254,31 +254,26 @@
         </div>
 
         <!-- input -->
-        <div v-if="selectedTrainer" class="bg-white dark:bg-[#3B3B3B] border-t border-gray-200 p-2 sm:p-4">
-  <div class="flex items-center gap-2 sm:gap-3">
-    <input
-      type="text"
-      v-model="messageInput"
-      @keyup.enter="sendMessage"
-      placeholder="Type your message here..."
-      :disabled="sending"
-      class="flex-1 px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:outline-none 
-             focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-    />
-
-    <button
-      @click="sendMessage"
-      :disabled="!messageInput.trim() || sending"
-      class="bg-blue-600 dark:bg-black text-white px-3 py-2 sm:px-6 sm:py-3 rounded-lg 
-             hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed 
-             flex items-center gap-1 sm:gap-2 cursor-pointer"
-    >
-      <span class="text-lg sm:text-xl">✈️</span>
-      <span class="hidden sm:inline">{{ sending ? "Sending..." : "Send" }}</span>
-    </button>
-  </div>
-</div>
-
+        <div v-if="selectedTrainer" class="bg-white dark:bg-[#3B3B3B] border-t border-gray-200 p-4">
+          <div class="flex items-center gap-3">
+            <input
+              type="text"
+              v-model="messageInput"
+              @keyup.enter="sendMessage"
+              placeholder="Type your message here..."
+              :disabled="sending"
+              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+            />
+            <button
+              @click="sendMessage"
+              :disabled="!messageInput.trim() || sending"
+              class="bg-blue-600 dark:bg-black text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+            >
+              <span class="text-xl">✈️</span>
+              <span class="hidden sm:inline">{{ sending ? "Sending..." : "Send" }}</span>
+            </button>
+          </div>
+        </div>
       </section>
     </div>
   </div>
@@ -790,15 +785,16 @@ section .flex-1 {
 }
 
 /* Small mobile optimization */
-@media (max-width: 370px) {
+@media (max-width: 360px) {
   .page-root {
-    max-width: 90%;
-    width: 75%;
+    max-width: 84%;
+    
     padding-left: 6px;
     padding-right: 6px;
   }
 
   .inbox-wrapper {
+
     border-radius: 12px;
   }
 
@@ -807,21 +803,20 @@ section .flex-1 {
   }
 
   .messages-container {
-    max-width: 100%;
-    width: 100%;
+    max-width: 98%;
     padding: 10px;
-    box-sizing: border-box;
   }
 
   .input-area {
-    padding: 10px;
-  }
+  display: flex;
+  width: 100% !important;
+}
+
 
   .message-box {
     max-width: 100%;
   }
-
- 
+  
 }
 
 
