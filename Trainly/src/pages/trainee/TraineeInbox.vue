@@ -9,7 +9,7 @@
     >
       <!-- Trainers Sidebar -->
       <aside
-        class="clients-column bg-white dark:bg-[#3B3B3B] dark:text-white border-r border-gray-200 flex flex-col"
+        class="clients-column bg-white dark:bg-[#3B3B3B] dark:text-white border-r border-gray-200 flex flex-col w-[90%]"
         :class="{
           'w-80': !isStacked,
           'w-full': isStacked && mobilePane === 'trainers',
@@ -17,10 +17,12 @@
         }"
       >
         <div class="p-6 border-b border-gray-200">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Chats</h1>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Chats
+          </h1>
           <div class="relative">
             <span
-              class="absolute left-3 top-1/2 transform dark:text-white -translate-y-1/2 text-gray-400"
+              class="hidden lg:flex absolute left-3 top-1/2 transform dark:text-white -translate-y-1/2 text-gray-400"
               >🔍</span
             >
             <input
@@ -33,12 +35,17 @@
         </div>
 
         <div class="flex-1 overflow-y-auto">
-          <div v-if="loadingTrainers" class="flex-1 flex items-center justify-center p-6">
+          <div
+            v-if="loadingTrainers"
+            class="flex-1 flex items-center justify-center p-6"
+          >
             <div class="text-center">
               <div
                 class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"
               ></div>
-              <p class="text-gray-500 dark:text-white text-sm">Loading trainers...</p>
+              <p class="text-gray-500 dark:text-white text-sm">
+                Loading trainers...
+              </p>
             </div>
           </div>
 
@@ -65,14 +72,18 @@
               <img
                 :src="
                   trainer.avatar ||
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(trainer.name)}&background=random`
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    trainer.name
+                  )}&background=random`
                 "
                 :alt="trainer.name"
                 class="w-12 h-12 rounded-full object-cover flex-shrink-0"
               />
               <div class="flex-1 min-w-0 dark:text-white text-left">
                 <div class="flex items-center justify-between mb-1">
-                  <h3 class="font-semibold dark:text-white text-gray-900 truncate">
+                  <h3
+                    class="font-semibold dark:text-white text-gray-900 truncate"
+                  >
                     {{ trainer.name }}
                   </h3>
                   <span
@@ -89,7 +100,9 @@
                   <span
                     v-if="trainer.unreadCount > 0"
                     class="unread-dot ml-2 flex-shrink-0"
-                    :title="trainer.unreadCount ? `${trainer.unreadCount} unread` : ''"
+                    :title="
+                      trainer.unreadCount ? `${trainer.unreadCount} unread` : ''
+                    "
                     aria-hidden="true"
                   ></span>
                 </div>
@@ -123,7 +136,9 @@
             <img
               :src="
                 selectedTrainer.avatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedTrainer.name)}&background=random`
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  selectedTrainer.name
+                )}&background=random`
               "
               :alt="selectedTrainer.name"
               class="w-10 h-10 rounded-full object-cover"
@@ -148,7 +163,9 @@
             v-if="selectedTrainer"
             :src="
               selectedTrainer.avatar ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedTrainer.name)}&background=random`
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                selectedTrainer.name
+              )}&background=random`
             "
             :alt="selectedTrainer.name"
             class="w-12 h-12 rounded-full object-cover"
@@ -169,7 +186,10 @@
             ref="messagesContainer"
             class="messages-container flex-1 overflow-y-auto p-6 space-y-4 dark:bg-[#3B3B3B] bg-gray-50"
           >
-            <div v-if="!selectedTrainer" class="flex-1 flex items-center justify-center">
+            <div
+              v-if="!selectedTrainer"
+              class="flex-1 flex items-center justify-center"
+            >
               <div class="text-center dark:text-white text-gray-400">
                 <div
                   class="w-24 h-24 bg-gray-200 dark:bg-[#3B3B3B] rounded-full mx-auto mb-4 flex items-center justify-center"
@@ -182,8 +202,13 @@
             </div>
 
             <div v-else>
-              <div v-if="loadingMessages" class="flex-1 flex items-center justify-center">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div
+                v-if="loadingMessages"
+                class="flex-1 flex items-center justify-center"
+              >
+                <div
+                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+                ></div>
               </div>
 
               <div
@@ -202,7 +227,9 @@
                   :key="msg.id"
                   :class="[
                     'flex',
-                    msg.senderId === this.traineeId ? 'justify-end' : 'justify-start',
+                    msg.senderId === this.traineeId
+                      ? 'justify-end'
+                      : 'justify-start',
                   ]"
                 >
                   <div class="flex items-start gap-3 max-w-2xl w-full">
@@ -210,7 +237,9 @@
                       v-if="msg.senderId !== this.traineeId"
                       :src="
                         selectedTrainer.avatar ||
-                        `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedTrainer.name)}&background=random`
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          selectedTrainer.name
+                        )}&background=random`
                       "
                       class="w-10 h-10 rounded-full object-cover flex-shrink-0 mt-1"
                     />
@@ -231,7 +260,9 @@
                             : 'bg-white dark:bg-[#1c1c1c] dark:text-white text-gray-900 rounded-bl-sm',
                         ]"
                       >
-                        <p class="text-sm dark:text-white whitespace-pre-wrap">{{ msg.text }}</p>
+                        <p class="text-sm dark:text-white whitespace-pre-wrap">
+                          {{ msg.text }}
+                        </p>
                       </div>
                       <p class="text-xs dark:text-white text-gray-500 mt-2">
                         {{ formatTime(msg.timestamp) }}
@@ -254,7 +285,10 @@
         </div>
 
         <!-- input -->
-        <div v-if="selectedTrainer" class="bg-white dark:bg-[#3B3B3B] border-t border-gray-200 p-4">
+        <div
+          v-if="selectedTrainer"
+          class="bg-white dark:bg-[#3B3B3B] border-t border-gray-200 p-4"
+        >
           <div class="flex items-center gap-3">
             <input
               type="text"
@@ -270,7 +304,9 @@
               class="bg-blue-600 dark:bg-black text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
             >
               <span class="text-xl">✈️</span>
-              <span class="hidden sm:inline">{{ sending ? "Sending..." : "Send" }}</span>
+              <span class="hidden sm:inline">{{
+                sending ? "Sending..." : "Send"
+              }}</span>
             </button>
           </div>
         </div>
@@ -324,7 +360,9 @@ export default {
       if (!this.searchQuery) return this.trainers;
       const q = this.searchQuery.toLowerCase();
       return this.trainers.filter(
-        (t) => t.name.toLowerCase().includes(q) || (t.email && t.email.toLowerCase().includes(q)),
+        (t) =>
+          t.name.toLowerCase().includes(q) ||
+          (t.email && t.email.toLowerCase().includes(q))
       );
     },
   },
@@ -374,17 +412,24 @@ export default {
               trainerData.avatar ||
               trainerData.profileImage
             );
-            const hasNameInBooking = !!(trainerData.firstName || trainerData.name);
+            const hasNameInBooking = !!(
+              trainerData.firstName || trainerData.name
+            );
             if (!hasImageInBooking || !hasNameInBooking) {
               const userData = await this.getUserData(trainerId);
               if (userData) trainerData = { ...userData, ...trainerData };
             }
             const name =
               trainerData.name ||
-              `${trainerData.firstName || ""} ${trainerData.lastName || ""}`.trim() ||
+              `${trainerData.firstName || ""} ${
+                trainerData.lastName || ""
+              }`.trim() ||
               "Unknown Trainer";
             const avatar =
-              trainerData.profilePicture || trainerData.avatar || trainerData.profileImage || null;
+              trainerData.profilePicture ||
+              trainerData.avatar ||
+              trainerData.profileImage ||
+              null;
             trainersMap.set(trainerId, {
               id: trainerId,
               name,
@@ -401,7 +446,10 @@ export default {
         this.loadingTrainers = false;
       } catch (error) {
         console.error("Error loading trainers:", error);
-        toast.error("Failed to load trainers", { position: "top-center", autoClose: 2000 });
+        toast.error("Failed to load trainers", {
+          position: "top-center",
+          autoClose: 2000,
+        });
         this.loadingTrainers = false;
       }
     },
@@ -411,7 +459,10 @@ export default {
       if (!this.traineeId || this.trainers.length === 0) return;
       try {
         const conversationsRef = collection(this.db, "conversations");
-        const q = query(conversationsRef, where("participants", "array-contains", this.traineeId));
+        const q = query(
+          conversationsRef,
+          where("participants", "array-contains", this.traineeId)
+        );
         const snapshot = await getDocs(q);
         snapshot.forEach((docSnap) => {
           const conv = docSnap.data();
@@ -442,7 +493,10 @@ export default {
     setupConversationsListener() {
       if (!this.traineeId) return;
       const conversationsRef = collection(this.db, "conversations");
-      const q = query(conversationsRef, where("participants", "array-contains", this.traineeId));
+      const q = query(
+        conversationsRef,
+        where("participants", "array-contains", this.traineeId)
+      );
       this.conversationsUnsubscribe = onSnapshot(q, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
           const conv = change.doc.data();
@@ -500,9 +554,14 @@ export default {
           traineeInfo: {
             id: this.traineeId,
             name:
-              `${traineeData.firstName || ""} ${traineeData.lastName || ""}`.trim() || "Trainee",
+              `${traineeData.firstName || ""} ${
+                traineeData.lastName || ""
+              }`.trim() || "Trainee",
             avatar:
-              traineeData.profilePicture || traineeData.avatar || traineeData.profileImage || null,
+              traineeData.profilePicture ||
+              traineeData.avatar ||
+              traineeData.profileImage ||
+              null,
           },
           lastMessage: "",
           lastMessageTime: serverTimestamp(),
@@ -515,7 +574,10 @@ export default {
         trainer.conversationId = newConvRef.id;
       } catch (error) {
         console.error("Error creating conversation:", error);
-        toast.error("Failed to create conversation", { position: "top-center", autoClose: 2000 });
+        toast.error("Failed to create conversation", {
+          position: "top-center",
+          autoClose: 2000,
+        });
       }
     },
 
@@ -524,7 +586,12 @@ export default {
       if (this.messagesUnsubscribe) this.messagesUnsubscribe();
       this.loadingMessages = true;
       this.messages = [];
-      const messagesRef = collection(this.db, "conversations", conversationId, "messages");
+      const messagesRef = collection(
+        this.db,
+        "conversations",
+        conversationId,
+        "messages"
+      );
       const q = query(messagesRef, orderBy("timestamp", "asc"));
       this.messagesUnsubscribe = onSnapshot(
         q,
@@ -536,7 +603,7 @@ export default {
         (error) => {
           console.error("Error loading messages:", error);
           this.loadingMessages = false;
-        },
+        }
       );
     },
 
@@ -544,7 +611,9 @@ export default {
     async markAsRead(conversationId) {
       try {
         const conversationRef = doc(this.db, "conversations", conversationId);
-        await updateDoc(conversationRef, { [`unreadCount.${this.traineeId}`]: 0 });
+        await updateDoc(conversationRef, {
+          [`unreadCount.${this.traineeId}`]: 0,
+        });
         if (this.selectedTrainer) this.selectedTrainer.unreadCount = 0;
       } catch (error) {
         console.error("Error marking as read:", error);
@@ -553,13 +622,19 @@ export default {
 
     // Send message as trainee
     async sendMessage() {
-      if (!this.messageInput.trim() || !this.selectedTrainer || this.sending) return;
+      if (!this.messageInput.trim() || !this.selectedTrainer || this.sending)
+        return;
       this.sending = true;
       const text = this.messageInput.trim();
       this.messageInput = "";
       try {
         const convId = this.selectedTrainer.conversationId;
-        const messagesRef = collection(this.db, "conversations", convId, "messages");
+        const messagesRef = collection(
+          this.db,
+          "conversations",
+          convId,
+          "messages"
+        );
         await addDoc(messagesRef, {
           senderId: this.traineeId,
           text,
@@ -576,7 +651,10 @@ export default {
         });
       } catch (error) {
         console.error("Error sending message:", error);
-        toast.error("Failed to send message", { position: "top-center", autoClose: 2000 });
+        toast.error("Failed to send message", {
+          position: "top-center",
+          autoClose: 2000,
+        });
         this.messageInput = text;
       } finally {
         this.sending = false;
@@ -609,7 +687,10 @@ export default {
       this.traineeId = user.uid;
       this.loadTrainers();
     } else {
-      toast.error("Please login first", { position: "top-center", autoClose: 2000 });
+      toast.error("Please login first", {
+        position: "top-center",
+        autoClose: 2000,
+      });
       this.loadingTrainers = false;
     }
 
@@ -680,7 +761,7 @@ section .flex-1 {
     max-width: 360px;
   }
 }
-@media  (max-width: 1279px) {
+@media (max-width: 1279px) {
   .clients-column {
     min-width: 280px;
     max-width: 320px;
@@ -693,7 +774,6 @@ section .flex-1 {
     padding-right: 1rem;
   }
 }
-
 
 .messages-container::-webkit-scrollbar {
   width: 6px;
@@ -725,7 +805,6 @@ section .flex-1 {
 /* ============ MOBILE ============ */
 @media (max-width: 768px) {
   .page-root {
-    
     padding: 0;
   }
 
@@ -758,13 +837,13 @@ section .flex-1 {
   }
 
   .inbox-wrapper {
-    
+
     border-radius: 0;
     margin: 0;
   }
 
   .messages-container {
-    width: 87%;
+    width: 95%;
     padding: 10px;
   }
 
@@ -775,7 +854,7 @@ section .flex-1 {
 
   /* Fix input area */
   .bg-white.border-t {
-    width: 84%;
+    width: 93%;
     padding: 2px;
   }
 
@@ -802,6 +881,4 @@ section .flex-1 {
     height: 40px;
   }
 }
-
-
 </style>
