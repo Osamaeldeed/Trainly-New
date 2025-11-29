@@ -32,7 +32,7 @@
 
       <form
         @submit.prevent="showConfirmUpdateModal"
-        class="p-15 border border-gray-200 rounded-3xl shadow-xl bg-white dark:bg-[#3B3B3B] flex flex-col items-center"
+        class="md:p-15 p-5 border border-gray-200 rounded-3xl shadow-xl bg-white dark:bg-[#3B3B3B] flex flex-col items-center"
       >
         <div class="flex items-center gap-3 mb-6 self-start">
           <div
@@ -87,7 +87,7 @@
 
         <!-- Personal Info -->
         <div class="w-full space-y-10">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mx-15">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:mx-15">
             <div>
               <label
                 for="first-name"
@@ -143,7 +143,7 @@
           </div>
 
           <!-- City / Country / Birthday -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mx-15">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 md:mx-15">
             <div>
               <label for="city" class="block text-sm font-medium dark:text-white text-gray-900"
                 >City</label
@@ -219,7 +219,7 @@
       <div
         class="w-full border border-gray-200 rounded-3xl dark:text-white shadow-xl dark:bg-[#3B3B3B] bg-white p-10"
       >
-        <div class="flex mx-5">
+        <div class="flex md:mx-5">
           <div
             class="bg-[#f4f8fc] dark:bg-[#3B3B3B] w-10 h-10 rounded-lg flex items-center justify-center mr-2 mt-1"
           >
@@ -234,7 +234,7 @@
           </div>
         </div>
 
-        <form class="max-w-[95%] mx-17" @submit.prevent="onSubmit">
+        <form class="max-w-[95%] md:mx-17" @submit.prevent="onSubmit">
           <!-- Current password -->
           <div class="mb-5">
             <label class="block mb-2 text-sm font-medium dark:text-white text-gray-900"
