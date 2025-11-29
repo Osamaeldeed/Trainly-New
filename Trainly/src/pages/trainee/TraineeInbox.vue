@@ -843,7 +843,7 @@ section .flex-1 {
   }
 
   .messages-container {
-    width: 95%;
+    width: 97%;
     padding: 10px;
   }
 

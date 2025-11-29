@@ -89,15 +89,15 @@
       @click="isOpen = !isOpen"
     >
       <span
-        class="block w-6 h-[3px] bg-gray-800 rounded transition-all duration-300"
+        class="block w-6 h-[3px] bg-gray-800 dark:bg-white rounded transition-all duration-300"
         :class="{ 'rotate-45 translate-y-[8px]': isOpen }"
       ></span>
       <span
-        class="block w-6 h-[3px] bg-gray-800 rounded transition-all duration-300"
+        class="block w-6 h-[3px] bg-gray-800 dark:bg-white rounded transition-all duration-300"
         :class="{ 'opacity-0': isOpen }"
       ></span>
       <span
-        class="block w-6 h-[3px] bg-gray-800 rounded transition-all duration-300"
+        class="block w-6 h-[3px] bg-gray-800 dark:bg-white rounded transition-all duration-300"
         :class="{ '-rotate-45 -translate-y-[8px]': isOpen }"
       ></span>
     </div>

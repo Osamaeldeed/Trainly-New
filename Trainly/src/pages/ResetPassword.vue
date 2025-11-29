@@ -171,7 +171,7 @@ export default {
                   :type="passwordFieldType"
                   :placeholder="$t('newPasswordPlaceholder')"
                   v-model="formData.password"
-                  class="w-full border dark:text-white rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  class="w-full border text-[12px] md:text-[16px] dark:text-white rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-green-400"
                   :class="errors.password ? 'border-red-500' : 'border-gray-300'"
                   @focus="errors.password = ''"
                   required
@@ -198,7 +198,7 @@ export default {
                   :type="confirmPasswordFieldType"
                   :placeholder="$t('confirmPasswordPlaceholder')"
                   v-model="formData.confirmPassword"
-                  class="w-full border dark:text-white rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  class="w-full border text-[12px] md:text-[16px] dark:text-white rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-green-400"
                   :class="errors.confirmPassword ? 'border-red-500' : 'border-gray-300'"
                   @focus="errors.confirmPassword = ''"
                   required
@@ -222,7 +222,7 @@ export default {
               <button
                 type="submit"
                 :disabled="isLoading"
-                class="px-10 py-1 rounded-4xl bg-gradient-to-r from-green-500 to-sky-400 text-white hover:opacity-90 transition font-semibold w-[50%] h-12 mb-5 text-[90%] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed relative"
+                class="md:px-10 md:py-1 px-2.5 rounded-4xl bg-gradient-to-r from-green-500 to-sky-400 text-white hover:opacity-90 transition font-semibold w-[50%] h-12 mb-5 text-[90%] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed relative"
               >
                 <svg
                   v-if="isLoading"

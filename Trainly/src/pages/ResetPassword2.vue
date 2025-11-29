@@ -97,10 +97,10 @@ export default {
 
 
 <template>
-  <section class="flex justify-center bg-white dark:bg-black">
+  <section class="flex justify-center bg-white dark:bg-black h-screen">
     <div class="flex w-full h-full overflow-hidden">
       <!-- الصورة -->
-      <div class="w-[40%] h-full flex items-center justify-center bg-gray-100">
+      <div class="hidden md:w-[40%] h-full md:flex items-center justify-center bg-gray-100">
         <img
           src="@/assets/images/pic4.png"
           alt="Payment Illustration"
@@ -109,7 +109,7 @@ export default {
       </div>
 
       <!-- النصوص -->
-      <div class="w-[60%] h-full flex flex-col">
+      <div class="md:w-[60%] h-full flex flex-col">
         <div class="flex ml-18">
           <img
             :src="logoSrc"
@@ -119,10 +119,10 @@ export default {
         </div>
 
         <div
-          class="relative p-[4px] rounded-3xl bg-linear-to-r from-green-500 to-sky-400 shadow-xl w-4/5 h-[60vh] flex mx-auto"
+          class="relative md:p-[4px] rounded-3xl bg-linear-to-r from-green-500 to-sky-400 shadow-xl w-4/5 h-[60vh] flex mx-auto"
         >
           <div
-            class="bg-white rounded-3xl dark:bg-[#3b3b3b] p-10 text-center w-full h-full overflow-auto pb-1"
+            class="bg-white rounded-3xl dark:bg-[#3b3b3b] md:p-10 pt-7 text-center w-full h-full overflow-auto pb-1"
           >
             <div class="flex justify-center">
               <img src="@/assets/images/success icon.png" alt="Success" class="w-30 h-30" />
@@ -136,7 +136,7 @@ export default {
             <router-link to="/login">
               <button
                 type="submit"
-                class="cursor-pointer px-10 py-1 rounded-4xl bg-linear-to-r from-green-500 to-sky-400 text-white hover:opacity-90 transition text-lg font-semibold w-60 h-12 mb-5"
+                class="cursor-pointer md:px-10 md:py-1 rounded-4xl bg-linear-to-r from-green-500 to-sky-400 text-white hover:opacity-90 transition text-lg font-semibold w-60 h-12 mb-5"
               >
                 {{ $t("login") }}
               </button>

@@ -129,7 +129,7 @@ export default {
               <button
                 type="submit"
                 :disabled="loading"
-                class="cursor-pointer px-10 py-1 rounded-4xl bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white hover:opacity-90 transition text-lg font-semibold w-[45%] h-12 mb-5"
+                class="cursor-pointer md:px-10 md:py-1  rounded-4xl bg-linear-to-r from-[#00C853] to-[#00B0FF] text-white hover:opacity-90 transition text-lg font-semibold w-[45%] h-12 mb-5"
               >
                 {{ loading ? "submitting.." : $t("submitButton") }}
               </button>

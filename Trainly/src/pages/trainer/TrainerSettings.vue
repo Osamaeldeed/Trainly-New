@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <form class="space-y-10 mx-15" @submit.prevent="updateTrainer">
+      <form class="space-y-10 md:mx-15" @submit.prevent="updateTrainer">
         <!-- Profile Photo -->
         <div class="flex flex-col items-center mb-10">
           <label
@@ -304,7 +304,7 @@
         </div>
       </div>
 
-      <form class="max-w-[95%] ps-[50px]" @submit.prevent="onSubmit">
+      <form class="max-w-[95%] md:ps-[50px]" @submit.prevent="onSubmit">
         <!-- Current password -->
         <div class="mb-5">
           <label
